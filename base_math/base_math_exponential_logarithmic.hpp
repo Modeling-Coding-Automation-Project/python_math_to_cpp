@@ -32,9 +32,14 @@ constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 constexpr double EXP_INPUT_MAX = 87.0;
+constexpr double EXP_OUTPUT_MAX = 6.076030225056872e+37;
 constexpr double EXP_INPUT_MIN = -87.0;
+constexpr double EXP_OUTPUT_MIN = 1.6458114310822737e-38;
+
 constexpr double EXP2_INPUT_MAX = 126.0;
+constexpr double EXP2_OUTPUT_MAX = 8.507059173023462e+37;
 constexpr double EXP2_INPUT_MIN = -126.0;
+constexpr double EXP2_OUTPUT_MIN = 1.1754943508222875e-38;
 
 constexpr double LOG_OUTPUT_MIN = -1.0e20;
 constexpr double LOG_SCALE_FACTOR = 5.0;
@@ -133,32 +138,32 @@ template <typename T> inline T sqrt(const T &x) {
 template <typename T, std::size_t LOOP_NUMBER>
 inline T exp_base_math(const T &x) {
 
-  T x_wrapped = x;
+  T result = static_cast<T>(1);
 
   if (x > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
-    x_wrapped = static_cast<T>(Base::Math::EXP_INPUT_MAX);
+    result = static_cast<T>(Base::Math::EXP_OUTPUT_MAX);
   } else if (x < static_cast<T>(Base::Math::EXP_INPUT_MIN)) {
-    x_wrapped = static_cast<T>(Base::Math::EXP_INPUT_MIN);
-  }
-
-  int n = static_cast<int>(x_wrapped / static_cast<T>(Base::Math::LN_2));
-  T remainder = x_wrapped - n * static_cast<T>(Base::Math::LN_2);
-
-  T result = static_cast<T>(1);
-  T term = static_cast<T>(1);
-
-  for (std::size_t i = 1; i < LOOP_NUMBER; ++i) {
-    term *= remainder / static_cast<T>(i);
-    result += term;
-  }
-
-  if (n > 0) {
-    for (int i = 0; i < n; ++i) {
-      result *= static_cast<T>(2);
-    }
+    result = static_cast<T>(Base::Math::EXP_OUTPUT_MIN);
   } else {
-    for (int i = 0; i < -n; ++i) {
-      result *= static_cast<T>(0.5);
+
+    int n = static_cast<int>(x / static_cast<T>(Base::Math::LN_2));
+    T remainder = x - n * static_cast<T>(Base::Math::LN_2);
+
+    T term = static_cast<T>(1);
+
+    for (std::size_t i = 1; i < LOOP_NUMBER; ++i) {
+      term *= remainder / static_cast<T>(i);
+      result += term;
+    }
+
+    if (n > 0) {
+      for (int i = 0; i < n; ++i) {
+        result *= static_cast<T>(2);
+      }
+    } else {
+      for (int i = 0; i < -n; ++i) {
+        result *= static_cast<T>(0.5);
+      }
     }
   }
 
@@ -178,32 +183,32 @@ template <typename T> inline T exp(const T &x) {
 template <typename T, std::size_t LOOP_NUMBER>
 inline T exp2_base_math(const T &x) {
 
-  T x_wrapped = x;
+  T result = static_cast<T>(1);
 
   if (x > static_cast<T>(Base::Math::EXP2_INPUT_MAX)) {
-    x_wrapped = static_cast<T>(Base::Math::EXP2_INPUT_MAX);
+    result = static_cast<T>(Base::Math::EXP2_OUTPUT_MAX);
   } else if (x < static_cast<T>(Base::Math::EXP2_INPUT_MIN)) {
-    x_wrapped = static_cast<T>(Base::Math::EXP2_INPUT_MIN);
-  }
-
-  int n = static_cast<int>(x_wrapped);
-  T remainder = x_wrapped - static_cast<T>(n);
-
-  T result = static_cast<T>(1);
-  T term = static_cast<T>(1);
-
-  for (std::size_t i = 1; i < LOOP_NUMBER; ++i) {
-    term *= static_cast<T>(Base::Math::LN_2) * remainder / static_cast<T>(i);
-    result += term;
-  }
-
-  if (n > 0) {
-    for (int i = 0; i < n; ++i) {
-      result *= static_cast<T>(2);
-    }
+    result = static_cast<T>(Base::Math::EXP2_OUTPUT_MIN);
   } else {
-    for (int i = 0; i < -n; ++i) {
-      result *= static_cast<T>(0.5);
+
+    int n = static_cast<int>(x);
+    T remainder = x - static_cast<T>(n);
+
+    T term = static_cast<T>(1);
+
+    for (std::size_t i = 1; i < LOOP_NUMBER; ++i) {
+      term *= static_cast<T>(Base::Math::LN_2) * remainder / static_cast<T>(i);
+      result += term;
+    }
+
+    if (n > 0) {
+      for (int i = 0; i < n; ++i) {
+        result *= static_cast<T>(2);
+      }
+    } else {
+      for (int i = 0; i < -n; ++i) {
+        result *= static_cast<T>(0.5);
+      }
     }
   }
 
