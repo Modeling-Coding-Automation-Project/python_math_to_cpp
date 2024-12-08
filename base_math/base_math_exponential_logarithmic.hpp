@@ -49,6 +49,17 @@ constexpr std::size_t LOG_SCALING_LOOP_MAX =
     54; // ln(1e38) / ln(LOG_SCALE_FACTOR)
 
 /* sqrt */
+template <typename T, std::size_t N> struct SqrtIterationLoop {
+  static T compute(const T &x, T guess) {
+    guess = (guess + x / guess) * static_cast<T>(0.5);
+    return SqrtIterationLoop<T, N - 1>::compute(x, guess);
+  }
+};
+
+template <typename T> struct SqrtIterationLoop<T, 0> {
+  static T compute(const T &, T guess) { return guess; }
+};
+
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sqrt_base_math(const T &x) {
   T result = static_cast<T>(0);
@@ -58,11 +69,7 @@ inline T sqrt_base_math(const T &x) {
   } else {
     T guess = x * static_cast<T>(0.5);
 
-    for (std::size_t i = 0; i < LOOP_NUMBER; ++i) {
-      guess = (guess + x / guess) * static_cast<T>(0.5);
-    }
-
-    result = guess;
+    result = SqrtIterationLoop<T, LOOP_NUMBER>::compute(x, guess);
   }
 
   return result;
