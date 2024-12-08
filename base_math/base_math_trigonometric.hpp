@@ -184,35 +184,46 @@ template <typename T> struct AtanChebyshevLoop<T, 0> {
   }
 };
 
+template <typename T> inline T atan_chebyshev_core(const T &x) {
+
+  T x_squared = x * x;
+  T y = static_cast<T>(0);
+
+  y = AtanChebyshevLoop<T, Base::Math::ATAN_REPEAT_NUMBER - 1>::compute(
+      x_squared, y);
+
+  return y * x;
+}
+
+template <typename T> inline T atan_chebyshev_core_wide(const T &x) {
+
+  if ((x > static_cast<T>(0.5)) || (x < static_cast<T>(-0.5))) {
+    T half_x = x * static_cast<T>(0.5);
+
+    return Base::Math::atan_chebyshev_core(half_x) +
+           Base::Math::atan_chebyshev_core(
+               half_x /
+               (static_cast<T>(1) + static_cast<T>(2) * half_x * half_x));
+
+  } else {
+
+    return Base::Math::atan_chebyshev_core(x);
+  }
+}
+
 template <typename T> inline T atan_chebyshev(const T &x) {
 
   T result = static_cast<T>(0);
 
   if (x > static_cast<T>(1)) {
     result = static_cast<T>(Base::Math::HALF_PI) -
-             Base::Math::atan_chebyshev(static_cast<T>(1) / x);
+             Base::Math::atan_chebyshev_core_wide(static_cast<T>(1) / x);
   } else if (x < static_cast<T>(-1)) {
     result = -static_cast<T>(Base::Math::HALF_PI) -
-             Base::Math::atan_chebyshev(static_cast<T>(1) / x);
+             Base::Math::atan_chebyshev_core_wide(static_cast<T>(1) / x);
   } else {
-    if ((x > static_cast<T>(0.5)) || (x < static_cast<T>(-0.5))) {
-      T half_x = x * static_cast<T>(0.5);
 
-      result = Base::Math::atan_chebyshev(half_x) +
-               Base::Math::atan_chebyshev(
-                   half_x /
-                   (static_cast<T>(1) + static_cast<T>(2) * half_x * half_x));
-
-    } else {
-
-      T x_squared = x * x;
-      T y = static_cast<T>(0);
-
-      y = AtanChebyshevLoop<T, Base::Math::ATAN_REPEAT_NUMBER - 1>::compute(
-          x_squared, y);
-
-      result = y * x;
-    }
+    result = Base::Math::atan_chebyshev_core_wide(x);
   }
 
   return result;
