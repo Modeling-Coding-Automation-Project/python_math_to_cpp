@@ -130,7 +130,8 @@ template <typename T> inline T sqrt(const T &x) {
 }
 
 /* exp */
-template <typename T> inline T exp_base_math(const T &x) {
+template <typename T, std::size_t LOOP_NUMBER>
+inline T exp_base_math(const T &x) {
 
   T x_wrapped = x;
 
@@ -146,7 +147,7 @@ template <typename T> inline T exp_base_math(const T &x) {
   T result = static_cast<T>(1);
   T term = static_cast<T>(1);
 
-  for (std::size_t i = 1; i < Base::Math::EXP_REPEAT_NUMBER; ++i) {
+  for (std::size_t i = 1; i < LOOP_NUMBER; ++i) {
     term *= remainder / static_cast<T>(i);
     result += term;
   }
@@ -169,7 +170,7 @@ template <typename T> inline T exp(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp(x);
 #else
-  return Base::Math::exp_base_math(x);
+  return Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x);
 #endif
 }
 
@@ -297,7 +298,8 @@ template <typename T> inline T log10(const T &x) {
 
 /* pow */
 template <typename T> inline T pow_base_math(const T &x, const T &y) {
-  return Base::Math::exp_base_math(y * Base::Math::log_base_math(x));
+  return Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(
+      y * Base::Math::log_base_math(x));
 }
 
 template <typename T> inline T pow(const T &x, const T &y) {

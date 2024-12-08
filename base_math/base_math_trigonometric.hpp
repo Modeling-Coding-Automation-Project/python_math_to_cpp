@@ -343,7 +343,8 @@ template <typename T> inline T acos(const T &x) {
 
 /* sinh */
 template <typename T> inline T sinh_base_math(const T &x) {
-  return (Base::Math::exp_base_math(x) - Base::Math::exp_base_math(-x)) *
+  return (Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x) -
+          Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(-x)) *
          static_cast<T>(0.5);
 }
 
@@ -358,7 +359,8 @@ template <typename T> inline T sinh(const T &x) {
 
 /* cosh */
 template <typename T> inline T cosh_base_math(const T &x) {
-  return (Base::Math::exp_base_math(x) + Base::Math::exp_base_math(-x)) *
+  return (Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x) +
+          Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(-x)) *
          static_cast<T>(0.5);
 }
 
@@ -374,8 +376,8 @@ template <typename T> inline T cosh(const T &x) {
 /* tanh */
 template <typename T> inline T tanh_base_math(const T &x) {
 
-  T a = Base::Math::exp_base_math(x);
-  T b = Base::Math::exp_base_math(-x);
+  T a = Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x);
+  T b = Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(-x);
 
   return (a - b) /
          avoid_zero_divide(a + b, static_cast<T>(TRIGONOMETRIC_DIVISION_MIN));
