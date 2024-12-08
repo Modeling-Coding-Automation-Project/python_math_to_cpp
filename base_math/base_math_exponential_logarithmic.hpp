@@ -142,6 +142,26 @@ template <typename T> inline T sqrt(const T &x) {
 }
 
 /* exp */
+template <typename T, std::size_t LOOP_MAX, std::size_t N>
+struct ExpIterationLoop {
+  static void compute(T &result, T &term, const T &remainder) {
+    term *= remainder / static_cast<T>(LOOP_MAX - N);
+    result += term;
+
+    ExpIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term, remainder);
+  }
+};
+
+template <typename T, std::size_t LOOP_MAX>
+struct ExpIterationLoop<T, LOOP_MAX, 0> {
+  static void compute(T &result, T &term, const T &remainder) {
+    /* Do Nothing. */
+    static_cast<void>(result);
+    static_cast<void>(term);
+    static_cast<void>(remainder);
+  }
+};
+
 template <typename T, std::size_t LOOP_NUMBER>
 inline T exp_base_math(const T &x) {
 
@@ -155,13 +175,10 @@ inline T exp_base_math(const T &x) {
 
     int n = static_cast<int>(x / static_cast<T>(Base::Math::LN_2));
     T remainder = x - n * static_cast<T>(Base::Math::LN_2);
-
     T term = static_cast<T>(1);
 
-    for (std::size_t i = 1; i < LOOP_NUMBER; ++i) {
-      term *= remainder / static_cast<T>(i);
-      result += term;
-    }
+    ExpIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(result, term,
+                                                               remainder);
 
     if (n > 0) {
       for (int i = 0; i < n; ++i) {
