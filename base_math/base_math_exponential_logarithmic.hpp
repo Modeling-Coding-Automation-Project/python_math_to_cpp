@@ -50,10 +50,10 @@ template <typename T> inline T sqrt_base_math(const T &x) {
   if (x <= static_cast<T>(0)) {
     /* Do Nothing. */
   } else {
-    T guess = x / static_cast<T>(2);
+    T guess = x * static_cast<T>(0.5);
 
     for (std::size_t i = 0; i < Base::Math::SQRT_REPEAT_NUMBER; ++i) {
-      guess = (guess + x / guess) / static_cast<T>(2);
+      guess = (guess + x / guess) * static_cast<T>(0.5);
     }
 
     result = guess;
