@@ -305,10 +305,13 @@ template <typename T> inline T asin_base_math(const T &x) {
 
   } else {
 
-    result = static_cast<T>(2) *
-             Base::Math::atan2_base_math(
-                 x, static_cast<T>(1) +
-                        Base::Math::sqrt_base_math(static_cast<T>(1) - x * x));
+    result =
+        static_cast<T>(2) *
+        Base::Math::atan2_base_math(
+            x,
+            static_cast<T>(1) +
+                Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
+                    static_cast<T>(1) - x * x));
   }
 
   return result;

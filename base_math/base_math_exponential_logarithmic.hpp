@@ -44,7 +44,8 @@ constexpr std::size_t LOG_SCALING_LOOP_MAX =
     54; // ln(1e38) / ln(LOG_SCALE_FACTOR)
 
 /* sqrt */
-template <typename T> inline T sqrt_base_math(const T &x) {
+template <typename T, std::size_t LOOP_NUMBER>
+inline T sqrt_base_math(const T &x) {
   T result = static_cast<T>(0);
 
   if (x <= static_cast<T>(0)) {
@@ -52,7 +53,7 @@ template <typename T> inline T sqrt_base_math(const T &x) {
   } else {
     T guess = x * static_cast<T>(0.5);
 
-    for (std::size_t i = 0; i < Base::Math::SQRT_REPEAT_NUMBER; ++i) {
+    for (std::size_t i = 0; i < LOOP_NUMBER; ++i) {
       guess = (guess + x / guess) * static_cast<T>(0.5);
     }
 
@@ -118,11 +119,11 @@ template <typename T> inline T sqrt(const T &x) {
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
   return Base::Math::fast_square_root(x);
 #else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::sqrt_base_math(x);
+  return Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::sqrt_base_math(x);
+  return Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
 
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
