@@ -175,7 +175,8 @@ template <typename T> inline T exp(const T &x) {
 }
 
 /* exp2 */
-template <typename T> inline T exp2_base_math(const T &x) {
+template <typename T, std::size_t LOOP_NUMBER>
+inline T exp2_base_math(const T &x) {
 
   T x_wrapped = x;
 
@@ -191,7 +192,7 @@ template <typename T> inline T exp2_base_math(const T &x) {
   T result = static_cast<T>(1);
   T term = static_cast<T>(1);
 
-  for (std::size_t i = 1; i < Base::Math::EXP2_REPEAT_NUMBER; ++i) {
+  for (std::size_t i = 1; i < LOOP_NUMBER; ++i) {
     term *= static_cast<T>(Base::Math::LN_2) * remainder / static_cast<T>(i);
     result += term;
   }
@@ -214,12 +215,13 @@ template <typename T> inline T exp2(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp2(x);
 #else
-  return Base::Math::exp2_base_math(x);
+  return Base::Math::exp2_base_math<T, Base::Math::EXP2_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* log */
-template <typename T> inline T log_base_math(const T &x) {
+template <typename T, std::size_t LOOP_NUMBER>
+inline T log_base_math(const T &x) {
   T result = static_cast<T>(0);
 
   if (x <= static_cast<T>(0)) {
@@ -245,7 +247,7 @@ template <typename T> inline T log_base_math(const T &x) {
 
     T guess = scaled_x - static_cast<T>(1);
     T exp_guess = static_cast<T>(0);
-    for (std::size_t i = 0; i < Base::Math::LOG_REPEAT_NUMBER; ++i) {
+    for (std::size_t i = 0; i < LOOP_NUMBER; ++i) {
       exp_guess = std::exp(guess);
       guess = guess - (exp_guess - scaled_x) / exp_guess;
     }
@@ -262,14 +264,16 @@ template <typename T> inline T log(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log(x);
 #else
-  return Base::Math::log_base_math(x);
+  return Base::Math::log_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* log2 */
-template <typename T> inline T log2_base_math(const T &x) {
+template <typename T, std::size_t LOOP_NUMBER>
+inline T log2_base_math(const T &x) {
 
-  return Base::Math::log_base_math(x) / static_cast<T>(Base::Math::LN_2);
+  return Base::Math::log_base_math<T, LOOP_NUMBER>(x) /
+         static_cast<T>(Base::Math::LN_2);
 }
 
 template <typename T> inline T log2(const T &x) {
@@ -277,14 +281,16 @@ template <typename T> inline T log2(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log2(x);
 #else
-  return Base::Math::log2_base_math(x);
+  return Base::Math::log2_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* log10 */
-template <typename T> inline T log10_base_math(const T &x) {
+template <typename T, std::size_t LOOP_NUMBER>
+inline T log10_base_math(const T &x) {
 
-  return Base::Math::log_base_math(x) / static_cast<T>(Base::Math::LN_10);
+  return Base::Math::log_base_math<T, LOOP_NUMBER>(x) /
+         static_cast<T>(Base::Math::LN_10);
 }
 
 template <typename T> inline T log10(const T &x) {
@@ -292,14 +298,15 @@ template <typename T> inline T log10(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log10(x);
 #else
-  return Base::Math::log10_base_math(x);
+  return Base::Math::log10_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* pow */
-template <typename T> inline T pow_base_math(const T &x, const T &y) {
-  return Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(
-      y * Base::Math::log_base_math(x));
+template <typename T, std::size_t EXP_LOOP_NUMBER, std::size_t LOG_LOOP_NUMBER>
+inline T pow_base_math(const T &x, const T &y) {
+  return Base::Math::exp_base_math<T, EXP_LOOP_NUMBER>(
+      y * Base::Math::log_base_math<T, LOG_LOOP_NUMBER>(x));
 }
 
 template <typename T> inline T pow(const T &x, const T &y) {
@@ -307,7 +314,8 @@ template <typename T> inline T pow(const T &x, const T &y) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::pow(x, y);
 #else
-  return Base::Math::pow_base_math(x, y);
+  return Base::Math::pow_base_math<T, Base::Math::EXP_REPEAT_NUMBER,
+                                   Base::Math::LOG_REPEAT_NUMBER>(x, y);
 #endif
 }
 
