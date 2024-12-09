@@ -31,17 +31,17 @@ void check_base_math_exponential_logarithmic(void) {
         static_cast<T>(0),
         static_cast<T>(0.25),
         static_cast<T>(0.5),
-        static_cast<T>(0.75),
+        static_cast<T>(0.7777),
         static_cast<T>(1),
         static_cast<T>(2),
-        static_cast<T>(3),
+        static_cast<T>(3.4),
         static_cast<T>(5),
-        static_cast<T>(10),
-        static_cast<T>(50),
-        static_cast<T>(100),
-        static_cast<T>(1000),
-        static_cast<T>(30000),
-        static_cast<T>(600000)
+        static_cast<T>(11),
+        static_cast<T>(56),
+        static_cast<T>(102),
+        static_cast<T>(1070),
+        static_cast<T>(39900),
+        static_cast<T>(608800)
     });
 
     /* sqrt */

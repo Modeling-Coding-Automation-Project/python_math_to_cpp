@@ -49,38 +49,7 @@ constexpr double LOG_OF_LOG_SCALE_FACTOR =
 constexpr std::size_t LOG_SCALING_LOOP_MAX =
     54; // ln(1e38) / ln(LOG_SCALE_FACTOR)
 
-/* sqrt */
-template <typename T, std::size_t LOOP_NUMBER>
-inline T sqrt_base_math(const T &x) {
-  T result = static_cast<T>(0);
-
-  if (x <= static_cast<T>(0)) {
-    /* Do Nothing. */
-  } else {
-    float x_float = static_cast<float>(x);
-    const float one_and_sqrt2_vec[2] = {1.0F, 1.4142136F};
-    int e = 0;
-    T h = static_cast<T>(0);
-    float r = 1.8284271F - 0.82842712F * std::frexpf(x_float, &e);
-
-    r = Base::Math::ldexp(
-        r * one_and_sqrt2_vec[e & static_cast<int>(0x00000001)], -e >> 1);
-
-    T r_T = static_cast<T>(r);
-
-    h = x * r_T * r_T;
-    r_T *= static_cast<T>(1.875) -
-           h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
-    T x_T = x * static_cast<T>(0.5);
-    r_T *= static_cast<T>(1.5) - x_T * r_T * r_T;
-    r_T *= static_cast<T>(1.5) - x_T * r_T * r_T;
-
-    result = x * r_T;
-  }
-
-  return result;
-}
-
+/* inverse sqrt */
 /*************************************************
 *  Detail: Calculates 1 / sqrt(x) within an error margin of 0.2%.
 *          Explanation on Wikipedia:
@@ -116,6 +85,61 @@ template <typename T> inline T fast_inverse_square_root(T input) {
   }
 
   return static_cast<T>(y);
+}
+
+template <typename T, std::size_t LOOP_NUMBER>
+inline T rsqrt_base_math(const T &x) {
+  T result = static_cast<T>(0);
+
+  if (x <= static_cast<T>(0)) {
+    /* Do Nothing. */
+  } else {
+    float x_float = static_cast<float>(x);
+    const float one_and_sqrt2_vec[2] = {1.0F, 1.4142136F};
+    int e = 0;
+    T h = static_cast<T>(0);
+    float r = 1.8284271F - 0.82842712F * std::frexpf(x_float, &e);
+
+    r = Base::Math::ldexp(
+        r * one_and_sqrt2_vec[e & static_cast<int>(0x00000001)], -e >> 1);
+
+    result = static_cast<T>(r);
+
+    h = x * result * result;
+    result *= static_cast<T>(1.875) -
+              h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
+    T x_T = x * static_cast<T>(0.5);
+    result *= static_cast<T>(1.5) - x_T * result * result;
+    result *= static_cast<T>(1.5) - x_T * result * result;
+  }
+
+  return result;
+}
+
+template <typename T> inline T rsqrt(const T &x) {
+
+#ifdef BASE_MATH_USE_STD_MATH
+  return static_cast<T>(1) / std::sqrt(x);
+#else
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+  return Base::Math::fast_inverse_square_root(x);
+#else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+  return Base::Math::rsqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+  return Base::Math::rsqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // BASE_MATH_USE_STD_MATH
+}
+
+/* sqrt */
+template <typename T, std::size_t LOOP_NUMBER>
+inline T sqrt_base_math(const T &x) {
+  return x * Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(x);
 }
 
 template <typename T> inline T fast_square_root(T input) {
