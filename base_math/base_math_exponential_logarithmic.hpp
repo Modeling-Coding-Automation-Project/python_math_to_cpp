@@ -60,18 +60,22 @@ inline T sqrt_base_math(const T &x) {
     float x_float = static_cast<float>(x);
     const float one_and_sqrt2_vec[2] = {1.0F, 1.4142136F};
     int e = 0;
-    float h = 0.0F;
+    T h = static_cast<T>(0);
     float r = 1.8284271F - 0.82842712F * std::frexpf(x_float, &e);
 
     r = Base::Math::ldexp(
         r * one_and_sqrt2_vec[e & static_cast<int>(0x00000001)], -e >> 1);
-    h = x_float * r * r;
-    r *= 1.875F - h * (1.25F - h * 0.375F);
-    x_float *= 0.5F;
-    r *= 1.5F - x_float * r * r;
-    r *= 1.5F - x_float * r * r;
 
-    result = x * static_cast<T>(r);
+    T r_T = static_cast<T>(r);
+
+    h = x * r_T * r_T;
+    r_T *= static_cast<T>(1.875) -
+           h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
+    T x_T = x * static_cast<T>(0.5);
+    r_T *= static_cast<T>(1.5) - x_T * r_T * r_T;
+    r_T *= static_cast<T>(1.5) - x_T * r_T * r_T;
+
+    result = x * r_T;
   }
 
   return result;
