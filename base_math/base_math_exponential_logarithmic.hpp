@@ -21,12 +21,12 @@ namespace Math {
 constexpr double EXPONENTIAL_LOGARITHMIC_DIVISION_MIN = 1.0e-10;
 
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-constexpr std::size_t SQRT_REPEAT_NUMBER = 4;
+constexpr std::size_t SQRT_REPEAT_NUMBER = 0;
 constexpr std::size_t EXP_REPEAT_NUMBER = 4;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
 constexpr std::size_t LOG_REPEAT_NUMBER = 5;
 #else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-constexpr std::size_t SQRT_REPEAT_NUMBER = 5;
+constexpr std::size_t SQRT_REPEAT_NUMBER = 2;
 constexpr std::size_t EXP_REPEAT_NUMBER = 7;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
@@ -88,6 +88,19 @@ template <typename T> inline T fast_inverse_square_root(T input) {
   return static_cast<T>(y);
 }
 
+template <typename T, int N> struct RsqrtBaseMathLoop {
+  static void compute(T &x_T, T &result) {
+    result *= static_cast<T>(1.5) - x_T * result * result;
+    RsqrtBaseMathLoop<T, N - 1>::compute(x_T, result);
+  }
+};
+
+template <typename T> struct RsqrtBaseMathLoop<T, 0> {
+  static void compute(T &x_T, T &result) {
+    result *= static_cast<T>(1.5) - x_T * result * result;
+  }
+};
+
 template <typename T, std::size_t LOOP_NUMBER>
 inline T rsqrt_base_math(const T &x) {
   T result = static_cast<T>(0);
@@ -109,9 +122,9 @@ inline T rsqrt_base_math(const T &x) {
     h = x * result * result;
     result *= static_cast<T>(1.875) -
               h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
+
     T x_T = x * static_cast<T>(0.5);
-    result *= static_cast<T>(1.5) - x_T * result * result;
-    result *= static_cast<T>(1.5) - x_T * result * result;
+    RsqrtBaseMathLoop<T, LOOP_NUMBER - 1>::compute(x_T, result);
   }
 
   return result;
