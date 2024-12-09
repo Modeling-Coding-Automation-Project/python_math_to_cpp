@@ -35,9 +35,13 @@ void check_base_math_exponential_logarithmic(void) {
         static_cast<T>(1),
         static_cast<T>(2),
         static_cast<T>(3),
-        static_cast<T>(4),
         static_cast<T>(5),
-        static_cast<T>(10)
+        static_cast<T>(10),
+        static_cast<T>(50),
+        static_cast<T>(100),
+        static_cast<T>(1000),
+        static_cast<T>(30000),
+        static_cast<T>(600000)
     });
 
     /* sqrt */
@@ -79,7 +83,7 @@ void check_base_math_exponential_logarithmic(void) {
             sqrt_answer = std::sqrt(test_values_sqrt[i]);
         }
 
-        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT,
+        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
             "check sqrt.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH

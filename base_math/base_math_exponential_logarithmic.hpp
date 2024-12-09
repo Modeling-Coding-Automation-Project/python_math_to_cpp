@@ -6,6 +6,7 @@
 #include "base_math_mathematical_constants.hpp"
 #include "base_math_utility.hpp"
 
+#include <cmath>
 #include <cstddef>
 #include <cstring>
 
@@ -49,17 +50,6 @@ constexpr std::size_t LOG_SCALING_LOOP_MAX =
     54; // ln(1e38) / ln(LOG_SCALE_FACTOR)
 
 /* sqrt */
-template <typename T, std::size_t N> struct SqrtIterationLoop {
-  static T compute(const T &x, T guess) {
-    guess = (guess + x / guess) * static_cast<T>(0.5);
-    return SqrtIterationLoop<T, N - 1>::compute(x, guess);
-  }
-};
-
-template <typename T> struct SqrtIterationLoop<T, 0> {
-  static T compute(const T &, T guess) { return guess; }
-};
-
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sqrt_base_math(const T &x) {
   T result = static_cast<T>(0);
@@ -67,9 +57,21 @@ inline T sqrt_base_math(const T &x) {
   if (x <= static_cast<T>(0)) {
     /* Do Nothing. */
   } else {
-    T guess = x * static_cast<T>(0.5);
+    float x_float = static_cast<float>(x);
+    const float t_2r2rt[2] = {1.0F, 1.41421356237309505F};
+    int e = 0;
+    float h = 0.0F;
+    float r = 1.82842712474619010E+00f -
+              8.28427124746190100E-01f * std::frexpf(x_float, &e);
 
-    result = SqrtIterationLoop<T, LOOP_NUMBER>::compute(x, guess);
+    r = ldexpf(r * t_2r2rt[e & 0x00000001], -e >> 1);
+    h = x_float * r * r;
+    r *= 1.875F - h * (1.25F - h * 0.375F);
+    x_float *= 0.5F;
+    r *= 1.5F - x_float * r * r;
+    r *= 1.5F - x_float * r * r;
+
+    result = x * static_cast<T>(r);
   }
 
   return result;
