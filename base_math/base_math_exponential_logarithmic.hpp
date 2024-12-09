@@ -51,6 +51,7 @@ constexpr std::size_t LOG_SCALING_LOOP_MAX =
 
 /* inverse sqrt */
 /*************************************************
+*  Function: fast_inverse_square_root
 *  Detail: Calculates 1 / sqrt(x) within an error margin of 0.2%.
 *          Explanation on Wikipedia:
 *          https://en.wikipedia.org/wiki/Fast_inverse_square_root
