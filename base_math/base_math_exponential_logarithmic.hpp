@@ -305,6 +305,24 @@ template <typename T> inline T exp2(const T &x) {
 }
 
 /* log */
+template <typename T, std::size_t N> struct LogIterationLoop {
+  static void compute(T &exp_guess, T &guess, const T &scaled_x) {
+    exp_guess = std::exp(guess);
+    guess = guess - (exp_guess - scaled_x) / exp_guess;
+
+    LogIterationLoop<T, N - 1>::compute(exp_guess, guess, scaled_x);
+  }
+};
+
+template <typename T> struct LogIterationLoop<T, 0> {
+  static void compute(T &exp_guess, T &guess, const T &scaled_x) {
+    /* Do Nothing. */
+    static_cast<void>(exp_guess);
+    static_cast<void>(guess);
+    static_cast<void>(scaled_x);
+  }
+};
+
 template <typename T, std::size_t LOOP_NUMBER>
 inline T log_base_math(const T &x) {
   T result = static_cast<T>(0);
@@ -332,10 +350,8 @@ inline T log_base_math(const T &x) {
 
     T guess = scaled_x - static_cast<T>(1);
     T exp_guess = static_cast<T>(0);
-    for (std::size_t i = 0; i < LOOP_NUMBER; ++i) {
-      exp_guess = std::exp(guess);
-      guess = guess - (exp_guess - scaled_x) / exp_guess;
-    }
+
+    LogIterationLoop<T, LOOP_NUMBER - 1>::compute(exp_guess, guess, scaled_x);
 
     result = guess + static_cast<T>(scale) *
                          static_cast<T>(Base::Math::LOG_OF_LOG_SCALE_FACTOR);
