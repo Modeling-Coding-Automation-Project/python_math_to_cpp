@@ -91,15 +91,23 @@ template <typename T> inline T fast_inverse_square_root(T input) {
 }
 
 template <typename T, int N> struct RsqrtBaseMathLoop {
-  static void compute(T &x_T, T &result) {
+  static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
     RsqrtBaseMathLoop<T, N - 1>::compute(x_T, result);
   }
 };
 
-template <typename T> struct RsqrtBaseMathLoop<T, 0> {
-  static void compute(T &x_T, T &result) {
+template <typename T> struct RsqrtBaseMathLoop<T, 1> {
+  static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
+  }
+};
+
+template <typename T> struct RsqrtBaseMathLoop<T, 0> {
+  static void compute(T x_T, T &result) {
+    /* Do Nothing. */
+    static_cast<void>(x_T);
+    static_cast<void>(result);
   }
 };
 
@@ -125,8 +133,7 @@ inline T rsqrt_base_math(const T &x) {
     result *= static_cast<T>(1.875) -
               h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
 
-    T x_T = x * static_cast<T>(0.5);
-    RsqrtBaseMathLoop<T, LOOP_NUMBER - 1>::compute(x_T, result);
+    RsqrtBaseMathLoop<T, LOOP_NUMBER>::compute(x * static_cast<T>(0.5), result);
   }
 
   return result;
