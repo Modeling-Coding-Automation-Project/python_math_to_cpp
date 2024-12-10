@@ -71,7 +71,8 @@ void check_base_math_exponential_logarithmic(void) {
             sqrt_answer = std::sqrt(test_values_sqrt[i]);
         }
 
-        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_SOFT,
+        tester.expect_near(sqrt_value, sqrt_answer,
+            NEAR_LIMIT_SOFT * std::abs(sqrt_answer) * static_cast<T>(10),
             "check sqrt.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);

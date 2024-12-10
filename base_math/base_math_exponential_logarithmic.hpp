@@ -170,7 +170,7 @@ template <typename T> inline T fast_square_root(T input) {
   if (input <= EXPONENTIAL_LOGARITHMIC_DIVISION_MIN) {
     return static_cast<T>(0);
   } else {
-    return static_cast<T>(1) / Base::Math::fast_inverse_square_root(input);
+    return input * Base::Math::fast_inverse_square_root(input);
   }
 }
 
