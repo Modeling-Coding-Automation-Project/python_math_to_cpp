@@ -62,6 +62,29 @@ template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
 }
 
 /* sin */
+template <typename T, std::size_t LOOP_MAX, std::size_t N>
+struct SinBaseMathLoop {
+  static void compute(const T &x_squared, T &term, T &result) {
+    term *=
+        -x_squared * static_cast<T>(static_cast<T>(1) /
+                                    static_cast<T>((2 * (LOOP_MAX - N)) *
+                                                   (2 * (LOOP_MAX - N) + 1)));
+    result += term;
+
+    SinBaseMathLoop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
+  }
+};
+
+template <typename T, std::size_t LOOP_MAX>
+struct SinBaseMathLoop<T, LOOP_MAX, 0> {
+  static void compute(const T &x_squared, T &term, T &result) {
+    /* Do Nothing. */
+    static_cast<void>(x_squared);
+    static_cast<void>(term);
+    static_cast<void>(result);
+  }
+};
+
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sin_base_math(const T &x) {
 
@@ -71,10 +94,12 @@ inline T sin_base_math(const T &x) {
   T result = x_wrapped;
   T x_squared = x_wrapped * x_wrapped;
 
-  for (std::size_t n = 1; n < LOOP_NUMBER; n++) {
-    term *= -x_squared / static_cast<T>((2 * n) * (2 * n + 1));
-    result += term;
-  }
+  // for (std::size_t n = 1; n < LOOP_NUMBER; n++) {
+  //   term *= -x_squared / static_cast<T>((2 * n) * (2 * n + 1));
+  //   result += term;
+  // }
+  SinBaseMathLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
+                                                            result);
 
   return result;
 }
