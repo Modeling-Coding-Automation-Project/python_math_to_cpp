@@ -233,15 +233,7 @@ inline T exp_base_math(const T &x) {
     ExpIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(result, term,
                                                                remainder);
 
-    if (n > 0) {
-      for (int i = 0; i < n; ++i) {
-        result *= static_cast<T>(2);
-      }
-    } else {
-      for (int i = 0; i < -n; ++i) {
-        result *= static_cast<T>(0.5);
-      }
-    }
+    result = Base::Math::ldexp(result, n);
   }
 
   return result;
