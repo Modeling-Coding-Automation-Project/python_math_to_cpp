@@ -34,6 +34,8 @@ constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 
 constexpr std::size_t SQRT_REPEAT_NUMBER_ALMOST_ACCURATE = 2;
 
+constexpr float one_and_sqrt2_vec[2] = {1.0F, 1.4142136F};
+
 constexpr double EXP_INPUT_MAX = 87.0;
 constexpr double EXP_OUTPUT_MAX = 6.076030225056872e+37;
 constexpr double EXP_INPUT_MIN = -87.0;
@@ -119,13 +121,14 @@ inline T rsqrt_base_math(const T &x) {
     /* Do Nothing. */
   } else {
     float x_float = static_cast<float>(x);
-    const float one_and_sqrt2_vec[2] = {1.0F, 1.4142136F};
+
     int e = 0;
     T h = static_cast<T>(0);
     float r = 1.8284271F - 0.82842712F * std::frexpf(x_float, &e);
 
     r = Base::Math::ldexp(
-        r * one_and_sqrt2_vec[e & static_cast<int>(0x00000001)], -e >> 1);
+        r * Base::Math::one_and_sqrt2_vec[e & static_cast<int>(0x00000001)],
+        -e >> 1);
 
     result = static_cast<T>(r);
 
