@@ -26,11 +26,13 @@ constexpr std::size_t EXP_REPEAT_NUMBER = 4;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
 constexpr std::size_t LOG_REPEAT_NUMBER = 5;
 #else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-constexpr std::size_t SQRT_REPEAT_NUMBER = 2;
+constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
 constexpr std::size_t EXP_REPEAT_NUMBER = 7;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+
+constexpr std::size_t SQRT_REPEAT_NUMBER_ALMOST_ACCURATE = 2;
 
 constexpr double EXP_INPUT_MAX = 87.0;
 constexpr double EXP_OUTPUT_MAX = 6.076030225056872e+37;

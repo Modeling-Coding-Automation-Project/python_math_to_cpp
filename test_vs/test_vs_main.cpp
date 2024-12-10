@@ -93,11 +93,13 @@ void check_base_math_exponential_logarithmic(void) {
         static_cast<T>(-100),
         static_cast<T>(-87),
         static_cast<T>(-50),
+        static_cast<T>(-11.113),
         static_cast<T>(-10),
         static_cast<T>(-1),
         static_cast<T>(0),
         static_cast<T>(2),
         static_cast<T>(10),
+        static_cast<T>(11.113),
         static_cast<T>(50),
         static_cast<T>(87),
         static_cast<T>(100)
