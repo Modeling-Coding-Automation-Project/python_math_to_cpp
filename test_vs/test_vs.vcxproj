@@ -141,6 +141,7 @@
     <ClInclude Include="..\python_math\python_math.hpp" />
     <ClInclude Include="..\python_math\python_math_arithmetic.hpp" />
     <ClInclude Include="..\python_math\python_math_exponential_logarithmic.hpp" />
+    <ClInclude Include="..\python_math\python_math_mathematical_constants.hpp" />
     <ClInclude Include="..\python_math\python_math_trigonometric.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
