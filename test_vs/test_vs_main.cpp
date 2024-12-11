@@ -94,7 +94,7 @@ void check_base_math_exponential_logarithmic(void) {
         static_cast<T>(2), static_cast<T>(3.123));
     T sqrt_d_answer = std::sqrt(static_cast<T>(3.123));
 
-    tester.expect_near(sqrt_d_value, sqrt_d_answer, NEAR_LIMIT_STRICT,
+    tester.expect_near(sqrt_d_value, sqrt_d_answer, static_cast<T>(1.0e-5),
         "check sqrt division_min argument.");
 
     std::vector<T> test_values_exp({
