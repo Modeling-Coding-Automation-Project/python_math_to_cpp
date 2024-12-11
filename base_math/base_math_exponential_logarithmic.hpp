@@ -24,7 +24,7 @@ constexpr double EXPONENTIAL_LOGARITHMIC_DIVISION_MIN = 1.0e-10;
 constexpr std::size_t SQRT_REPEAT_NUMBER = 0;
 constexpr std::size_t EXP_REPEAT_NUMBER = 4;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
-constexpr std::size_t LOG_REPEAT_NUMBER = 5;
+constexpr std::size_t LOG_REPEAT_NUMBER = 6;
 #else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
 constexpr std::size_t EXP_REPEAT_NUMBER = 7;
