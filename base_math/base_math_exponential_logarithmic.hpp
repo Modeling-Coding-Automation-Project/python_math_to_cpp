@@ -19,6 +19,7 @@ namespace Base {
 namespace Math {
 
 constexpr double EXPONENTIAL_LOGARITHMIC_DIVISION_MIN = 1.0e-10;
+constexpr double RSQRT_OUTPUT_MAX = 1.0e5;
 
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 0;
@@ -115,9 +116,9 @@ template <typename T> struct RsqrtBaseMathLoop<T, 0> {
 
 template <typename T, std::size_t LOOP_NUMBER>
 inline T rsqrt_base_math(const T &x) {
-  T result = static_cast<T>(0);
+  T result = static_cast<T>(Base::Math::RSQRT_OUTPUT_MAX);
 
-  if (x <= static_cast<T>(0)) {
+  if (x <= static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
     /* Do Nothing. */
   } else {
     float x_float = static_cast<float>(x);
@@ -165,7 +166,15 @@ template <typename T> inline T rsqrt(const T &x) {
 /* sqrt */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sqrt_base_math(const T &x) {
-  return x * Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(x);
+
+  T x_wrapped = x;
+
+  if (x <= static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+    x_wrapped =
+        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  }
+
+  return x_wrapped * Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(x_wrapped);
 }
 
 template <typename T> inline T fast_square_root(T input) {
