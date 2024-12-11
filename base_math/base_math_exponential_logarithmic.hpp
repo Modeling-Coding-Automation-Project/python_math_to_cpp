@@ -126,7 +126,7 @@ inline T rsqrt_base_math(const T &x, const T &division_min) {
 
   int e = 0;
   T h = static_cast<T>(0);
-  float r = 1.8284271F - 0.82842712F * std::frexpf(x_float, &e);
+  float r = 1.8284271F - 0.82842712F * frexpf(x_float, &e);
 
   r = Base::Math::ldexp(
       r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
