@@ -71,9 +71,15 @@ as much as possible.
 *          If the absolute value is small, 0 will be output, but inputting
 values less than -1.0F may result in inf.
 **************************************************/
-template <typename T> inline T fast_inverse_square_root(T input) {
+template <typename T>
+inline T fast_inverse_square_root(const T &input, const T &division_min) {
 
   float y = static_cast<float>(0);
+
+  T input_wrapped = input;
+  if (input < division_min) {
+    input_wrapped = division_min;
+  }
 
   if (input <= static_cast<T>(0)) {
     /* Do Nothing. */
@@ -81,8 +87,8 @@ template <typename T> inline T fast_inverse_square_root(T input) {
     long i = static_cast<long>(0);
     float x = static_cast<float>(0);
 
-    x = static_cast<float>(input) * static_cast<float>(0.5);
-    y = static_cast<float>(input);
+    x = static_cast<float>(input_wrapped) * static_cast<float>(0.5);
+    y = static_cast<float>(input_wrapped);
     std::memcpy(&i, &y, 4);
     i = static_cast<long>(0x5f3759df) - (i >> 1);
     std::memcpy(&y, &i, 4);
@@ -152,7 +158,8 @@ template <typename T> inline T rsqrt(const T &x) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::fast_inverse_square_root(x);
+  return Base::Math::fast_inverse_square_root(
+      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 #else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
   return Base::Math::rsqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
@@ -196,13 +203,20 @@ inline T sqrt_base_math(const T &x, const T &division_min) {
          Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(x_wrapped, division_min);
 }
 
-template <typename T> inline T fast_square_root(T input) {
+template <typename T> inline T fast_square_root(const T &input) {
 
-  if (input <= EXPONENTIAL_LOGARITHMIC_DIVISION_MIN) {
-    return static_cast<T>(0);
-  } else {
-    return input * Base::Math::fast_inverse_square_root(input);
+  T x_wrapped = input;
+
+  if (input <
+      static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+    x_wrapped =
+        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
   }
+
+  return x_wrapped *
+         Base::Math::fast_inverse_square_root(
+             x_wrapped,
+             static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
 
 template <typename T> inline T sqrt(const T &x) {
