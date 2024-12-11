@@ -32,7 +32,7 @@ constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
-constexpr std::size_t SQRT_REPEAT_NUMBER_ALMOST_ACCURATE = 2;
+constexpr std::size_t SQRT_REPEAT_NUMBER_MOSTLY_ACCURATE = 2;
 
 constexpr float one_and_sqrt2_vec[2] = {1.0F, 1.4142136F};
 
