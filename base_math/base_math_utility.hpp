@@ -29,6 +29,20 @@ template <typename T> inline bool near_zero(T in, T division_min) {
   return flag;
 }
 
+template <typename T> inline T ldexp(const T &x, const int &n) {
+
+  T result = x;
+
+  for (int i = 0; i < n; ++i) {
+    result *= static_cast<T>(2);
+  }
+  for (int i = 0; i < -n; ++i) {
+    result *= static_cast<T>(0.5);
+  }
+
+  return result;
+}
+
 } // namespace Math
 } // namespace Base
 

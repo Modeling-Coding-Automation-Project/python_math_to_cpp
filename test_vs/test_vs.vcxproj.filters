@@ -53,5 +53,8 @@
     <ClInclude Include="..\python_math\python_math_trigonometric.hpp">
       <Filter>リソース ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="..\python_math\python_math_mathematical_constants.hpp">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
