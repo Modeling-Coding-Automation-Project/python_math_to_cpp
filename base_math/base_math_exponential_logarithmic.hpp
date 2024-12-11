@@ -183,6 +183,19 @@ inline T sqrt_base_math(const T &x) {
              static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
 
+template <typename T, std::size_t LOOP_NUMBER>
+inline T sqrt_base_math(const T &x, const T &division_min) {
+
+  T x_wrapped = x;
+
+  if (x < division_min) {
+    x_wrapped = division_min;
+  }
+
+  return x_wrapped *
+         Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(x_wrapped, division_min);
+}
+
 template <typename T> inline T fast_square_root(T input) {
 
   if (input <= EXPONENTIAL_LOGARITHMIC_DIVISION_MIN) {
