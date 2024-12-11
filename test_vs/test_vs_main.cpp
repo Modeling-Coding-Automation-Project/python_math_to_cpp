@@ -63,7 +63,7 @@ void check_base_math_exponential_logarithmic(void) {
 #else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);
-        T sqrt_answer = static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+        T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
             sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
@@ -76,7 +76,7 @@ void check_base_math_exponential_logarithmic(void) {
             "check sqrt.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);
-        T sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+        T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
             sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
@@ -1087,7 +1087,7 @@ void check_python_math_exponential_logarithmic(void) {
 #else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = PythonMath::sqrt(test_values_sqrt[i]);
-        T sqrt_answer = static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+        T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
             sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
@@ -1099,7 +1099,7 @@ void check_python_math_exponential_logarithmic(void) {
             "check sqrt.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = PythonMath::sqrt(test_values_sqrt[i]);
-        T sqrt_answer = static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+        T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
             sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }

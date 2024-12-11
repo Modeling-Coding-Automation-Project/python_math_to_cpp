@@ -19,7 +19,6 @@ namespace Base {
 namespace Math {
 
 constexpr double EXPONENTIAL_LOGARITHMIC_DIVISION_MIN = 1.0e-10;
-constexpr double RSQRT_OUTPUT_MAX = 1.0e5;
 
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 0;
@@ -116,29 +115,31 @@ template <typename T> struct RsqrtBaseMathLoop<T, 0> {
 
 template <typename T, std::size_t LOOP_NUMBER>
 inline T rsqrt_base_math(const T &x, const T &division_min) {
-  T result = static_cast<T>(Base::Math::RSQRT_OUTPUT_MAX);
+  T result = static_cast<T>(0);
 
-  if (x <= division_min) {
-    /* Do Nothing. */
-  } else {
-    float x_float = static_cast<float>(x);
-
-    int e = 0;
-    T h = static_cast<T>(0);
-    float r = 1.8284271F - 0.82842712F * std::frexpf(x_float, &e);
-
-    r = Base::Math::ldexp(
-        r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
-        -e >> 1);
-
-    result = static_cast<T>(r);
-
-    h = x * result * result;
-    result *= static_cast<T>(1.875) -
-              h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
-
-    RsqrtBaseMathLoop<T, LOOP_NUMBER>::compute(x * static_cast<T>(0.5), result);
+  T x_wrapped = x;
+  if (x < division_min) {
+    x_wrapped = division_min;
   }
+
+  float x_float = static_cast<float>(x_wrapped);
+
+  int e = 0;
+  T h = static_cast<T>(0);
+  float r = 1.8284271F - 0.82842712F * std::frexpf(x_float, &e);
+
+  r = Base::Math::ldexp(
+      r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
+      -e >> 1);
+
+  result = static_cast<T>(r);
+
+  h = x * result * result;
+  result *= static_cast<T>(1.875) -
+            h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
+
+  RsqrtBaseMathLoop<T, LOOP_NUMBER>::compute(x_wrapped * static_cast<T>(0.5),
+                                             result);
 
   return result;
 }
@@ -171,7 +172,7 @@ inline T sqrt_base_math(const T &x) {
 
   T x_wrapped = x;
 
-  if (x <= static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
     x_wrapped =
         static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
   }
