@@ -31,13 +31,17 @@ void check_base_math_exponential_logarithmic(void) {
         static_cast<T>(0),
         static_cast<T>(0.25),
         static_cast<T>(0.5),
-        static_cast<T>(0.75),
+        static_cast<T>(0.7777),
         static_cast<T>(1),
         static_cast<T>(2),
-        static_cast<T>(3),
-        static_cast<T>(4),
+        static_cast<T>(3.4),
         static_cast<T>(5),
-        static_cast<T>(10)
+        static_cast<T>(11),
+        static_cast<T>(56),
+        static_cast<T>(102),
+        static_cast<T>(1070),
+        static_cast<T>(39900),
+        static_cast<T>(608800)
     });
 
     /* sqrt */
@@ -60,40 +64,50 @@ void check_base_math_exponential_logarithmic(void) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
-        if (test_values_sqrt[i] < static_cast<T>(0)) {
-            sqrt_answer = std::sqrt(static_cast<T>(0));
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
         else {
             sqrt_answer = std::sqrt(test_values_sqrt[i]);
         }
 
-        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_SOFT,
+        tester.expect_near(sqrt_value, sqrt_answer,
+            NEAR_LIMIT_SOFT * std::abs(sqrt_answer) * static_cast<T>(10),
             "check sqrt.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
-        if (test_values_sqrt[i] < static_cast<T>(0)) {
-            sqrt_answer = std::sqrt(static_cast<T>(0));
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
         else {
             sqrt_answer = std::sqrt(test_values_sqrt[i]);
         }
 
-        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT,
+        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
             "check sqrt.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
     }
 
+    T sqrt_d_value = Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
+        static_cast<T>(2), static_cast<T>(3.123));
+    T sqrt_d_answer = std::sqrt(static_cast<T>(3.123));
+
+    tester.expect_near(sqrt_d_value, sqrt_d_answer, static_cast<T>(1.0e-1),
+        "check sqrt division_min argument.");
+
     std::vector<T> test_values_exp({
         static_cast<T>(-100),
         static_cast<T>(-87),
         static_cast<T>(-50),
+        static_cast<T>(-11.113),
         static_cast<T>(-10),
         static_cast<T>(-1),
         static_cast<T>(0),
         static_cast<T>(2),
         static_cast<T>(10),
+        static_cast<T>(11.113),
         static_cast<T>(50),
         static_cast<T>(87),
         static_cast<T>(100)
@@ -1081,8 +1095,8 @@ void check_python_math_exponential_logarithmic(void) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = PythonMath::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
-        if (test_values_sqrt[i] < static_cast<T>(0)) {
-            sqrt_answer = std::sqrt(static_cast<T>(0));
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
         else {
             sqrt_answer = std::sqrt(test_values_sqrt[i]);
@@ -1093,8 +1107,8 @@ void check_python_math_exponential_logarithmic(void) {
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = PythonMath::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
-        if (test_values_sqrt[i] < static_cast<T>(0)) {
-            sqrt_answer = std::sqrt(static_cast<T>(0));
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
         else {
             sqrt_answer = std::sqrt(test_values_sqrt[i]);
