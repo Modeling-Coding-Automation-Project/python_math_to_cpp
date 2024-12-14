@@ -5,7 +5,7 @@
 #include "base_math_exponential_logarithmic.hpp"
 #include "base_math_macros.hpp"
 #include "base_math_mathematical_constants.hpp"
-#include "base_math_utility.hpp"
+#include "base_utility.hpp"
 
 #include <cstddef>
 
@@ -166,7 +166,7 @@ template <typename T, std::size_t SIN_LOOP_NUMBER, std::size_t COS_LOOP_NUMBER>
 inline T tan_base_math(const T &x) {
 
   return Base::Math::sin_base_math<T, SIN_LOOP_NUMBER>(x) /
-         Base::Math::avoid_zero_divide(
+         Base::Utility::avoid_zero_divide(
              Base::Math::cos_base_math<T, COS_LOOP_NUMBER>(x),
              static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN));
 }
@@ -302,9 +302,9 @@ template <typename T, std::size_t LOOP_NUMBER>
 inline T atan2_base_math(const T &y, const T &x) {
   T result = static_cast<T>(0);
 
-  if (Base::Math::near_zero(
+  if (Base::Utility::near_zero(
           x, static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN)) &&
-      Base::Math::near_zero(
+      Base::Utility::near_zero(
           y, static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN))) {
 
     return static_cast<T>(0);
@@ -323,13 +323,13 @@ inline T atan2_base_math(const T &y, const T &x) {
     result = Base::Math::atan_chebyshev<T, LOOP_NUMBER>(y / x) -
              static_cast<T>(Base::Math::PI);
 
-  } else if (Base::Math::near_zero(
+  } else if (Base::Utility::near_zero(
                  x, static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN)) &&
              y > static_cast<T>(0)) {
 
     result = static_cast<T>(Base::Math::HALF_PI);
 
-  } else if (Base::Math::near_zero(
+  } else if (Base::Utility::near_zero(
                  x, static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN)) &&
              y < static_cast<T>(0)) {
 
@@ -445,8 +445,8 @@ inline T tanh_base_math(const T &x) {
   T a = Base::Math::exp_base_math<T, LOOP_NUMBER>(x);
   T b = Base::Math::exp_base_math<T, LOOP_NUMBER>(-x);
 
-  return (a - b) /
-         avoid_zero_divide(a + b, static_cast<T>(TRIGONOMETRIC_DIVISION_MIN));
+  return (a - b) / Base::Utility::avoid_zero_divide(
+                       a + b, static_cast<T>(TRIGONOMETRIC_DIVISION_MIN));
 }
 
 template <typename T> inline T tanh(const T &x) {
