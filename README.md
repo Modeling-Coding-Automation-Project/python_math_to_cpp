@@ -15,16 +15,16 @@ C++11
 
 - 基本
   - abs, fmod
-- 指数、対数
+- 指数関数、対数関数
   - sqrt, exp, exp2, log, log2, log10, pow
 - 三角関数
   - sin, cos, tan, asin, acos, atan, atan2, sinh, cosh, tanh
 
 ## 使い方
 
-詳細については記事をご参照ください。
+詳細については以下の記事をご参照ください。
 
-（TBD）
+https://note.com/claude_a/n/n175c03804515
 
 ## サポート
 
