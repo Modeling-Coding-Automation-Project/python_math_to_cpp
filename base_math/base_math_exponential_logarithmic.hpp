@@ -160,7 +160,9 @@ inline double sqrt_extraction_double(const double &value) {
                 (EXTRACTION_DOUBLE_REPEAT_NUMBER < static_cast<int>(-1));
        i -= static_cast<int>(2)) {
 
-    c = (unsigned long long)((y << 1 | (unsigned long long)1) <= (m >> i));
+    c = static_cast<unsigned long long>(
+        ((y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <=
+         (m >> i)));
     a = (a << static_cast<int>(1)) | c;
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y) << i;
@@ -190,6 +192,86 @@ inline double sqrt_extraction_double(const double &value) {
   return result;
 }
 
+template <int EXTRACTION_FLOAT_REPEAT_NUMBER>
+inline float sqrt_extraction_float(const float &value) {
+
+  float result = static_cast<float>(0);
+  unsigned short n; // n is the exponent of value
+  unsigned long m;  // m is the mantissa of value
+  unsigned long Temp;
+  int i = static_cast<int>(0);
+  unsigned long a = static_cast<unsigned long>(0);
+  unsigned long c = static_cast<unsigned long>(0);
+  unsigned long y = static_cast<unsigned long>(0);
+
+  std::memcpy(&Temp, &value, static_cast<std::size_t>(4));
+
+  // The exponent is 2 to the power of  (n - 128), and when the square root is
+  // taken, it becomes 2 to the power of (n/2 - 64).
+  // When n is odd
+  // The mantissa is (m + 2^23), and the exponent is (n - 1) / 2 + 63
+  // When n is even
+  // The mantissa is (m + 2^23) * 2, and the exponent is n / 2 + 63
+  // However, since 1 is added to the exponent due to the rounding up of the
+  // mantissa later, 62 is added here
+  n = static_cast<unsigned short>((
+      (static_cast<unsigned long>(0x7FFFFFFF) & Temp) >> static_cast<int>(23)));
+
+  m = (static_cast<unsigned long long>(0x800000) +
+       (static_cast<unsigned long long>(0x7FFFFF) & Temp))
+      << (static_cast<unsigned short>(1) & (~n));
+
+  // the exponent part to Temp
+  Temp = static_cast<unsigned long>(
+             (((n + static_cast<unsigned short>(
+                        (static_cast<unsigned short>(1) & n))) >>
+               static_cast<int>(1)) +
+              static_cast<unsigned short>(62)))
+         << static_cast<int>(23);
+
+  // Use the square root calculation to calculate the square root of m, which
+  // has been updated above. The resulting square root has the number of digits
+  // for the number of iterations.
+  for (i = static_cast<int>(25);
+       i >= (static_cast<int>(-2) * EXTRACTION_FLOAT_REPEAT_NUMBER -
+             static_cast<int>(2)) *
+                (EXTRACTION_FLOAT_REPEAT_NUMBER < static_cast<int>(-1));
+       i -= static_cast<int>(2)) {
+
+    c = static_cast<unsigned long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >> i));
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y) << i;
+    y += c;
+  }
+
+  y <<= static_cast<int>(1);
+
+  for (i = static_cast<int>(0); i <= EXTRACTION_FLOAT_REPEAT_NUMBER; i++) {
+
+    m <<= static_cast<int>(2);
+    c = static_cast<unsigned long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= m);
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y);
+    y += c;
+  }
+
+  // Round the least significant digit (1 carry up).
+  // Therefore, the above square root calculation is performed one more time.
+  // The smaller the number of iterations, the greater the left shift amount.
+  // Add the mantissa to Temp.
+  Temp += (((a + (static_cast<unsigned long>(1) & a)) >> 1)
+           << (static_cast<int>(12) - EXTRACTION_FLOAT_REPEAT_NUMBER));
+
+  std::memcpy(&result, &Temp, static_cast<std::size_t>(4));
+
+  return result;
+}
+
+/* rsqrt loop */
 template <typename T, int N> struct RsqrtBaseMathLoop {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
