@@ -90,12 +90,34 @@ void check_base_math_exponential_logarithmic(void) {
 #endif // BASE_MATH_USE_STD_MATH
     }
 
-    T sqrt_d_value = Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
-        static_cast<T>(2), static_cast<T>(3.123));
-    T sqrt_d_answer = std::sqrt(static_cast<T>(3.123));
+    /* sqrt check avoid zero divide */
+    {
+        T sqrt_d_value = Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
+            static_cast<T>(2), static_cast<T>(3.123));
+        T sqrt_d_answer = std::sqrt(static_cast<T>(3.123));
 
-    tester.expect_near(sqrt_d_value, sqrt_d_answer, static_cast<T>(1.0e-1),
-        "check sqrt division_min argument.");
+        tester.expect_near(sqrt_d_value, sqrt_d_answer, static_cast<T>(1.0e-1),
+            "check sqrt division_min argument.");
+    }
+
+    /* sqrt extraction */
+    for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
+        T sqrt_value = static_cast<T>(0);
+        T sqrt_answer = static_cast<T>(0);
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            sqrt_value = static_cast<T>(
+                Base::Math::sqrt_extraction_double(static_cast<double>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN), 1));
+            sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+        }
+        else {
+            sqrt_value = static_cast<T>(
+                Base::Math::sqrt_extraction_double(static_cast<double>(test_values_sqrt[i]), 1));
+            sqrt_answer = std::sqrt(test_values_sqrt[i]);
+        }
+
+        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
+            "check sqrt extraction double.");
+    }
 
     std::vector<T> test_values_exp({
         static_cast<T>(-100),

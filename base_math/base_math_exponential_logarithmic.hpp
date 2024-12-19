@@ -98,6 +98,60 @@ inline T fast_inverse_square_root(const T &input, const T &division_min) {
   return static_cast<T>(y);
 }
 
+/*************************************************
+ *  Function: sqrt_extraction_double
+ *  Detail: calculates sqrt with extraction of mantissa.
+ *  Input value depends on the IEEE 754 standard.
+ **************************************************/
+inline double sqrt_extraction_double(double In_Num, int In_r) {
+
+  unsigned short n;
+  unsigned long long m;
+  unsigned long long Temp;
+  int i = 0;
+  unsigned long long a = 0;
+  unsigned long long c = 0;
+  unsigned long long y = 0;
+
+  std::memcpy(&Temp, &In_Num, 8);
+
+  n = (unsigned short)(((unsigned long long)0x7FFFFFFFFFFFFFFF & Temp) >> 52);
+
+  m = ((unsigned long long)0x10000000000000 +
+       ((unsigned long long)0xFFFFFFFFFFFFF & Temp))
+      << ((unsigned short)1 & (~n));
+
+  Temp = (unsigned long long)(((n + (unsigned short)((unsigned short)1 & n)) >>
+                               1) +
+                              (unsigned short)510)
+         << 52;
+
+  for (i = 54; i >= (-2 * In_r - 2) * (In_r < -1); i -= 2) {
+
+    c = (unsigned long long)((y << 1 | (unsigned long long)1) <= (m >> i));
+    a = (a << 1) | c;
+    y = (y << 1) | c;
+    m -= (c * y) << i;
+    y += c;
+  }
+
+  for (i = 0; i <= In_r; i++) {
+
+    m <<= 2;
+    c = (unsigned long long)((y << 1 | (unsigned long long)1) <= m);
+    a = (a << 1) | c;
+    y = (y << 1) | c;
+    m -= (c * y);
+    y += c;
+  }
+
+  Temp += (((a + ((unsigned long long)1 & a)) >> 1) << (26 - In_r));
+
+  std::memcpy(&In_Num, &Temp, 8);
+
+  return In_Num;
+}
+
 template <typename T, int N> struct RsqrtBaseMathLoop {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
