@@ -106,12 +106,12 @@ void check_base_math_exponential_logarithmic(void) {
         T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
             sqrt_value = static_cast<T>(
-                Base::Math::sqrt_extraction_double(static_cast<double>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN), 1));
+                Base::Math::sqrt_extraction_double<0>(static_cast<double>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)));
             sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
         else {
             sqrt_value = static_cast<T>(
-                Base::Math::sqrt_extraction_double(static_cast<double>(test_values_sqrt[i]), 1));
+                Base::Math::sqrt_extraction_double<0>(static_cast<double>(test_values_sqrt[i])));
             sqrt_answer = std::sqrt(test_values_sqrt[i]);
         }
 
