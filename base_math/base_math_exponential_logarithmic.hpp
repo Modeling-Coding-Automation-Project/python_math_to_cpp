@@ -102,12 +102,12 @@ inline T fast_inverse_square_root(const T &input, const T &division_min) {
  *  Function: sqrt_extraction_double
  *  Detail: calculates sqrt with extraction of mantissa.
  *  Input value depends on the IEEE 754 standard.
- * When In_r is specified as the maximum 26,
- * it completely matches math.h's sqrt().
- * When In_r is 0, the error is within 8.0e^-7 [%].
- * When In_r is -10, the error is within 8.0e^-3 [%].
- * When In_r is -20, the error is within 8 [%].
- * At -26, since almost no calculation is performed, the error is very large.
+ *  When In_r is specified as the maximum 26,
+ *  it completely matches math.h's sqrt().
+ *  When In_r is 0, the error is within 8.0e^-7 [%].
+ *  When In_r is -10, the error is within 8.0e^-3 [%].
+ *  When In_r is -20, the error is within 8 [%].
+ *  At -26, since almost no calculation is performed, the error is very large.
  **************************************************/
 template <int EXTRACTION_DOUBLE_REPEAT_NUMBER>
 inline double sqrt_extraction_double(const double &value) {
@@ -192,6 +192,11 @@ inline double sqrt_extraction_double(const double &value) {
   return result;
 }
 
+/*************************************************
+ *  Function: sqrt_extraction_float
+ *  Detail: calculates sqrt with extraction of mantissa.
+ *  check the comment of double version.
+ **************************************************/
 template <int EXTRACTION_FLOAT_REPEAT_NUMBER>
 inline float sqrt_extraction_float(const float &value) {
 

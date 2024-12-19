@@ -119,26 +119,23 @@ void check_base_math_exponential_logarithmic(void) {
             "check sqrt extraction double.");
     }
 
-    //for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
-    //    T sqrt_value = static_cast<T>(0);
-    //    T sqrt_answer = static_cast<T>(0);
-    //    if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
-    //        sqrt_value = static_cast<T>(
-    //            Base::Math::sqrt_extraction_float<10>(static_cast<float>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)));
-    //        sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
-    //    }
-    //    else {
-    //        sqrt_value = static_cast<T>(
-    //            Base::Math::sqrt_extraction_float<10>(static_cast<float>(test_values_sqrt[i])));
-    //        sqrt_answer = std::sqrt(test_values_sqrt[i]);
-    //    }
+    for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
+        T sqrt_value = static_cast<T>(0);
+        T sqrt_answer = static_cast<T>(0);
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            sqrt_value = static_cast<T>(
+                Base::Math::sqrt_extraction_float<12>(static_cast<float>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)));
+            sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+        }
+        else {
+            sqrt_value = static_cast<T>(
+                Base::Math::sqrt_extraction_float<12>(static_cast<float>(test_values_sqrt[i])));
+            sqrt_answer = std::sqrt(test_values_sqrt[i]);
+        }
 
-    //    tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
-    //        "check sqrt extraction float.");
-    //}
-
-    float value_answer = std::sqrt(10.0F);
-    float value_float = Base::Math::sqrt_extraction_float<12>(10.0F);
+        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
+            "check sqrt extraction float.");
+    }
 
 
     std::vector<T> test_values_exp({
