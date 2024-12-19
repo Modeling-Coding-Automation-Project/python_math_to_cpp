@@ -27,7 +27,7 @@ constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
 constexpr std::size_t LOG_REPEAT_NUMBER = 6;
 #else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
-constexpr std::size_t EXP_REPEAT_NUMBER = 7;
+constexpr std::size_t EXP_REPEAT_NUMBER = 9;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
@@ -352,7 +352,7 @@ template <typename T> inline T exp2(const T &x) {
 /* log */
 template <typename T, std::size_t N> struct LogIterationLoop {
   static void compute(T &exp_guess, T &guess, const T &scaled_x) {
-    exp_guess = std::exp(guess);
+    exp_guess = Base::Math::exp(guess);
     guess = guess - (exp_guess - scaled_x) / exp_guess;
 
     LogIterationLoop<T, N - 1>::compute(exp_guess, guess, scaled_x);
