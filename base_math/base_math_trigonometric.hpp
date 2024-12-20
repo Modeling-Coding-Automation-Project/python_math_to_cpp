@@ -47,15 +47,13 @@ template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
   T result = static_cast<T>(0);
 
   if (x >= static_cast<T>(0)) {
-    result =
-        Base::Math::mod(x + static_cast<T>(Base::Math::PI),
-                        static_cast<T>(2) * static_cast<T>(Base::Math::PI)) -
-        static_cast<T>(Base::Math::PI);
+    result = Base::Math::mod(x + static_cast<T>(Base::Math::PI),
+                             static_cast<T>(Base::Math::TWO_PI)) -
+             static_cast<T>(Base::Math::PI);
   } else {
-    result =
-        Base::Math::mod(x - static_cast<T>(Base::Math::PI),
-                        static_cast<T>(2) * static_cast<T>(Base::Math::PI)) +
-        static_cast<T>(Base::Math::PI);
+    result = Base::Math::mod(x - static_cast<T>(Base::Math::PI),
+                             static_cast<T>(Base::Math::TWO_PI)) +
+             static_cast<T>(Base::Math::PI);
   }
 
   return result;
