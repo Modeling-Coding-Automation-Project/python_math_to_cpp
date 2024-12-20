@@ -676,8 +676,6 @@ double exp_mcloughlin_expansion_with_table(double x) {
     result = static_cast<double>(Base::Math::EXP_OUTPUT_MIN);
   } else {
 
-    // double y = static_cast<double>(1) / static_cast<double>(2 * 3 * 4 * 5 * 6
-    // * 7);
     double y = EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1];
 
     double z = static_cast<double>(0);

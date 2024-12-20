@@ -260,7 +260,7 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* exp Mcloughlin Expansion with table */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
-        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<7>(test_values_exp[i]);
+        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<4>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
             exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
@@ -272,7 +272,7 @@ void check_base_math_exponential_logarithmic(void) {
             exp_answer = std::exp(test_values_exp[i]);
         }
 
-        tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT* std::abs(exp_answer)),
+        tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT * std::abs(exp_answer)),
             "check exp Mcloughlin Expansion with table.");
     }
 
@@ -2392,13 +2392,6 @@ int main() {
 
     //check_python_math_calc<float>();
 
-
-    using namespace Base::Math;
-
-
-    using MyList = MakeExpMcloughlinFactorList<7>::type;
-
-    constexpr auto a = to_exp_mcloughlin_factor_array(MyList{});
 
     return 0;
 }
