@@ -47,7 +47,7 @@ constexpr double EXP2_OUTPUT_MAX = 8.507059173023462e+37;
 constexpr double EXP2_INPUT_MIN = -126.0;
 constexpr double EXP2_OUTPUT_MIN = 1.1754943508222875e-38;
 
-constexpr unsigned long long TABLE_FOR_EXP[16] = {
+constexpr unsigned long long TABLE_FOR_EXP_DOUBLE[16] = {
     0x059B0D3158574ull, // 2^( 1 /32)-1
     0x11301D0125B51ull, // 2^( 3 /32)-1
     0x1D4873168B9AAull, // 2^( 5 /32)-1
@@ -692,11 +692,10 @@ double exp_mcloughlin_expansion_with_table(double x) {
                                         static_cast<int>(q >> 4))
             << static_cast<int>(52) ^
         static_cast<unsigned long long>(
-            Base::Math::TABLE_FOR_EXP[q & static_cast<int>(0xF)]);
+            Base::Math::TABLE_FOR_EXP_DOUBLE[q & static_cast<int>(0xF)]);
 
     std::memcpy(&z, &w, static_cast<int>(8));
 
-    // for (int i = 0; i < static_cast<int>(7); ++i) {
     for (int i = static_cast<int>(0);
          i < static_cast<int>(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER); ++i) {
       y = y * r +
