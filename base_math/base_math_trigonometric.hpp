@@ -368,7 +368,7 @@ inline T asin_base_math(const T &x) {
     result = static_cast<T>(2) *
              Base::Math::atan2_base_math<T, ATAN_LOOP_NUMBER>(
                  x, static_cast<T>(1) +
-                        Base::Math::sqrt_base_math<T, SQRT_LOOP_NUMBER>(
+                        Base::Math::sqrt_newton_method<T, SQRT_LOOP_NUMBER>(
                             static_cast<T>(1) - x * x));
   }
 

@@ -92,7 +92,7 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* sqrt check avoid zero divide */
     {
-        T sqrt_d_value = Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
+        T sqrt_d_value = Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
             static_cast<T>(2), static_cast<T>(3.123));
         T sqrt_d_answer = std::sqrt(static_cast<T>(3.123));
 

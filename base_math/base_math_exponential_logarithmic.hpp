@@ -353,7 +353,7 @@ template <typename T> inline T rsqrt(const T &x) {
 
 /* sqrt */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T sqrt_base_math(const T &x) {
+inline T sqrt_newton_method(const T &x) {
 
   T x_wrapped = x;
 
@@ -369,7 +369,7 @@ inline T sqrt_base_math(const T &x) {
 }
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T sqrt_base_math(const T &x, const T &division_min) {
+inline T sqrt_newton_method(const T &x, const T &division_min) {
 
   T x_wrapped = x;
 
@@ -407,11 +407,11 @@ template <typename T> inline T sqrt(const T &x) {
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
   return Base::Math::fast_square_root(x);
 #else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+  return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+  return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
 
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
