@@ -61,7 +61,7 @@ template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
 
 /* sin */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct SinBaseMathLoop {
+struct SinMcloughlinLoop {
   static void compute(const T &x_squared, T &term, T &result) {
     term *=
         -x_squared * static_cast<T>(static_cast<T>(1) /
@@ -69,12 +69,12 @@ struct SinBaseMathLoop {
                                                    (2 * (LOOP_MAX - N) + 1)));
     result += term;
 
-    SinBaseMathLoop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
+    SinMcloughlinLoop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
   }
 };
 
 template <typename T, std::size_t LOOP_MAX>
-struct SinBaseMathLoop<T, LOOP_MAX, 0> {
+struct SinMcloughlinLoop<T, LOOP_MAX, 0> {
   static void compute(const T &x_squared, T &term, T &result) {
     /* Do Nothing. */
     static_cast<void>(x_squared);
@@ -84,7 +84,7 @@ struct SinBaseMathLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T sin_base_math(const T &x) {
+inline T sin_mcloughlin_expansion(const T &x) {
 
   T x_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(x);
 
@@ -92,12 +92,8 @@ inline T sin_base_math(const T &x) {
   T result = x_wrapped;
   T x_squared = x_wrapped * x_wrapped;
 
-  // for (std::size_t n = 1; n < LOOP_NUMBER; n++) {
-  //   term *= -x_squared / static_cast<T>((2 * n) * (2 * n + 1));
-  //   result += term;
-  // }
-  SinBaseMathLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
-                                                            result);
+  SinMcloughlinLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
+                                                              result);
 
   return result;
 }
@@ -107,13 +103,14 @@ template <typename T> inline T sin(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::sin(x);
 #else
-  return Base::Math::sin_base_math<T, Base::Math::SIN_REPEAT_NUMBER>(x);
+  return Base::Math::sin_mcloughlin_expansion<T, Base::Math::SIN_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
 /* cos */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct CosBaseMathLoop {
+struct CosMcloughlinLoop {
   static void compute(const T &x_squared, T &term, T &result) {
     term *=
         -x_squared * static_cast<T>(static_cast<T>(1) /
@@ -121,12 +118,12 @@ struct CosBaseMathLoop {
                                                    (2 * (LOOP_MAX - N))));
     result += term;
 
-    CosBaseMathLoop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
+    CosMcloughlinLoop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
   }
 };
 
 template <typename T, std::size_t LOOP_MAX>
-struct CosBaseMathLoop<T, LOOP_MAX, 0> {
+struct CosMcloughlinLoop<T, LOOP_MAX, 0> {
   static void compute(const T &x_squared, T &term, T &result) {
     /* Do Nothing. */
     static_cast<void>(x_squared);
@@ -136,7 +133,7 @@ struct CosBaseMathLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T cos_base_math(const T &x) {
+inline T cos_mcloughlin_expansion(const T &x) {
 
   T x_wrapped = wrap_value_in_minus_pi_and_pi(x);
 
@@ -144,8 +141,8 @@ inline T cos_base_math(const T &x) {
   T result = static_cast<T>(1);
   T x_squared = x_wrapped * x_wrapped;
 
-  CosBaseMathLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
-                                                            result);
+  CosMcloughlinLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
+                                                              result);
 
   return result;
 }
@@ -155,17 +152,18 @@ template <typename T> inline T cos(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::cos(x);
 #else
-  return Base::Math::cos_base_math<T, Base::Math::COS_REPEAT_NUMBER>(x);
+  return Base::Math::cos_mcloughlin_expansion<T, Base::Math::COS_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
 /* tan */
 template <typename T, std::size_t SIN_LOOP_NUMBER, std::size_t COS_LOOP_NUMBER>
-inline T tan_base_math(const T &x) {
+inline T tan_mcloughlin_expansion(const T &x) {
 
-  return Base::Math::sin_base_math<T, SIN_LOOP_NUMBER>(x) /
+  return Base::Math::sin_mcloughlin_expansion<T, SIN_LOOP_NUMBER>(x) /
          Base::Utility::avoid_zero_divide(
-             Base::Math::cos_base_math<T, COS_LOOP_NUMBER>(x),
+             Base::Math::cos_mcloughlin_expansion<T, COS_LOOP_NUMBER>(x),
              static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN));
 }
 
@@ -174,29 +172,29 @@ template <typename T> inline T tan(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::tan(x);
 #else
-  return Base::Math::tan_base_math<T, Base::Math::SIN_REPEAT_NUMBER,
-                                   Base::Math::COS_REPEAT_NUMBER>(x);
+  return Base::Math::tan_mcloughlin_expansion<T, Base::Math::SIN_REPEAT_NUMBER,
+                                              Base::Math::COS_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* atan */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T atan_base_math(const T &x) {
+inline T atan_mcloughlin_expansion(const T &x) {
 
   T result = static_cast<T>(0);
 
   if (x > static_cast<T>(1)) {
     result = static_cast<T>(Base::Math::HALF_PI) -
-             Base::Math::atan_base_math(static_cast<T>(1) / x);
+             Base::Math::atan_mcloughlin_expansion(static_cast<T>(1) / x);
   } else if (x < static_cast<T>(-1)) {
     result = -static_cast<T>(Base::Math::HALF_PI) -
-             Base::Math::atan_base_math(static_cast<T>(1) / x);
+             Base::Math::atan_mcloughlin_expansion(static_cast<T>(1) / x);
   } else {
     if ((x > static_cast<T>(0.5)) || (x < static_cast<T>(-0.5))) {
       T half_x = x * static_cast<T>(0.5);
 
-      result = Base::Math::atan_base_math(half_x) +
-               Base::Math::atan_base_math(
+      result = Base::Math::atan_mcloughlin_expansion(half_x) +
+               Base::Math::atan_mcloughlin_expansion(
                    half_x /
                    (static_cast<T>(1) + static_cast<T>(2) * half_x * half_x));
 
@@ -297,7 +295,7 @@ template <typename T> inline T atan(const T &x) {
 
 /* atan2 */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T atan2_base_math(const T &y, const T &x) {
+inline T atan2_chebyshev(const T &y, const T &x) {
   T result = static_cast<T>(0);
 
   if (Base::Utility::near_zero(
@@ -342,14 +340,14 @@ template <typename T> inline T atan2(const T &y, const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::atan2(y, x);
 #else
-  return Base::Math::atan2_base_math<T, Base::Math::ATAN_REPEAT_NUMBER>(y, x);
+  return Base::Math::atan2_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER>(y, x);
 #endif
 }
 
 /* asin */
 template <typename T, std::size_t ATAN_LOOP_NUMBER,
           std::size_t SQRT_LOOP_NUMBER>
-inline T asin_base_math(const T &x) {
+inline T asin_chebyshev(const T &x) {
 
   T result = static_cast<T>(0);
 
@@ -364,7 +362,7 @@ inline T asin_base_math(const T &x) {
   } else {
 
     result = static_cast<T>(2) *
-             Base::Math::atan2_base_math<T, ATAN_LOOP_NUMBER>(
+             Base::Math::atan2_chebyshev<T, ATAN_LOOP_NUMBER>(
                  x, static_cast<T>(1) +
                         Base::Math::sqrt_newton_method<T, SQRT_LOOP_NUMBER>(
                             static_cast<T>(1) - x * x));
@@ -378,7 +376,7 @@ template <typename T> inline T asin(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::asin(x);
 #else
-  return Base::Math::asin_base_math<T, Base::Math::ATAN_REPEAT_NUMBER,
+  return Base::Math::asin_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
                                     Base::Math::SQRT_REPEAT_NUMBER>(x);
 #endif
 }
@@ -386,10 +384,10 @@ template <typename T> inline T asin(const T &x) {
 /* acos */
 template <typename T, std::size_t ATAN_LOOP_NUMBER,
           std::size_t SQRT_LOOP_NUMBER>
-inline T acos_base_math(const T &x) {
+inline T acos_chebyshev(const T &x) {
 
   return static_cast<T>(Base::Math::HALF_PI) -
-         Base::Math::asin_base_math<T, ATAN_LOOP_NUMBER, SQRT_LOOP_NUMBER>(x);
+         Base::Math::asin_chebyshev<T, ATAN_LOOP_NUMBER, SQRT_LOOP_NUMBER>(x);
 }
 
 template <typename T> inline T acos(const T &x) {
@@ -397,14 +395,14 @@ template <typename T> inline T acos(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::acos(x);
 #else
-  return Base::Math::acos_base_math<T, Base::Math::ATAN_REPEAT_NUMBER,
+  return Base::Math::acos_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
                                     Base::Math::SQRT_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* sinh */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T sinh_base_math(const T &x) {
+inline T sinh_mcloughlin_expansion(const T &x) {
   return (Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(x) -
           Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(-x)) *
          static_cast<T>(0.5);
@@ -415,13 +413,15 @@ template <typename T> inline T sinh(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::sinh(x);
 #else
-  return Base::Math::sinh_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x);
+  return Base::Math::sinh_mcloughlin_expansion<T,
+                                               Base::Math::EXP_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
 /* cosh */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T cosh_base_math(const T &x) {
+inline T cosh_mcloughlin_expansion(const T &x) {
   return (Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(x) +
           Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(-x)) *
          static_cast<T>(0.5);
@@ -432,13 +432,15 @@ template <typename T> inline T cosh(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::cosh(x);
 #else
-  return Base::Math::cosh_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x);
+  return Base::Math::cosh_mcloughlin_expansion<T,
+                                               Base::Math::EXP_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
 /* tanh */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T tanh_base_math(const T &x) {
+inline T tanh_mcloughlin_expansion(const T &x) {
 
   T a = Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(x);
   T b = Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(-x);
@@ -452,7 +454,9 @@ template <typename T> inline T tanh(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::tanh(x);
 #else
-  return Base::Math::tanh_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x);
+  return Base::Math::tanh_mcloughlin_expansion<T,
+                                               Base::Math::EXP_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
