@@ -6,13 +6,13 @@
 namespace Base {
 namespace Math {
 
-template <std::size_t... Values> struct DoubleValueList {};
+template <std::size_t... Values> struct ValueArgumentList {};
 
 template <std::size_t N, typename List> struct Append;
 
 template <std::size_t N, std::size_t... Values>
-struct Append<N, DoubleValueList<Values...>> {
-  using type = DoubleValueList<Values..., N>;
+struct Append<N, ValueArgumentList<Values...>> {
+  using type = ValueArgumentList<Values..., N>;
 };
 
 template <std::size_t N> struct Factorial {
@@ -30,12 +30,12 @@ template <std::size_t N> struct MakeExpMcloughlinFactorList {
 };
 
 template <> struct MakeExpMcloughlinFactorList<1> {
-  using type = DoubleValueList<Factorial<1>::value>;
+  using type = ValueArgumentList<Factorial<1>::value>;
 };
 
 template <std::size_t... Values>
 constexpr std::array<double, sizeof...(Values)>
-toArray(DoubleValueList<Values...>) {
+to_array(ValueArgumentList<Values...>) {
   return {static_cast<double>(Values)...};
 }
 

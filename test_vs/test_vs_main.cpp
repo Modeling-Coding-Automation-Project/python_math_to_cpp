@@ -2398,7 +2398,7 @@ int main() {
 
     using MyList = MakeExpMcloughlinFactorList<7>::type;
 
-    constexpr auto a = toArray(MyList{});
+    constexpr auto a = to_array(MyList{});
 
     return 0;
 }
