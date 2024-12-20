@@ -98,6 +98,97 @@ inline T fast_inverse_square_root(const T &input, const T &division_min) {
   return static_cast<T>(y);
 }
 
+/* sqrt extraction double */
+template <int Loop_Limit, int I, int I_Limit>
+struct SqrtExtractionDoubleFirstLoop {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    c = static_cast<unsigned long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >> I));
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y) << I;
+    y += c;
+
+    SqrtExtractionDoubleFirstLoop<Loop_Limit, (I - 2),
+                                  (I - 2 - Loop_Limit)>::execute(c, m, y, a);
+  }
+};
+
+template <int Loop_Limit, int I_Limit>
+struct SqrtExtractionDoubleFirstLoop<Loop_Limit, -2, I_Limit> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int Loop_Limit, int I>
+struct SqrtExtractionDoubleFirstLoop<Loop_Limit, I, -2> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int Loop_Limit>
+struct SqrtExtractionDoubleFirstLoop<Loop_Limit, -2, -2> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int I> struct SqrtExtractionDoubleSecondLoop {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    m <<= static_cast<int>(2);
+    c = static_cast<unsigned long long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <= m);
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y);
+    y += c;
+    SqrtExtractionDoubleSecondLoop<I - 1>::execute(c, m, y, a);
+  }
+};
+
+template <> struct SqrtExtractionDoubleSecondLoop<0> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    m <<= static_cast<int>(2);
+    c = static_cast<unsigned long long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <= m);
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y);
+    y += c;
+  }
+};
+
+template <> struct SqrtExtractionDoubleSecondLoop<-1> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
 /*************************************************
  *  Function: sqrt_extraction_double
  *  Detail: calculates sqrt with extraction of mantissa.
@@ -113,10 +204,12 @@ template <int EXTRACTION_DOUBLE_REPEAT_NUMBER>
 inline double sqrt_extraction_double(const double &value) {
 
   double result = static_cast<double>(0);
-  unsigned short n;     // n is the exponent of value
-  unsigned long long m; // m is the mantissa of value
+  unsigned short n =
+      static_cast<unsigned short>(0); // n is the exponent of value
+  unsigned long long m =
+      static_cast<unsigned long long>(0); // m is the mantissa of value
   unsigned long long Temp;
-  int i = static_cast<int>(0);
+
   unsigned long long a = static_cast<unsigned long long>(0);
   unsigned long long c = static_cast<unsigned long long>(0);
   unsigned long long y = static_cast<unsigned long long>(0);
@@ -151,34 +244,23 @@ inline double sqrt_extraction_double(const double &value) {
               static_cast<unsigned short>(510)))
          << static_cast<int>(52);
 
-  // Use the square root calculation to calculate the square root of m, which
-  // has been updated above. The resulting square root has the number of digits
-  // for the number of iterations.
-  for (i = static_cast<int>(54);
-       i >= (static_cast<int>(-2) * EXTRACTION_DOUBLE_REPEAT_NUMBER -
-             static_cast<int>(2)) *
-                (EXTRACTION_DOUBLE_REPEAT_NUMBER < static_cast<int>(-1));
-       i -= static_cast<int>(2)) {
+  SqrtExtractionDoubleFirstLoop<
+      ((static_cast<int>(-2) * EXTRACTION_DOUBLE_REPEAT_NUMBER -
+        static_cast<int>(2)) *
+       (EXTRACTION_DOUBLE_REPEAT_NUMBER < static_cast<int>(-1))),
+      54,
+      (54 - ((static_cast<int>(-2) * EXTRACTION_DOUBLE_REPEAT_NUMBER -
+              static_cast<int>(2)) *
+             (EXTRACTION_DOUBLE_REPEAT_NUMBER <
+              static_cast<int>(-1))))>::execute(c, m, y, a);
 
-    c = static_cast<unsigned long long>(
-        ((y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <=
-         (m >> i)));
-    a = (a << static_cast<int>(1)) | c;
-    y = (y << static_cast<int>(1)) | c;
-    m -= (c * y) << i;
-    y += c;
-  }
-
-  for (i = static_cast<int>(0); i <= EXTRACTION_DOUBLE_REPEAT_NUMBER; i++) {
-
-    m <<= static_cast<int>(2);
-    c = static_cast<unsigned long long>(
-        (y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <= m);
-    a = (a << static_cast<int>(1)) | c;
-    y = (y << static_cast<int>(1)) | c;
-    m -= (c * y);
-    y += c;
-  }
+  SqrtExtractionDoubleSecondLoop<(
+      (EXTRACTION_DOUBLE_REPEAT_NUMBER *
+       static_cast<int>(
+           (EXTRACTION_DOUBLE_REPEAT_NUMBER >= static_cast<int>(0)))) +
+      static_cast<int>(-1) *
+          (static_cast<int>((EXTRACTION_DOUBLE_REPEAT_NUMBER <
+                             static_cast<int>(0)))))>::execute(c, m, y, a);
 
   // Round the least significant digit (1 carry up).
   // Therefore, the above square root calculation is performed one more time.
@@ -192,7 +274,7 @@ inline double sqrt_extraction_double(const double &value) {
   return result;
 }
 
-/* sqrt extractio float */
+/* sqrt extraction float */
 template <int Loop_Limit, int I, int I_Limit>
 struct SqrtExtractionFloatFirstLoop {
   static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
