@@ -277,20 +277,20 @@ inline float sqrt_extraction_float(const float &value) {
 }
 
 /* rsqrt loop */
-template <typename T, int N> struct RsqrtBaseMathLoop {
+template <typename T, int N> struct RsqrtNewtonLoop {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
-    RsqrtBaseMathLoop<T, N - 1>::compute(x_T, result);
+    RsqrtNewtonLoop<T, N - 1>::compute(x_T, result);
   }
 };
 
-template <typename T> struct RsqrtBaseMathLoop<T, 1> {
+template <typename T> struct RsqrtNewtonLoop<T, 1> {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
   }
 };
 
-template <typename T> struct RsqrtBaseMathLoop<T, 0> {
+template <typename T> struct RsqrtNewtonLoop<T, 0> {
   static void compute(T x_T, T &result) {
     /* Do Nothing. */
     static_cast<void>(x_T);
@@ -299,7 +299,7 @@ template <typename T> struct RsqrtBaseMathLoop<T, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T rsqrt_base_math(const T &x, const T &division_min) {
+inline T rsqrt_newton_method(const T &x, const T &division_min) {
   T result = static_cast<T>(0);
 
   T x_wrapped = x;
@@ -322,8 +322,8 @@ inline T rsqrt_base_math(const T &x, const T &division_min) {
   result *= static_cast<T>(1.875) -
             h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
 
-  RsqrtBaseMathLoop<T, LOOP_NUMBER>::compute(x_wrapped * static_cast<T>(0.5),
-                                             result);
+  RsqrtNewtonLoop<T, LOOP_NUMBER>::compute(x_wrapped * static_cast<T>(0.5),
+                                           result);
 
   return result;
 }
@@ -339,12 +339,12 @@ template <typename T> inline T rsqrt(const T &x) {
   return Base::Math::fast_inverse_square_root(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 #else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::rsqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
+  return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::rsqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
+  return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
@@ -363,7 +363,7 @@ inline T sqrt_base_math(const T &x) {
   }
 
   return x_wrapped *
-         Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(
+         Base::Math::rsqrt_newton_method<T, LOOP_NUMBER>(
              x_wrapped,
              static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
@@ -377,8 +377,8 @@ inline T sqrt_base_math(const T &x, const T &division_min) {
     x_wrapped = division_min;
   }
 
-  return x_wrapped *
-         Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(x_wrapped, division_min);
+  return x_wrapped * Base::Math::rsqrt_newton_method<T, LOOP_NUMBER>(
+                         x_wrapped, division_min);
 }
 
 template <typename T> inline T fast_square_root(const T &input) {
