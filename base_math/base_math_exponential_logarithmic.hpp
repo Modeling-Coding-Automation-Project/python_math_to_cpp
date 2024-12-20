@@ -192,6 +192,59 @@ inline double sqrt_extraction_double(const double &value) {
   return result;
 }
 
+/* sqrt extractio float */
+template <int Loop_Limit, int I, int I_Limit>
+struct SqrtExtractionFloatFirstLoop {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    c = static_cast<unsigned long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >> I));
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y) << I;
+    y += c;
+
+    SqrtExtractionFloatFirstLoop<Loop_Limit, (I - 2),
+                                 (I - 2 - Loop_Limit)>::execute(c, m, y, a);
+  }
+};
+
+template <int Loop_Limit, int I_Limit>
+struct SqrtExtractionFloatFirstLoop<Loop_Limit, -1, I_Limit> {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int Loop_Limit, int I>
+struct SqrtExtractionFloatFirstLoop<Loop_Limit, I, -1> {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int Loop_Limit>
+struct SqrtExtractionFloatFirstLoop<Loop_Limit, -1, -1> {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
 /*************************************************
  *  Function: sqrt_extraction_float
  *  Detail: calculates sqrt with extraction of mantissa.
@@ -237,19 +290,29 @@ inline float sqrt_extraction_float(const float &value) {
   // Use the square root calculation to calculate the square root of m, which
   // has been updated above. The resulting square root has the number of digits
   // for the number of iterations.
-  for (i = static_cast<int>(25);
-       i >= (static_cast<int>(-2) * EXTRACTION_FLOAT_REPEAT_NUMBER -
-             static_cast<int>(2)) *
-                (EXTRACTION_FLOAT_REPEAT_NUMBER < static_cast<int>(-1));
-       i -= static_cast<int>(2)) {
+  // for (i = static_cast<int>(25);
+  //      i >= (static_cast<int>(-2) * EXTRACTION_FLOAT_REPEAT_NUMBER -
+  //            static_cast<int>(2)) *
+  //               (EXTRACTION_FLOAT_REPEAT_NUMBER < static_cast<int>(-1));
+  //      i -= static_cast<int>(2)) {
 
-    c = static_cast<unsigned long>(
-        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >> i));
-    a = (a << static_cast<int>(1)) | c;
-    y = (y << static_cast<int>(1)) | c;
-    m -= (c * y) << i;
-    y += c;
-  }
+  //   c = static_cast<unsigned long>(
+  //       (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >>
+  //       i));
+  //   a = (a << static_cast<int>(1)) | c;
+  //   y = (y << static_cast<int>(1)) | c;
+  //   m -= (c * y) << i;
+  //   y += c;
+  // }
+  SqrtExtractionFloatFirstLoop<
+      ((static_cast<int>(-2) * EXTRACTION_FLOAT_REPEAT_NUMBER -
+        static_cast<int>(2)) *
+       (EXTRACTION_FLOAT_REPEAT_NUMBER < static_cast<int>(-1))),
+      25,
+      (25 - ((static_cast<int>(-2) * EXTRACTION_FLOAT_REPEAT_NUMBER -
+              static_cast<int>(2)) *
+             (EXTRACTION_FLOAT_REPEAT_NUMBER <
+              static_cast<int>(-1))))>::execute(c, m, y, a);
 
   y <<= static_cast<int>(1);
 

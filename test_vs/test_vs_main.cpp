@@ -143,7 +143,7 @@ void check_base_math_exponential_logarithmic(void) {
     }
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
-    /* sqrt extraction double */
+    /* sqrt extraction float */
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
         T sqrt_value = static_cast<T>(0);
