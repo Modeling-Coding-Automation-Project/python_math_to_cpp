@@ -4,7 +4,6 @@
 #include "base_math_arithmetic.hpp"
 #include "base_math_macros.hpp"
 #include "base_math_mathematical_constants.hpp"
-#include "base_math_utility.hpp"
 
 #include <cmath>
 #include <cstddef>
@@ -319,9 +318,8 @@ inline T rsqrt_base_math(const T &x, const T &division_min) {
   T h = static_cast<T>(0);
   float r = 1.8284271F - 0.82842712F * frexpf(x_float, &e);
 
-  r = Base::Math::ldexp(
-      r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
-      -e >> 1);
+  r = ldexp(r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
+            -e >> 1);
 
   result = static_cast<T>(r);
 
@@ -463,7 +461,7 @@ inline T exp_base_math(const T &x) {
     ExpIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(result, term,
                                                                remainder);
 
-    result = Base::Math::ldexp(result, n);
+    result = ldexp(result, n);
   }
 
   return result;
@@ -519,7 +517,7 @@ inline T exp2_base_math(const T &x) {
     Exp2IterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(result, term,
                                                                 remainder);
 
-    result = Base::Math::ldexp(result, n);
+    result = ldexp(result, n);
   }
 
   return result;
