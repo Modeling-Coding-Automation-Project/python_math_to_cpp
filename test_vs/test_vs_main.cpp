@@ -2393,5 +2393,12 @@ int main() {
     //check_python_math_calc<float>();
 
 
+    using namespace Base::Math;
+
+
+    using MyList = MakeIntList<5>::type;
+
+    constexpr auto a = toArray(MyList{});
+
     return 0;
 }
