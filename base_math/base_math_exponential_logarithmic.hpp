@@ -583,7 +583,7 @@ template <typename T> inline T sqrt(const T &x) {
 #endif // BASE_MATH_USE_STD_MATH
 }
 
-/* exp */
+/* exp Mcloughlin Expansion */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
 struct ExpMcloughlinIterationLoop {
   static void compute(T &result, T &term, const T &remainder) {
@@ -637,6 +637,72 @@ template <typename T> inline T exp(const T &x) {
   return Base::Math::exp_mcloughlin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 #endif
+}
+
+/* exp Mcloughlin Expansion with table */
+double exp_fast(double x) {
+  double result = static_cast<double>(1);
+
+  // constexpr double waru[7] = {static_cast<double>(1.0 / (2 * 3 * 4 * 5 * 6)),
+  //                             static_cast<double>(1.0 / (2 * 3 * 4 * 5)),
+  //                             static_cast<double>(1.0 / (2 * 3 * 4)),
+  //                             static_cast<double>(1.0 / (2 * 3)),
+  //                             static_cast<double>(1.0 / 2),
+  //                             static_cast<double>(1.0),
+  //                             static_cast<double>(1.0)};
+
+  constexpr double waru[4] = {
+      static_cast<double>(1.0 / (2 * 3)), static_cast<double>(1.0 / 2),
+      static_cast<double>(1.0), static_cast<double>(1.0)};
+
+  constexpr unsigned long long table[16] = {
+      0x059B0D3158574ull, // 2^( 1 /32)-1
+      0x11301D0125B51ull, // 2^( 3 /32)-1
+      0x1D4873168B9AAull, // 2^( 5 /32)-1
+      0x29E9DF51FDEE1ull, // 2^( 7 /32)-1
+      0x371A7373AA9CBull, // 2^( 9 /32)-1
+      0x44E086061892Dull, // 2^( 11 /32)-1
+      0x5342B569D4F82ull, // 2^( 13 /32)-1
+      0x6247EB03A5585ull, // 2^( 15 /32)-1
+      0x71F75E8EC5F74ull, // 2^( 17 /32)-1
+      0x82589994CCE13ull, // 2^( 19 /32)-1
+      0x93737B0CDC5E5ull, // 2^( 21 /32)-1
+      0xA5503B23E255Dull, // 2^( 23 /32)-1
+      0xB7F76F2FB5E47ull, // 2^( 25 /32)-1
+      0xCB720DCEF9069ull, // 2^( 27 /32)-1
+      0xDFC97337B9B5Full, // 2^( 29 /32)-1
+      0xF50765B6E4540ull, // 2^( 31 /32)-1
+  };
+
+  if (x > static_cast<double>(Base::Math::EXP_INPUT_MAX)) {
+    result = static_cast<double>(Base::Math::EXP_OUTPUT_MAX);
+  } else if (x < static_cast<double>(Base::Math::EXP_INPUT_MIN)) {
+    result = static_cast<double>(Base::Math::EXP_OUTPUT_MIN);
+  } else {
+
+    // double y = 1.0 / (2 * 3 * 4 * 5 * 6 * 7);
+    double y = 1.0 / (2 * 3 * 4);
+
+    double z, r;
+    int q;
+    unsigned long long w;
+
+    z = x * (16.0 / Base::Math::LN_2);
+    q = (int)z - (x < 0);
+    r = x - ((q << 1) + 1) * (Base::Math::LN_2 / 32.0);
+    w = (unsigned long long)(1023 + (q >> 4)) << 52 ^ table[q & 0xF];
+
+    std::memcpy(&z, &w, 8);
+
+    // for (int i = 0; i < 7; ++i) {
+    for (int i = 0; i < 4; ++i) {
+      y = y * r + waru[i];
+    }
+
+    result = y * z;
+  }
+
+  return result;
 }
 
 /* exp2 */
