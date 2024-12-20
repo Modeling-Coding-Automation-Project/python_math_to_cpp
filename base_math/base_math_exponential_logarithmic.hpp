@@ -66,6 +66,12 @@ constexpr unsigned long long TABLE_FOR_EXP_DOUBLE[16] = {
     0xF50765B6E4540ull, // 2^( 31 /32)-1
 };
 
+using EXP_MCLOUGHLIN_FACTOR_List =
+    typename MakeExpMcloughlinFactorList<7>::type;
+
+constexpr auto EXP_MCLOUGHLIN_FACTOR =
+    Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_List{});
+
 constexpr double LOG_OUTPUT_MIN = -1.0e20;
 constexpr double LOG_SCALE_FACTOR = 5.0;
 constexpr double LOG_OF_LOG_SCALE_FACTOR =
@@ -660,15 +666,24 @@ template <typename T> inline T exp(const T &x) {
 }
 
 /* exp Mcloughlin Expansion with table */
+template <typename T, std::size_t N> struct ExpMcLoughlinExpansionLoop {
+  static void compute(double &y, double &r) {
+    y = y * r + Base::Math::EXP_MCLOUGHLIN_FACTOR[N - 1];
+    ExpMcLoughlinExpansionLoop<T, N - 1>::compute(y, r);
+  }
+};
+
+template <typename T> struct ExpMcLoughlinExpansionLoop<T, 0> {
+  static void compute(double &y, double &r) {
+    static_cast<void>(y);
+    static_cast<void>(r);
+    // Do nothing
+  }
+};
+
 template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 double exp_mcloughlin_expansion_with_table(double x) {
   double result = static_cast<double>(1);
-
-  using EXP_MCLOUGHLIN_FACTOR_List = typename MakeExpMcloughlinFactorList<
-      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::type;
-
-  constexpr auto EXP_MCLOUGHLIN_FACTOR =
-      Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_List{});
 
   if (x > static_cast<double>(Base::Math::EXP_INPUT_MAX)) {
     result = static_cast<double>(Base::Math::EXP_OUTPUT_MAX);
@@ -676,7 +691,9 @@ double exp_mcloughlin_expansion_with_table(double x) {
     result = static_cast<double>(Base::Math::EXP_OUTPUT_MIN);
   } else {
 
-    double y = EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1];
+    double y =
+        Base::Math::EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1];
 
     double z = static_cast<double>(0);
     double r = static_cast<double>(0);
@@ -696,11 +713,9 @@ double exp_mcloughlin_expansion_with_table(double x) {
 
     std::memcpy(&z, &w, static_cast<int>(8));
 
-    for (int i = static_cast<int>(0);
-         i < static_cast<int>(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER); ++i) {
-      y = y * r +
-          EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - i - 1];
-    }
+    ExpMcLoughlinExpansionLoop<double,
+                               MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                            r);
 
     result = y * z;
   }
