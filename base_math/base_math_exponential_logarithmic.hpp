@@ -9,11 +9,6 @@
 #include <cstddef>
 #include <cstring>
 
-#ifdef BASE_MATH_USE_STD_MATH
-#include <cmath>
-#else  // BASE_MATH_USE_STD_MATH
-#endif // BASE_MATH_USE_STD_MATH
-
 namespace Base {
 namespace Math {
 
