@@ -497,7 +497,7 @@ struct Exp2NewtonIterationLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T exp2_newton_method(const T &x) {
+inline T exp2_mcloughlin_expansion(const T &x) {
 
   T result = static_cast<T>(1);
 
@@ -526,21 +526,23 @@ template <typename T> inline T exp2(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp2(x);
 #else
-  return Base::Math::exp2_newton_method<T, Base::Math::EXP2_REPEAT_NUMBER>(x);
+  return Base::Math::exp2_mcloughlin_expansion<T,
+                                               Base::Math::EXP2_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
 /* log */
-template <typename T, std::size_t N> struct LogIterationLoop {
+template <typename T, std::size_t N> struct LogNewtonIterationLoop {
   static void compute(T &exp_guess, T &guess, const T &scaled_x) {
     exp_guess = Base::Math::exp(guess);
     guess = guess - (exp_guess - scaled_x) / exp_guess;
 
-    LogIterationLoop<T, N - 1>::compute(exp_guess, guess, scaled_x);
+    LogNewtonIterationLoop<T, N - 1>::compute(exp_guess, guess, scaled_x);
   }
 };
 
-template <typename T> struct LogIterationLoop<T, 0> {
+template <typename T> struct LogNewtonIterationLoop<T, 0> {
   static void compute(T &exp_guess, T &guess, const T &scaled_x) {
     /* Do Nothing. */
     static_cast<void>(exp_guess);
@@ -550,7 +552,7 @@ template <typename T> struct LogIterationLoop<T, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T log_base_math(const T &x) {
+inline T log_newton_method(const T &x) {
   T result = static_cast<T>(0);
 
   if (x <= static_cast<T>(0)) {
@@ -577,7 +579,8 @@ inline T log_base_math(const T &x) {
     T guess = scaled_x - static_cast<T>(1);
     T exp_guess = static_cast<T>(0);
 
-    LogIterationLoop<T, LOOP_NUMBER - 1>::compute(exp_guess, guess, scaled_x);
+    LogNewtonIterationLoop<T, LOOP_NUMBER - 1>::compute(exp_guess, guess,
+                                                        scaled_x);
 
     result = guess + static_cast<T>(scale) *
                          static_cast<T>(Base::Math::LOG_OF_LOG_SCALE_FACTOR);
@@ -591,15 +594,15 @@ template <typename T> inline T log(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log(x);
 #else
-  return Base::Math::log_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
+  return Base::Math::log_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* log2 */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T log2_base_math(const T &x) {
+inline T log2_newton_method(const T &x) {
 
-  return Base::Math::log_base_math<T, LOOP_NUMBER>(x) /
+  return Base::Math::log_newton_method<T, LOOP_NUMBER>(x) /
          static_cast<T>(Base::Math::LN_2);
 }
 
@@ -608,15 +611,15 @@ template <typename T> inline T log2(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log2(x);
 #else
-  return Base::Math::log2_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
+  return Base::Math::log2_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* log10 */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T log10_base_math(const T &x) {
+inline T log10_newton_method(const T &x) {
 
-  return Base::Math::log_base_math<T, LOOP_NUMBER>(x) /
+  return Base::Math::log_newton_method<T, LOOP_NUMBER>(x) /
          static_cast<T>(Base::Math::LN_10);
 }
 
@@ -625,7 +628,7 @@ template <typename T> inline T log10(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log10(x);
 #else
-  return Base::Math::log10_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
+  return Base::Math::log10_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
@@ -633,7 +636,7 @@ template <typename T> inline T log10(const T &x) {
 template <typename T, std::size_t EXP_LOOP_NUMBER, std::size_t LOG_LOOP_NUMBER>
 inline T pow_base_math(const T &x, const T &y) {
   return Base::Math::exp_mcloughlin_expansion<T, EXP_LOOP_NUMBER>(
-      y * Base::Math::log_base_math<T, LOG_LOOP_NUMBER>(x));
+      y * Base::Math::log_newton_method<T, LOG_LOOP_NUMBER>(x));
 }
 
 template <typename T> inline T pow(const T &x, const T &y) {
