@@ -35,8 +35,9 @@ template <> struct MakeExpMcloughlinFactorList<1> {
 
 template <std::size_t... Values>
 constexpr std::array<double, sizeof...(Values)>
-to_array(ValueArgumentList<Values...>) {
-  return {static_cast<double>(Values)...};
+to_exp_mcloughlin_factor_array(ValueArgumentList<Values...>) {
+  return {static_cast<double>(static_cast<double>(1) /
+                              static_cast<double>(Values))...};
 }
 
 } // namespace Math
