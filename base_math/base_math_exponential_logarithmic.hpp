@@ -664,15 +664,6 @@ template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 double exp_mcloughlin_expansion_with_table(double x) {
   double result = static_cast<double>(1);
 
-  // constexpr double EXP_MCLOUGHLIN_FACTOR[7] = {static_cast<double>(1.0 / (2 *
-  // 3 * 4 * 5 * 6)),
-  //                             static_cast<double>(1.0 / (2 * 3 * 4 * 5)),
-  //                             static_cast<double>(1.0 / (2 * 3 * 4)),
-  //                             static_cast<double>(1.0 / (2 * 3)),
-  //                             static_cast<double>(1.0 / 2),
-  //                             static_cast<double>(1.0),
-  //                             static_cast<double>(1.0)};
-
   using EXP_MCLOUGHLIN_FACTOR_List = typename MakeExpMcloughlinFactorList<
       MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::type;
 
@@ -687,7 +678,7 @@ double exp_mcloughlin_expansion_with_table(double x) {
 
     // double y = static_cast<double>(1) / static_cast<double>(2 * 3 * 4 * 5 * 6
     // * 7);
-    double y = static_cast<double>(1) / static_cast<double>(2 * 3 * 4);
+    double y = EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1];
 
     double z = static_cast<double>(0);
     double r = static_cast<double>(0);
