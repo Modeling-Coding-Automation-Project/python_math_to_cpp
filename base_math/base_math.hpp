@@ -6,6 +6,5 @@
 #include "base_math_macros.hpp"
 #include "base_math_mathematical_constants.hpp"
 #include "base_math_trigonometric.hpp"
-#include "base_math_utility.hpp"
 
 #endif // BASE_MATH_HPP

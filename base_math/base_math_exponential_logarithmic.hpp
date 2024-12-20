@@ -4,16 +4,10 @@
 #include "base_math_arithmetic.hpp"
 #include "base_math_macros.hpp"
 #include "base_math_mathematical_constants.hpp"
-#include "base_math_utility.hpp"
 
 #include <cmath>
 #include <cstddef>
 #include <cstring>
-
-#ifdef BASE_MATH_USE_STD_MATH
-#include <cmath>
-#else  // BASE_MATH_USE_STD_MATH
-#endif // BASE_MATH_USE_STD_MATH
 
 namespace Base {
 namespace Math {
@@ -22,14 +16,20 @@ constexpr double EXPONENTIAL_LOGARITHMIC_DIVISION_MIN = 1.0e-10;
 
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 0;
-constexpr std::size_t EXP_REPEAT_NUMBER = 4;
+constexpr std::size_t EXP_REPEAT_NUMBER = 5;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
 constexpr std::size_t LOG_REPEAT_NUMBER = 6;
+
+constexpr int SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER = -21;
+constexpr int SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER = -6;
 #else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
-constexpr std::size_t EXP_REPEAT_NUMBER = 7;
+constexpr std::size_t EXP_REPEAT_NUMBER = 9;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
+
+constexpr int SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER = -7;
+constexpr int SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER = 8;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 constexpr std::size_t SQRT_REPEAT_NUMBER_MOSTLY_ACCURATE = 2;
@@ -98,20 +98,365 @@ inline T fast_inverse_square_root(const T &input, const T &division_min) {
   return static_cast<T>(y);
 }
 
-template <typename T, int N> struct RsqrtBaseMathLoop {
-  static void compute(T x_T, T &result) {
-    result *= static_cast<T>(1.5) - x_T * result * result;
-    RsqrtBaseMathLoop<T, N - 1>::compute(x_T, result);
+/* sqrt extraction double */
+template <int Loop_Limit, int I, int I_Limit>
+struct SqrtExtractionDoubleFirstLoop {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    c = static_cast<unsigned long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >> I));
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y) << I;
+    y += c;
+
+    SqrtExtractionDoubleFirstLoop<Loop_Limit, (I - 2),
+                                  (I - 2 - Loop_Limit)>::execute(c, m, y, a);
   }
 };
 
-template <typename T> struct RsqrtBaseMathLoop<T, 1> {
+template <int Loop_Limit, int I_Limit>
+struct SqrtExtractionDoubleFirstLoop<Loop_Limit, -2, I_Limit> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int Loop_Limit, int I>
+struct SqrtExtractionDoubleFirstLoop<Loop_Limit, I, -2> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int Loop_Limit>
+struct SqrtExtractionDoubleFirstLoop<Loop_Limit, -2, -2> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int I> struct SqrtExtractionDoubleSecondLoop {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    m <<= static_cast<int>(2);
+    c = static_cast<unsigned long long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <= m);
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y);
+    y += c;
+    SqrtExtractionDoubleSecondLoop<I - 1>::execute(c, m, y, a);
+  }
+};
+
+template <> struct SqrtExtractionDoubleSecondLoop<0> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    m <<= static_cast<int>(2);
+    c = static_cast<unsigned long long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <= m);
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y);
+    y += c;
+  }
+};
+
+template <> struct SqrtExtractionDoubleSecondLoop<-1> {
+  static void execute(unsigned long long &c, unsigned long long &m,
+                      unsigned long long &y, unsigned long long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+/*************************************************
+ *  Function: sqrt_extraction_double
+ *  Detail: calculates sqrt with extraction of mantissa.
+ *  Input value depends on the IEEE 754 standard.
+ *  When In_r is specified as the maximum 26,
+ *  it completely matches math.h's sqrt().
+ *  When In_r is 0, the error is within 8.0e^-7 [%].
+ *  When In_r is -10, the error is within 8.0e^-3 [%].
+ *  When In_r is -20, the error is within 8 [%].
+ *  At -26, since almost no calculation is performed, the error is very large.
+ **************************************************/
+template <int EXTRACTION_DOUBLE_REPEAT_NUMBER>
+inline double sqrt_extraction_double(const double &value) {
+
+  double result = static_cast<double>(0);
+  unsigned short n =
+      static_cast<unsigned short>(0); // n is the exponent of value
+  unsigned long long m =
+      static_cast<unsigned long long>(0); // m is the mantissa of value
+  unsigned long long Temp;
+
+  unsigned long long a = static_cast<unsigned long long>(0);
+  unsigned long long c = static_cast<unsigned long long>(0);
+  unsigned long long y = static_cast<unsigned long long>(0);
+
+  std::memcpy(&Temp, &value, static_cast<std::size_t>(8));
+
+  // To calculate the square root, the square root of 2 generated by the power
+  // of 2 is assigned to the mantissa, and the value is adjusted.
+  // The exponent is 2 to the power of (n - 1024), and when the square root is
+  // taken, it becomes 2 to the power of (n/2 - 512).
+  // In the following, the case is divided into even and odd numbers so that n
+  // does not become a fraction when divided by 2.
+  // When n is odd
+  // The mantissa is (m + 2^52), and the exponent is (n - 1) / 2 + 511
+  // When n is even
+  // The mantissa is (m + 2^52) * 2, and the exponent is n / 2 + 511
+  // However, since 1 is added to the exponent due to the rounding up of the
+  // mantissa later, 510 is added here
+  n = static_cast<unsigned short>(
+      ((static_cast<unsigned long long>(0x7FFFFFFFFFFFFFFF) & Temp) >>
+       static_cast<int>(52)));
+
+  m = (static_cast<unsigned long long>(0x10000000000000) +
+       (static_cast<unsigned long long>(0xFFFFFFFFFFFFF) & Temp))
+      << (static_cast<unsigned short>(1) & (~n));
+
+  // the exponent part to Temp
+  Temp = static_cast<unsigned long long>(
+             (((n + static_cast<unsigned short>(
+                        (static_cast<unsigned short>(1) & n))) >>
+               static_cast<int>(1)) +
+              static_cast<unsigned short>(510)))
+         << static_cast<int>(52);
+
+  SqrtExtractionDoubleFirstLoop<
+      ((static_cast<int>(-2) * EXTRACTION_DOUBLE_REPEAT_NUMBER -
+        static_cast<int>(2)) *
+       (EXTRACTION_DOUBLE_REPEAT_NUMBER < static_cast<int>(-1))),
+      54,
+      (54 - ((static_cast<int>(-2) * EXTRACTION_DOUBLE_REPEAT_NUMBER -
+              static_cast<int>(2)) *
+             (EXTRACTION_DOUBLE_REPEAT_NUMBER <
+              static_cast<int>(-1))))>::execute(c, m, y, a);
+
+  SqrtExtractionDoubleSecondLoop<(
+      (EXTRACTION_DOUBLE_REPEAT_NUMBER *
+       static_cast<int>(
+           (EXTRACTION_DOUBLE_REPEAT_NUMBER >= static_cast<int>(0)))) +
+      static_cast<int>(-1) *
+          (static_cast<int>((EXTRACTION_DOUBLE_REPEAT_NUMBER <
+                             static_cast<int>(0)))))>::execute(c, m, y, a);
+
+  // Round the least significant digit (1 carry up).
+  // Therefore, the above square root calculation is performed one more time.
+  // The smaller the number of iterations, the greater the left shift amount.
+  // Add the mantissa to Temp.
+  Temp += (((a + (static_cast<unsigned long long>(1) & a)) >> 1)
+           << (static_cast<int>(26) - EXTRACTION_DOUBLE_REPEAT_NUMBER));
+
+  std::memcpy(&result, &Temp, static_cast<std::size_t>(8));
+
+  return result;
+}
+
+/* sqrt extraction float */
+template <int Loop_Limit, int I, int I_Limit>
+struct SqrtExtractionFloatFirstLoop {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    c = static_cast<unsigned long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >> I));
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y) << I;
+    y += c;
+
+    SqrtExtractionFloatFirstLoop<Loop_Limit, (I - 2),
+                                 (I - 2 - Loop_Limit)>::execute(c, m, y, a);
+  }
+};
+
+template <int Loop_Limit, int I_Limit>
+struct SqrtExtractionFloatFirstLoop<Loop_Limit, -1, I_Limit> {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int Loop_Limit, int I>
+struct SqrtExtractionFloatFirstLoop<Loop_Limit, I, -1> {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int Loop_Limit>
+struct SqrtExtractionFloatFirstLoop<Loop_Limit, -1, -1> {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+template <int I> struct SqrtExtractionFloatSecondLoop {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    m <<= static_cast<int>(2);
+    c = static_cast<unsigned long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= m);
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y);
+    y += c;
+    SqrtExtractionFloatSecondLoop<I - 1>::execute(c, m, y, a);
+  }
+};
+
+template <> struct SqrtExtractionFloatSecondLoop<0> {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    m <<= static_cast<int>(2);
+    c = static_cast<unsigned long>(
+        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= m);
+    a = (a << static_cast<int>(1)) | c;
+    y = (y << static_cast<int>(1)) | c;
+    m -= (c * y);
+    y += c;
+  }
+};
+
+template <> struct SqrtExtractionFloatSecondLoop<-1> {
+  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
+                      unsigned long &a) {
+    static_cast<void>(c);
+    static_cast<void>(m);
+    static_cast<void>(y);
+    static_cast<void>(a);
+    // Base case: do nothing
+  }
+};
+
+/*************************************************
+ *  Function: sqrt_extraction_float
+ *  Detail: calculates sqrt with extraction of mantissa.
+ *  check the comment of double version.
+ **************************************************/
+template <int EXTRACTION_FLOAT_REPEAT_NUMBER>
+inline float sqrt_extraction_float(const float &value) {
+
+  float result = static_cast<float>(0);
+  unsigned short n = static_cast<short>(0); // n is the exponent of value
+  unsigned long m = static_cast<long>(0);   // m is the mantissa of value
+  unsigned long Temp = static_cast<long>(0);
+
+  unsigned long a = static_cast<unsigned long>(0);
+  unsigned long c = static_cast<unsigned long>(0);
+  unsigned long y = static_cast<unsigned long>(0);
+
+  std::memcpy(&Temp, &value, static_cast<std::size_t>(4));
+
+  // The exponent is 2 to the power of  (n - 128), and when the square root is
+  // taken, it becomes 2 to the power of (n/2 - 64).
+  // When n is odd
+  // The mantissa is (m + 2^23), and the exponent is (n - 1) / 2 + 63
+  // When n is even
+  // The mantissa is (m + 2^23) * 2, and the exponent is n / 2 + 63
+  // However, since 1 is added to the exponent due to the rounding up of the
+  // mantissa later, 62 is added here
+  n = static_cast<unsigned short>((
+      (static_cast<unsigned long>(0x7FFFFFFF) & Temp) >> static_cast<int>(23)));
+
+  m = (static_cast<unsigned long long>(0x800000) +
+       (static_cast<unsigned long long>(0x7FFFFF) & Temp))
+      << (static_cast<unsigned short>(1) & (~n));
+
+  // the exponent part to Temp
+  Temp = static_cast<unsigned long>(
+             (((n + static_cast<unsigned short>(
+                        (static_cast<unsigned short>(1) & n))) >>
+               static_cast<int>(1)) +
+              static_cast<unsigned short>(62)))
+         << static_cast<int>(23);
+
+  // Use the square root calculation to calculate the square root of m, which
+  // has been updated above. The resulting square root has the number of digits
+  // for the number of iterations.
+  SqrtExtractionFloatFirstLoop<
+      ((static_cast<int>(-2) * EXTRACTION_FLOAT_REPEAT_NUMBER -
+        static_cast<int>(2)) *
+       (EXTRACTION_FLOAT_REPEAT_NUMBER < static_cast<int>(-1))),
+      25,
+      (25 - ((static_cast<int>(-2) * EXTRACTION_FLOAT_REPEAT_NUMBER -
+              static_cast<int>(2)) *
+             (EXTRACTION_FLOAT_REPEAT_NUMBER <
+              static_cast<int>(-1))))>::execute(c, m, y, a);
+
+  y <<= static_cast<int>(1);
+
+  SqrtExtractionFloatSecondLoop<(
+      (EXTRACTION_FLOAT_REPEAT_NUMBER *
+       static_cast<int>(
+           (EXTRACTION_FLOAT_REPEAT_NUMBER >= static_cast<int>(0)))) +
+      static_cast<int>(-1) *
+          (static_cast<int>((EXTRACTION_FLOAT_REPEAT_NUMBER <
+                             static_cast<int>(0)))))>::execute(c, m, y, a);
+
+  // Round the least significant digit (1 carry up).
+  // Therefore, the above square root calculation is performed one more time.
+  // The smaller the number of iterations, the greater the left shift amount.
+  // Add the mantissa to Temp.
+  Temp += (((a + (static_cast<unsigned long>(1) & a)) >> 1)
+           << (static_cast<int>(12) - EXTRACTION_FLOAT_REPEAT_NUMBER));
+
+  std::memcpy(&result, &Temp, static_cast<std::size_t>(4));
+
+  return result;
+}
+
+/* rsqrt loop */
+template <typename T, int N> struct RsqrtNewtonLoop {
+  static void compute(T x_T, T &result) {
+    result *= static_cast<T>(1.5) - x_T * result * result;
+    RsqrtNewtonLoop<T, N - 1>::compute(x_T, result);
+  }
+};
+
+template <typename T> struct RsqrtNewtonLoop<T, 1> {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
   }
 };
 
-template <typename T> struct RsqrtBaseMathLoop<T, 0> {
+template <typename T> struct RsqrtNewtonLoop<T, 0> {
   static void compute(T x_T, T &result) {
     /* Do Nothing. */
     static_cast<void>(x_T);
@@ -120,7 +465,7 @@ template <typename T> struct RsqrtBaseMathLoop<T, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T rsqrt_base_math(const T &x, const T &division_min) {
+inline T rsqrt_newton_method(const T &x, const T &division_min) {
   T result = static_cast<T>(0);
 
   T x_wrapped = x;
@@ -134,9 +479,8 @@ inline T rsqrt_base_math(const T &x, const T &division_min) {
   T h = static_cast<T>(0);
   float r = 1.8284271F - 0.82842712F * frexpf(x_float, &e);
 
-  r = Base::Math::ldexp(
-      r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
-      -e >> 1);
+  r = ldexp(r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
+            -e >> 1);
 
   result = static_cast<T>(r);
 
@@ -144,8 +488,8 @@ inline T rsqrt_base_math(const T &x, const T &division_min) {
   result *= static_cast<T>(1.875) -
             h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
 
-  RsqrtBaseMathLoop<T, LOOP_NUMBER>::compute(x_wrapped * static_cast<T>(0.5),
-                                             result);
+  RsqrtNewtonLoop<T, LOOP_NUMBER>::compute(x_wrapped * static_cast<T>(0.5),
+                                           result);
 
   return result;
 }
@@ -161,12 +505,12 @@ template <typename T> inline T rsqrt(const T &x) {
   return Base::Math::fast_inverse_square_root(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 #else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::rsqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
+  return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::rsqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(
+  return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
@@ -175,7 +519,7 @@ template <typename T> inline T rsqrt(const T &x) {
 
 /* sqrt */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T sqrt_base_math(const T &x) {
+inline T sqrt_newton_method(const T &x) {
 
   T x_wrapped = x;
 
@@ -185,13 +529,13 @@ inline T sqrt_base_math(const T &x) {
   }
 
   return x_wrapped *
-         Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(
+         Base::Math::rsqrt_newton_method<T, LOOP_NUMBER>(
              x_wrapped,
              static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T sqrt_base_math(const T &x, const T &division_min) {
+inline T sqrt_newton_method(const T &x, const T &division_min) {
 
   T x_wrapped = x;
 
@@ -199,8 +543,8 @@ inline T sqrt_base_math(const T &x, const T &division_min) {
     x_wrapped = division_min;
   }
 
-  return x_wrapped *
-         Base::Math::rsqrt_base_math<T, LOOP_NUMBER>(x_wrapped, division_min);
+  return x_wrapped * Base::Math::rsqrt_newton_method<T, LOOP_NUMBER>(
+                         x_wrapped, division_min);
 }
 
 template <typename T> inline T fast_square_root(const T &input) {
@@ -229,11 +573,11 @@ template <typename T> inline T sqrt(const T &x) {
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
   return Base::Math::fast_square_root(x);
 #else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+  return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::sqrt_base_math<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+  return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
 
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
@@ -241,17 +585,18 @@ template <typename T> inline T sqrt(const T &x) {
 
 /* exp */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct ExpIterationLoop {
+struct ExpMcloughlinIterationLoop {
   static void compute(T &result, T &term, const T &remainder) {
     term *= remainder / static_cast<T>(LOOP_MAX - N);
     result += term;
 
-    ExpIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term, remainder);
+    ExpMcloughlinIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term,
+                                                            remainder);
   }
 };
 
 template <typename T, std::size_t LOOP_MAX>
-struct ExpIterationLoop<T, LOOP_MAX, 0> {
+struct ExpMcloughlinIterationLoop<T, LOOP_MAX, 0> {
   static void compute(T &result, T &term, const T &remainder) {
     /* Do Nothing. */
     static_cast<void>(result);
@@ -261,7 +606,7 @@ struct ExpIterationLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T exp_base_math(const T &x) {
+inline T exp_mcloughlin_expansion(const T &x) {
 
   T result = static_cast<T>(1);
 
@@ -275,10 +620,10 @@ inline T exp_base_math(const T &x) {
     T remainder = x - n * static_cast<T>(Base::Math::LN_2);
     T term = static_cast<T>(1);
 
-    ExpIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(result, term,
-                                                               remainder);
+    ExpMcloughlinIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
+        result, term, remainder);
 
-    result = Base::Math::ldexp(result, n);
+    result = ldexp(result, n);
   }
 
   return result;
@@ -289,24 +634,26 @@ template <typename T> inline T exp(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp(x);
 #else
-  return Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x);
+  return Base::Math::exp_mcloughlin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
 /* exp2 */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct Exp2IterationLoop {
+struct Exp2NewtonIterationLoop {
   static void compute(T &result, T &term, const T &remainder) {
     term *= static_cast<T>(Base::Math::LN_2) * remainder /
             static_cast<T>(LOOP_MAX - N);
     result += term;
 
-    Exp2IterationLoop<T, LOOP_MAX, N - 1>::compute(result, term, remainder);
+    Exp2NewtonIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term,
+                                                         remainder);
   }
 };
 
 template <typename T, std::size_t LOOP_MAX>
-struct Exp2IterationLoop<T, LOOP_MAX, 0> {
+struct Exp2NewtonIterationLoop<T, LOOP_MAX, 0> {
   static void compute(T &result, T &term, const T &remainder) {
     /* Do Nothing. */
     static_cast<void>(result);
@@ -316,7 +663,7 @@ struct Exp2IterationLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T exp2_base_math(const T &x) {
+inline T exp2_mcloughlin_expansion(const T &x) {
 
   T result = static_cast<T>(1);
 
@@ -331,10 +678,10 @@ inline T exp2_base_math(const T &x) {
 
     T term = static_cast<T>(1);
 
-    Exp2IterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(result, term,
-                                                                remainder);
+    Exp2NewtonIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
+        result, term, remainder);
 
-    result = Base::Math::ldexp(result, n);
+    result = ldexp(result, n);
   }
 
   return result;
@@ -345,21 +692,23 @@ template <typename T> inline T exp2(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp2(x);
 #else
-  return Base::Math::exp2_base_math<T, Base::Math::EXP2_REPEAT_NUMBER>(x);
+  return Base::Math::exp2_mcloughlin_expansion<T,
+                                               Base::Math::EXP2_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
 /* log */
-template <typename T, std::size_t N> struct LogIterationLoop {
+template <typename T, std::size_t N> struct LogNewtonIterationLoop {
   static void compute(T &exp_guess, T &guess, const T &scaled_x) {
-    exp_guess = std::exp(guess);
+    exp_guess = Base::Math::exp(guess);
     guess = guess - (exp_guess - scaled_x) / exp_guess;
 
-    LogIterationLoop<T, N - 1>::compute(exp_guess, guess, scaled_x);
+    LogNewtonIterationLoop<T, N - 1>::compute(exp_guess, guess, scaled_x);
   }
 };
 
-template <typename T> struct LogIterationLoop<T, 0> {
+template <typename T> struct LogNewtonIterationLoop<T, 0> {
   static void compute(T &exp_guess, T &guess, const T &scaled_x) {
     /* Do Nothing. */
     static_cast<void>(exp_guess);
@@ -369,7 +718,7 @@ template <typename T> struct LogIterationLoop<T, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T log_base_math(const T &x) {
+inline T log_newton_method(const T &x) {
   T result = static_cast<T>(0);
 
   if (x <= static_cast<T>(0)) {
@@ -396,7 +745,8 @@ inline T log_base_math(const T &x) {
     T guess = scaled_x - static_cast<T>(1);
     T exp_guess = static_cast<T>(0);
 
-    LogIterationLoop<T, LOOP_NUMBER - 1>::compute(exp_guess, guess, scaled_x);
+    LogNewtonIterationLoop<T, LOOP_NUMBER - 1>::compute(exp_guess, guess,
+                                                        scaled_x);
 
     result = guess + static_cast<T>(scale) *
                          static_cast<T>(Base::Math::LOG_OF_LOG_SCALE_FACTOR);
@@ -410,15 +760,15 @@ template <typename T> inline T log(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log(x);
 #else
-  return Base::Math::log_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
+  return Base::Math::log_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* log2 */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T log2_base_math(const T &x) {
+inline T log2_newton_method(const T &x) {
 
-  return Base::Math::log_base_math<T, LOOP_NUMBER>(x) /
+  return Base::Math::log_newton_method<T, LOOP_NUMBER>(x) /
          static_cast<T>(Base::Math::LN_2);
 }
 
@@ -427,15 +777,15 @@ template <typename T> inline T log2(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log2(x);
 #else
-  return Base::Math::log2_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
+  return Base::Math::log2_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* log10 */
 template <typename T, std::size_t LOOP_NUMBER>
-inline T log10_base_math(const T &x) {
+inline T log10_newton_method(const T &x) {
 
-  return Base::Math::log_base_math<T, LOOP_NUMBER>(x) /
+  return Base::Math::log_newton_method<T, LOOP_NUMBER>(x) /
          static_cast<T>(Base::Math::LN_10);
 }
 
@@ -444,15 +794,15 @@ template <typename T> inline T log10(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log10(x);
 #else
-  return Base::Math::log10_base_math<T, Base::Math::LOG_REPEAT_NUMBER>(x);
+  return Base::Math::log10_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 #endif
 }
 
 /* pow */
 template <typename T, std::size_t EXP_LOOP_NUMBER, std::size_t LOG_LOOP_NUMBER>
 inline T pow_base_math(const T &x, const T &y) {
-  return Base::Math::exp_base_math<T, EXP_LOOP_NUMBER>(
-      y * Base::Math::log_base_math<T, LOG_LOOP_NUMBER>(x));
+  return Base::Math::exp_mcloughlin_expansion<T, EXP_LOOP_NUMBER>(
+      y * Base::Math::log_newton_method<T, LOG_LOOP_NUMBER>(x));
 }
 
 template <typename T> inline T pow(const T &x, const T &y) {
