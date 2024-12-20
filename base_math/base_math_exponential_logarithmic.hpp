@@ -4,6 +4,7 @@
 #include "base_math_arithmetic.hpp"
 #include "base_math_macros.hpp"
 #include "base_math_mathematical_constants.hpp"
+#include "base_math_templates.hpp"
 
 #include <cmath>
 #include <cstddef>
@@ -659,10 +660,12 @@ template <typename T> inline T exp(const T &x) {
 }
 
 /* exp Mcloughlin Expansion with table */
+template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 double exp_mcloughlin_expansion_with_table(double x) {
   double result = static_cast<double>(1);
 
-  // constexpr double waru[7] = {static_cast<double>(1.0 / (2 * 3 * 4 * 5 * 6)),
+  // constexpr double EXP_MCLOUGHLIN_FACTOR[7] = {static_cast<double>(1.0 / (2 *
+  // 3 * 4 * 5 * 6)),
   //                             static_cast<double>(1.0 / (2 * 3 * 4 * 5)),
   //                             static_cast<double>(1.0 / (2 * 3 * 4)),
   //                             static_cast<double>(1.0 / (2 * 3)),
@@ -670,9 +673,11 @@ double exp_mcloughlin_expansion_with_table(double x) {
   //                             static_cast<double>(1.0),
   //                             static_cast<double>(1.0)};
 
-  constexpr double waru[4] = {
-      static_cast<double>(1.0 / (2 * 3)), static_cast<double>(1.0 / 2),
-      static_cast<double>(1.0), static_cast<double>(1.0)};
+  using EXP_MCLOUGHLIN_FACTOR_List = typename MakeExpMcloughlinFactorList<
+      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::type;
+
+  constexpr auto EXP_MCLOUGHLIN_FACTOR =
+      Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_List{});
 
   if (x > static_cast<double>(Base::Math::EXP_INPUT_MAX)) {
     result = static_cast<double>(Base::Math::EXP_OUTPUT_MAX);
@@ -703,8 +708,10 @@ double exp_mcloughlin_expansion_with_table(double x) {
     std::memcpy(&z, &w, static_cast<int>(8));
 
     // for (int i = 0; i < static_cast<int>(7); ++i) {
-    for (int i = static_cast<int>(0); i < static_cast<int>(4); ++i) {
-      y = y * r + waru[i];
+    for (int i = static_cast<int>(0);
+         i < static_cast<int>(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER); ++i) {
+      y = y * r +
+          EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - i - 1];
     }
 
     result = y * z;
