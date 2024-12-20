@@ -407,8 +407,8 @@ template <typename T> inline T acos(const T &x) {
 /* sinh */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sinh_base_math(const T &x) {
-  return (Base::Math::exp_base_math<T, LOOP_NUMBER>(x) -
-          Base::Math::exp_base_math<T, LOOP_NUMBER>(-x)) *
+  return (Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(x) -
+          Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(-x)) *
          static_cast<T>(0.5);
 }
 
@@ -424,8 +424,8 @@ template <typename T> inline T sinh(const T &x) {
 /* cosh */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T cosh_base_math(const T &x) {
-  return (Base::Math::exp_base_math<T, LOOP_NUMBER>(x) +
-          Base::Math::exp_base_math<T, LOOP_NUMBER>(-x)) *
+  return (Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(x) +
+          Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(-x)) *
          static_cast<T>(0.5);
 }
 
@@ -442,8 +442,8 @@ template <typename T> inline T cosh(const T &x) {
 template <typename T, std::size_t LOOP_NUMBER>
 inline T tanh_base_math(const T &x) {
 
-  T a = Base::Math::exp_base_math<T, LOOP_NUMBER>(x);
-  T b = Base::Math::exp_base_math<T, LOOP_NUMBER>(-x);
+  T a = Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(x);
+  T b = Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(-x);
 
   return (a - b) / Base::Utility::avoid_zero_divide(
                        a + b, static_cast<T>(TRIGONOMETRIC_DIVISION_MIN));

@@ -419,17 +419,18 @@ template <typename T> inline T sqrt(const T &x) {
 
 /* exp */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct ExpIterationLoop {
+struct ExpMcloughlinIterationLoop {
   static void compute(T &result, T &term, const T &remainder) {
     term *= remainder / static_cast<T>(LOOP_MAX - N);
     result += term;
 
-    ExpIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term, remainder);
+    ExpMcloughlinIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term,
+                                                            remainder);
   }
 };
 
 template <typename T, std::size_t LOOP_MAX>
-struct ExpIterationLoop<T, LOOP_MAX, 0> {
+struct ExpMcloughlinIterationLoop<T, LOOP_MAX, 0> {
   static void compute(T &result, T &term, const T &remainder) {
     /* Do Nothing. */
     static_cast<void>(result);
@@ -439,7 +440,7 @@ struct ExpIterationLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T exp_base_math(const T &x) {
+inline T exp_mcloughlin_expansion(const T &x) {
 
   T result = static_cast<T>(1);
 
@@ -453,8 +454,8 @@ inline T exp_base_math(const T &x) {
     T remainder = x - n * static_cast<T>(Base::Math::LN_2);
     T term = static_cast<T>(1);
 
-    ExpIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(result, term,
-                                                               remainder);
+    ExpMcloughlinIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
+        result, term, remainder);
 
     result = ldexp(result, n);
   }
@@ -467,7 +468,8 @@ template <typename T> inline T exp(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp(x);
 #else
-  return Base::Math::exp_base_math<T, Base::Math::EXP_REPEAT_NUMBER>(x);
+  return Base::Math::exp_mcloughlin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
+      x);
 #endif
 }
 
@@ -629,7 +631,7 @@ template <typename T> inline T log10(const T &x) {
 /* pow */
 template <typename T, std::size_t EXP_LOOP_NUMBER, std::size_t LOG_LOOP_NUMBER>
 inline T pow_base_math(const T &x, const T &y) {
-  return Base::Math::exp_base_math<T, EXP_LOOP_NUMBER>(
+  return Base::Math::exp_mcloughlin_expansion<T, EXP_LOOP_NUMBER>(
       y * Base::Math::log_base_math<T, LOG_LOOP_NUMBER>(x));
 }
 
