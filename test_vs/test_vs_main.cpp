@@ -2396,7 +2396,7 @@ int main() {
     using namespace Base::Math;
 
 
-    using MyList = MakeIntList<5>::type;
+    using MyList = MakeExpMcloughlinFactorList<7>::type;
 
     constexpr auto a = toArray(MyList{});
 

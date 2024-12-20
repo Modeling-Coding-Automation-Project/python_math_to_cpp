@@ -6,30 +6,36 @@
 namespace Base {
 namespace Math {
 
-template <int... Values> struct IntList {};
+template <std::size_t... Values> struct DoubleValueList {};
 
-template <int N, typename List> struct Append;
+template <std::size_t N, typename List> struct Append;
 
-template <int N, int... Values> struct Append<N, IntList<Values...>> {
-  using type = IntList<Values..., N>;
+template <std::size_t N, std::size_t... Values>
+struct Append<N, DoubleValueList<Values...>> {
+  using type = DoubleValueList<Values..., N>;
 };
 
-template <int N> struct MakeIntList {
-  using type = typename Append<N, typename MakeIntList<N - 1>::type>::type;
+template <std::size_t N> struct Factorial {
+  static constexpr std::size_t value = N * Factorial<N - 1>::value;
 };
 
-template <> struct MakeIntList<0> {
-  using type = IntList<0>;
+template <> struct Factorial<0> {
+  static constexpr std::size_t value = static_cast<std::size_t>(1);
 };
 
-template <int... Values> void printList(IntList<Values...>) {
-  int arr[] = {(std::cout << Values << " ", 0)...};
-  (void)arr;
-  std::cout << std::endl;
-}
+template <std::size_t N> struct MakeExpMcloughlinFactorList {
+  using type =
+      typename Append<Factorial<(N - 1)>::value,
+                      typename MakeExpMcloughlinFactorList<N - 1>::type>::type;
+};
 
-template <int... Values>
-constexpr std::array<double, sizeof...(Values)> toArray(IntList<Values...>) {
+template <> struct MakeExpMcloughlinFactorList<1> {
+  using type = DoubleValueList<Factorial<1>::value>;
+};
+
+template <std::size_t... Values>
+constexpr std::array<double, sizeof...(Values)>
+toArray(DoubleValueList<Values...>) {
   return {static_cast<double>(Values)...};
 }
 
