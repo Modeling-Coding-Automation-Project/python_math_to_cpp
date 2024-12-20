@@ -30,6 +30,9 @@ constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
 constexpr std::size_t EXP_REPEAT_NUMBER = 9;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
+
+constexpr int SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER = -7;
+constexpr int SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER = 8;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 constexpr std::size_t SQRT_REPEAT_NUMBER_MOSTLY_ACCURATE = 2;
