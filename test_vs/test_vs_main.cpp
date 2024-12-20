@@ -101,6 +101,27 @@ void check_base_math_exponential_logarithmic(void) {
     }
 
     /* sqrt extraction double */
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+    for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
+        T sqrt_value = static_cast<T>(0);
+        T sqrt_answer = static_cast<T>(0);
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            sqrt_value = static_cast<T>(
+                Base::Math::sqrt_extraction_double<Base::Math::SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER>(
+                    static_cast<double>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)));
+            sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+        }
+        else {
+            sqrt_value = static_cast<T>(
+                Base::Math::sqrt_extraction_double<Base::Math::SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER>(
+                    static_cast<double>(test_values_sqrt[i])));
+            sqrt_answer = std::sqrt(test_values_sqrt[i]);
+        }
+
+        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_SOFT * std::abs(sqrt_answer),
+            "check sqrt extraction double.");
+    }
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
         T sqrt_value = static_cast<T>(0);
         T sqrt_answer = static_cast<T>(0);
@@ -120,8 +141,30 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
             "check sqrt extraction double.");
     }
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
     /* sqrt extraction double */
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+    for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
+        T sqrt_value = static_cast<T>(0);
+        T sqrt_answer = static_cast<T>(0);
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            sqrt_value = static_cast<T>(
+                Base::Math::sqrt_extraction_float<Base::Math::SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER>(
+                    static_cast<float>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)));
+            sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+        }
+        else {
+            sqrt_value = static_cast<T>(
+                Base::Math::sqrt_extraction_float<Base::Math::SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER>(
+                    static_cast<float>(test_values_sqrt[i])));
+            sqrt_answer = std::sqrt(test_values_sqrt[i]);
+        }
+
+        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_SOFT * std::abs(sqrt_answer),
+            "check sqrt extraction float.");
+    }
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
         T sqrt_value = static_cast<T>(0);
         T sqrt_answer = static_cast<T>(0);
@@ -141,6 +184,7 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
             "check sqrt extraction float.");
     }
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 
     std::vector<T> test_values_exp({
