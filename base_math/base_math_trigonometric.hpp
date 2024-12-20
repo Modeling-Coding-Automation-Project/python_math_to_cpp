@@ -1,9 +1,10 @@
 #ifndef BASE_MATH_TRIGONOMETRIC_HPP
 #define BASE_MATH_TRIGONOMETRIC_HPP
 
+#include "base_math_macros.hpp"
+
 #include "base_math_arithmetic.hpp"
 #include "base_math_exponential_logarithmic.hpp"
-#include "base_math_macros.hpp"
 #include "base_math_mathematical_constants.hpp"
 #include "base_utility.hpp"
 

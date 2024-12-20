@@ -2,6 +2,7 @@
 #define BASE_MATH_ARITHMETIC_HPP
 
 #include "base_math_macros.hpp"
+
 #include "base_math_mathematical_constants.hpp"
 
 #include <cstddef>
