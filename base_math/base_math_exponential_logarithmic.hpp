@@ -475,18 +475,19 @@ template <typename T> inline T exp(const T &x) {
 
 /* exp2 */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct Exp2IterationLoop {
+struct Exp2NewtonIterationLoop {
   static void compute(T &result, T &term, const T &remainder) {
     term *= static_cast<T>(Base::Math::LN_2) * remainder /
             static_cast<T>(LOOP_MAX - N);
     result += term;
 
-    Exp2IterationLoop<T, LOOP_MAX, N - 1>::compute(result, term, remainder);
+    Exp2NewtonIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term,
+                                                         remainder);
   }
 };
 
 template <typename T, std::size_t LOOP_MAX>
-struct Exp2IterationLoop<T, LOOP_MAX, 0> {
+struct Exp2NewtonIterationLoop<T, LOOP_MAX, 0> {
   static void compute(T &result, T &term, const T &remainder) {
     /* Do Nothing. */
     static_cast<void>(result);
@@ -496,7 +497,7 @@ struct Exp2IterationLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T exp2_base_math(const T &x) {
+inline T exp2_newton_method(const T &x) {
 
   T result = static_cast<T>(1);
 
@@ -511,8 +512,8 @@ inline T exp2_base_math(const T &x) {
 
     T term = static_cast<T>(1);
 
-    Exp2IterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(result, term,
-                                                                remainder);
+    Exp2NewtonIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
+        result, term, remainder);
 
     result = ldexp(result, n);
   }
@@ -525,7 +526,7 @@ template <typename T> inline T exp2(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp2(x);
 #else
-  return Base::Math::exp2_base_math<T, Base::Math::EXP2_REPEAT_NUMBER>(x);
+  return Base::Math::exp2_newton_method<T, Base::Math::EXP2_REPEAT_NUMBER>(x);
 #endif
 }
 
