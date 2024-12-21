@@ -681,8 +681,13 @@ template <typename T> struct ExpMcLoughlinExpansionLoop<T, 0> {
   }
 };
 
+/*************************************************
+ *  Function: exp_double_mcloughlin_expansion_with_table
+ *  Detail: calculates exp with mcloughlin expansion and table.
+ *  Fast but it depends on the IEEE 754 standard.
+ **************************************************/
 template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
-double exp_mcloughlin_expansion_with_table(double x) {
+inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
   double result = static_cast<double>(1);
 
   if (x > static_cast<double>(Base::Math::EXP_INPUT_MAX)) {
@@ -714,6 +719,52 @@ double exp_mcloughlin_expansion_with_table(double x) {
     std::memcpy(&z, &w, static_cast<int>(8));
 
     ExpMcLoughlinExpansionLoop<double,
+                               MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                            r);
+
+    result = y * z;
+  }
+
+  return result;
+}
+
+/*************************************************
+ *  Function: exp_float_mcloughlin_expansion_with_table
+ *  Detail: calculates exp with mcloughlin expansion and table.
+ *  Fast but it depends on the IEEE 754 standard.
+ **************************************************/
+template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
+  float result = static_cast<float>(1);
+
+  if (x > static_cast<float>(Base::Math::EXP_INPUT_MAX)) {
+    result = static_cast<float>(Base::Math::EXP_OUTPUT_MAX);
+  } else if (x < static_cast<float>(Base::Math::EXP_INPUT_MIN)) {
+    result = static_cast<float>(Base::Math::EXP_OUTPUT_MIN);
+  } else {
+
+    float y =
+        Base::Math::EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1];
+
+    float z = static_cast<float>(0);
+    float r = static_cast<float>(0);
+    int q = static_cast<int>(0);
+    unsigned long w = static_cast<unsigned long>(0);
+
+    z = x * (static_cast<float>(16) / static_cast<float>(Base::Math::LN_2));
+    q = static_cast<int>(z) - (x < static_cast<float>(0));
+    r = x - ((q << static_cast<int>(1)) + static_cast<int>(1)) *
+                (static_cast<float>(Base::Math::LN_2) / static_cast<float>(32));
+    w = static_cast<unsigned long>(static_cast<int>(1023) +
+                                   static_cast<int>(q >> 4))
+            << static_cast<int>(23) ^
+        static_cast<unsigned long>(
+            Base::Math::TABLE_FOR_EXP_float[q & static_cast<int>(0xF)]);
+
+    std::memcpy(&z, &w, static_cast<int>(4));
+
+    ExpMcLoughlinExpansionLoop<float,
                                MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y,
                                                                             r);
 

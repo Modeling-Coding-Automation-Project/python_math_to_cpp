@@ -260,7 +260,7 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* exp Mcloughlin Expansion with table */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
-        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<4>(test_values_exp[i]);
+        T exp_value = Base::Math::exp_double_mcloughlin_expansion_with_table<4>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
             exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
