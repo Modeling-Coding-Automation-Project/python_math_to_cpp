@@ -793,6 +793,29 @@ inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
   return result;
 }
 
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+typename std::enable_if<std::is_same<T, double>::value, T>::type
+exp_FP_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::exp_double_mcloughlin_expansion_with_table<
+      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+}
+
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+typename std::enable_if<std::is_same<T, float>::value, T>::type
+exp_FP_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::exp_float_mcloughlin_expansion_with_table<
+      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+}
+
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline T exp_mcloughlin_expansion_with_table(const T &x) {
+
+  return exp_FP_mcloughlin_expansion_with_table<
+      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+}
+
 /* exp2 */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
 struct Exp2NewtonIterationLoop {
