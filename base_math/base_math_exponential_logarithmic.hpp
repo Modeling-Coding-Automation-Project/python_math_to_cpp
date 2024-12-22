@@ -21,16 +21,14 @@ constexpr std::size_t EXP_REPEAT_NUMBER = 5;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
 constexpr std::size_t LOG_REPEAT_NUMBER = 6;
 
-constexpr int SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER = -21;
-constexpr int SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER = -6;
+constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 6;
 #else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
 constexpr std::size_t EXP_REPEAT_NUMBER = 9;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 
-constexpr int SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER = -7;
-constexpr int SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER = 8;
+constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 19;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 constexpr std::size_t SQRT_REPEAT_NUMBER_MOSTLY_ACCURATE = 2;
@@ -238,11 +236,11 @@ template <> struct SqrtExtractionDoubleSecondLoop<-1> {
  *  Function: sqrt_extraction_double
  *  Detail: calculates sqrt with extraction of mantissa.
  *  Input value depends on the IEEE 754 standard.
- *  When In_r is specified as the maximum 26,
+ *  When REPEAT_NUMBER is specified as the maximum 26,
  *  it completely matches math.h's sqrt().
- *  When In_r is 0, the error is within 8.0e^-7 [%].
- *  When In_r is -10, the error is within 8.0e^-3 [%].
- *  When In_r is -20, the error is within 8 [%].
+ *  When REPEAT_NUMBER is 0, the error is within 8.0e^-7 [%].
+ *  When REPEAT_NUMBER is -10, the error is within 8.0e^-3 [%].
+ *  When REPEAT_NUMBER is -20, the error is within 8 [%].
  *  At -26, since almost no calculation is performed, the error is very large.
  **************************************************/
 template <int EXTRACTION_DOUBLE_REPEAT_NUMBER>
@@ -487,7 +485,30 @@ inline float sqrt_extraction_float(const float &value) {
   return result;
 }
 
-/* rsqrt loop */
+/* sqrt extraction */
+template <typename T, int EXTRACTION_FP_REPEAT_NUMBER>
+typename std::enable_if<std::is_same<T, double>::value, T>::type
+sqrt_extraction_FP(const T &x) {
+
+  return Base::Math::sqrt_extraction_double<
+      static_cast<int>(EXTRACTION_FP_REPEAT_NUMBER) - static_cast<int>(26)>(x);
+}
+
+template <typename T, int EXTRACTION_FP_REPEAT_NUMBER>
+typename std::enable_if<std::is_same<T, float>::value, T>::type
+sqrt_extraction_FP(const T &x) {
+
+  return Base::Math::sqrt_extraction_float<
+      static_cast<int>(EXTRACTION_FP_REPEAT_NUMBER) - static_cast<int>(12)>(x);
+}
+
+template <typename T, int EXTRACTION_FP_REPEAT_NUMBER>
+inline T sqrt_extraction(const T &x) {
+
+  return Base::Math::sqrt_extraction_FP<T, EXTRACTION_FP_REPEAT_NUMBER>(x);
+}
+
+/* rsqrt newton method loop */
 template <typename T, int N> struct RsqrtNewtonLoop {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
@@ -509,6 +530,7 @@ template <typename T> struct RsqrtNewtonLoop<T, 0> {
   }
 };
 
+/* rsqrt newton method */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T rsqrt_newton_method(const T &x, const T &division_min) {
   T result = static_cast<T>(0);
