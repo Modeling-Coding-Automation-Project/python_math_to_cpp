@@ -66,6 +66,25 @@ constexpr unsigned long long TABLE_FOR_EXP_DOUBLE[16] = {
     0xF50765B6E4540ull, // 2^( 31 /32)-1
 };
 
+constexpr unsigned long TABLE_FOR_EXP_FLOAT[16] = {
+    0x02CD86ul, // 2^( 1 /32)-1
+    0x08980Eul, // 2^( 3 /32)-1
+    0x0EA439ul, // 2^( 5 /32)-1
+    0x14F4EFul, // 2^( 7 /32)-1
+    0x1B8D39ul, // 2^( 9 /32)-1
+    0x227043ul, // 2^( 11 /32)-1
+    0x29A15Aul, // 2^( 13 /32)-1
+    0x3123F5ul, // 2^( 15 /32)-1
+    0x38FBAFul, // 2^( 17 /32)-1
+    0x412C4Cul, // 2^( 19 /32)-1
+    0x49B9BDul, // 2^( 21 /32)-1
+    0x52A81Dul, // 2^( 23 /32)-1
+    0x5BFBB7ul, // 2^( 25 /32)-1
+    0x65B906ul, // 2^( 27 /32)-1
+    0x6FE4B9ul, // 2^( 29 /32)-1
+    0x7A83B2ul, // 2^( 31 /32)-1
+};
+
 using EXP_MCLOUGHLIN_FACTOR_List =
     typename MakeExpMcloughlinFactorList<7>::type;
 
@@ -667,14 +686,14 @@ template <typename T> inline T exp(const T &x) {
 
 /* exp Mcloughlin Expansion with table */
 template <typename T, std::size_t N> struct ExpMcLoughlinExpansionLoop {
-  static void compute(double &y, double &r) {
-    y = y * r + Base::Math::EXP_MCLOUGHLIN_FACTOR[N - 1];
+  static void compute(T &y, T &r) {
+    y = y * r + static_cast<T>(Base::Math::EXP_MCLOUGHLIN_FACTOR[N - 1]);
     ExpMcLoughlinExpansionLoop<T, N - 1>::compute(y, r);
   }
 };
 
 template <typename T> struct ExpMcLoughlinExpansionLoop<T, 0> {
-  static void compute(double &y, double &r) {
+  static void compute(T &y, T &r) {
     static_cast<void>(y);
     static_cast<void>(r);
     // Do nothing
@@ -743,9 +762,9 @@ inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
     result = static_cast<float>(Base::Math::EXP_OUTPUT_MIN);
   } else {
 
-    float y =
+    float y = static_cast<float>(
         Base::Math::EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
-                                          1];
+                                          1]);
 
     float z = static_cast<float>(0);
     float r = static_cast<float>(0);
@@ -756,11 +775,11 @@ inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
     q = static_cast<int>(z) - (x < static_cast<float>(0));
     r = x - ((q << static_cast<int>(1)) + static_cast<int>(1)) *
                 (static_cast<float>(Base::Math::LN_2) / static_cast<float>(32));
-    w = static_cast<unsigned long>(static_cast<int>(1023) +
+    w = static_cast<unsigned long>(static_cast<int>(127) +
                                    static_cast<int>(q >> 4))
             << static_cast<int>(23) ^
         static_cast<unsigned long>(
-            Base::Math::TABLE_FOR_EXP_float[q & static_cast<int>(0xF)]);
+            Base::Math::TABLE_FOR_EXP_FLOAT[q & static_cast<int>(0xF)]);
 
     std::memcpy(&z, &w, static_cast<int>(4));
 
