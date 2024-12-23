@@ -931,7 +931,7 @@ double log_mucloughlin_expansion_with_table(const double &x) {
   } else {
 
     unsigned long long w = static_cast<unsigned long long>(0);
-    unsigned long long kasuu16 = static_cast<unsigned long long>(0);
+    unsigned long long mantissa16 = static_cast<unsigned long long>(0);
     int q = static_cast<int>(0);
     double y = static_cast<double>(0);
     double h = static_cast<double>(0);
@@ -943,24 +943,23 @@ double log_mucloughlin_expansion_with_table(const double &x) {
           static_cast<unsigned long long>(0x1F)) +
          static_cast<unsigned long long>(1)) >>
         static_cast<int>(1);
-    kasuu16 = (w & static_cast<unsigned long long>(0xFFFFFFFFFFFFF)) ^
-              static_cast<unsigned long long>(
-                  0x4030000000000000); // mantissa*16  16<=kasuu16<32
+    mantissa16 = (w & static_cast<unsigned long long>(0xFFFFFFFFFFFFF)) ^
+                 static_cast<unsigned long long>(
+                     0x4030000000000000); // mantissa*16  16<=mantissa16<32
 
-    std::memcpy(&h, &kasuu16, static_cast<std::size_t>(8));
+    std::memcpy(&h, &mantissa16, static_cast<std::size_t>(8));
 
     z = static_cast<double>(q + static_cast<int>(16));
     h = (h - z) / (h + z);
     z = h * h;
-    y = (2.0 / 9.0) * z + 2.0 / 7.0;
-    y = y * z + 2.0 / 5.0;
-    y = y * z + 2.0 / 3.0;
-    y = y * z + 2.0;
+
+    y = static_cast<double>(1.5) * z + static_cast<double>(2);
     y = y * h;
-    result =
-        (static_cast<int>(w >> static_cast<int>(52)) - static_cast<int>(1023)) *
-            static_cast<double>(Base::Math::LN_2) +
-        static_cast<double>(Base::Math::TABLE_FOR_LOG_DOUBLE[q]) + y;
+
+    result = static_cast<double>(static_cast<int>(w >> static_cast<int>(52)) -
+                                 static_cast<int>(1023)) *
+                 static_cast<double>(Base::Math::LN_2) +
+             static_cast<double>(Base::Math::TABLE_FOR_LOG_DOUBLE[q]) + y;
   }
 
   return result;

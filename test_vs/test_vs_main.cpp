@@ -316,10 +316,10 @@ void check_base_math_exponential_logarithmic(void) {
     static_cast<T>(7.77777),
     static_cast<T>(10),
     static_cast<T>(50),
-    static_cast<T>(100),
+    static_cast<T>(111),
     static_cast<T>(500),
-    static_cast<T>(1000),
-    static_cast<T>(10000)
+    static_cast<T>(1020),
+    static_cast<T>(14350)
         });
 
     /* log */
