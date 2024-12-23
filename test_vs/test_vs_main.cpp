@@ -2355,11 +2355,11 @@ int main() {
 
     check_base_math_calc<double>();
 
-    //check_base_math_calc<float>();
+    check_base_math_calc<float>();
 
-    //check_python_math_calc<double>();
+    check_python_math_calc<double>();
 
-    //check_python_math_calc<float>();
+    check_python_math_calc<float>();
 
 
     return 0;

@@ -921,8 +921,12 @@ template <typename T> inline T exp2(const T &x) {
 }
 
 /* log mucloughlin expansion with table */
-
-double log_mucloughlin_expansion_with_table(const double &x) {
+/*************************************************
+ *  Function: log_double_mcloughlin_expansion_with_table
+ *  Detail: calculates log with mcloughlin expansion and table.
+ *  Fast but it depends on the IEEE 754 standard.
+ **************************************************/
+double log_double_mucloughlin_expansion_with_table(const double &x) {
 
   double result = static_cast<double>(0);
 
@@ -940,8 +944,8 @@ double log_mucloughlin_expansion_with_table(const double &x) {
     std::memcpy(&w, &x, static_cast<std::size_t>(8));
 
     q = ((static_cast<int>(w >> static_cast<int>(47)) &
-          static_cast<unsigned long long>(0x1F)) +
-         static_cast<unsigned long long>(1)) >>
+          static_cast<int>(0x1F)) +
+         static_cast<int>(1)) >>
         static_cast<int>(1);
     mantissa16 = (w & static_cast<unsigned long long>(0xFFFFFFFFFFFFF)) ^
                  static_cast<unsigned long long>(
@@ -963,6 +967,74 @@ double log_mucloughlin_expansion_with_table(const double &x) {
   }
 
   return result;
+}
+
+/*************************************************
+ *  Function: log_float_mcloughlin_expansion_with_table
+ *  Detail: calculates log with mcloughlin expansion and table.
+ *  Fast but it depends on the IEEE 754 standard.
+ **************************************************/
+float log_float_mucloughlin_expansion_with_table(const float &x) {
+
+  float result = static_cast<float>(0);
+
+  if (x <= static_cast<float>(0)) {
+    result = static_cast<float>(Base::Math::LOG_OUTPUT_MIN);
+  } else {
+
+    unsigned long w = static_cast<unsigned long>(0);
+    unsigned long mantissa16 = static_cast<unsigned long>(0);
+    int q = static_cast<int>(0);
+    float y = static_cast<float>(0);
+    float h = static_cast<float>(0);
+    float z = static_cast<float>(0);
+
+    std::memcpy(&w, &x, static_cast<std::size_t>(4));
+
+    q = ((static_cast<int>(w >> static_cast<int>(18)) &
+          static_cast<int>(0x1F)) +
+         static_cast<int>(1)) >>
+        static_cast<int>(1);
+    mantissa16 =
+        (w & static_cast<unsigned long>(0x7FFFFF)) ^
+        static_cast<unsigned long>(0x41800000); // mantissa*16 16<=mantissa16<32
+
+    std::memcpy(&h, &mantissa16, static_cast<std::size_t>(4));
+
+    z = static_cast<float>(q + static_cast<int>(16));
+    h = (h - z) / (h + z);
+    z = h * h;
+
+    y = static_cast<float>(1.5) * z + static_cast<float>(2);
+    y = y * h;
+
+    result = static_cast<float>(static_cast<int>(w >> static_cast<int>(23)) -
+                                static_cast<int>(127)) *
+                 static_cast<float>(Base::Math::LN_2) +
+             static_cast<float>(Base::Math::TABLE_FOR_LOG_DOUBLE[q]) + y;
+  }
+
+  return result;
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, double>::value, T>::type
+log_FloatingPoint_mucloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_double_mucloughlin_expansion_with_table(x);
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, float>::value, T>::type
+log_FloatingPoint_mucloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_float_mucloughlin_expansion_with_table(x);
+}
+
+template <typename T>
+inline T log_mucloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_FloatingPoint_mucloughlin_expansion_with_table<T>(x);
 }
 
 /* log newton method */
