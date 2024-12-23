@@ -949,7 +949,7 @@ double log_mucloughlin_expansion_with_table(const double &x) {
 
     std::memcpy(&h, &kasuu16, static_cast<std::size_t>(8));
 
-    z = (double)(q + static_cast<int>(16));
+    z = static_cast<double>(q + static_cast<int>(16));
     h = (h - z) / (h + z);
     z = h * h;
     y = (2.0 / 9.0) * z + 2.0 / 7.0;
