@@ -486,26 +486,29 @@ inline float sqrt_extraction_float(const float &value) {
 }
 
 /* sqrt extraction */
-template <typename T, int EXTRACTION_FP_REPEAT_NUMBER>
+template <typename T, int EXTRACTION_FloatingPoint_REPEAT_NUMBER>
 typename std::enable_if<std::is_same<T, double>::value, T>::type
-sqrt_extraction_FP(const T &x) {
+sqrt_extraction_FloatingPoint(const T &x) {
 
   return Base::Math::sqrt_extraction_double<
-      static_cast<int>(EXTRACTION_FP_REPEAT_NUMBER) - static_cast<int>(26)>(x);
+      static_cast<int>(EXTRACTION_FloatingPoint_REPEAT_NUMBER) -
+      static_cast<int>(26)>(x);
 }
 
-template <typename T, int EXTRACTION_FP_REPEAT_NUMBER>
+template <typename T, int EXTRACTION_FloatingPoint_REPEAT_NUMBER>
 typename std::enable_if<std::is_same<T, float>::value, T>::type
-sqrt_extraction_FP(const T &x) {
+sqrt_extraction_FloatingPoint(const T &x) {
 
   return Base::Math::sqrt_extraction_float<
-      static_cast<int>(EXTRACTION_FP_REPEAT_NUMBER) - static_cast<int>(12)>(x);
+      static_cast<int>(EXTRACTION_FloatingPoint_REPEAT_NUMBER) -
+      static_cast<int>(12)>(x);
 }
 
-template <typename T, int EXTRACTION_FP_REPEAT_NUMBER>
+template <typename T, int EXTRACTION_FloatingPoint_REPEAT_NUMBER>
 inline T sqrt_extraction(const T &x) {
 
-  return Base::Math::sqrt_extraction_FP<T, EXTRACTION_FP_REPEAT_NUMBER>(x);
+  return Base::Math::sqrt_extraction_FloatingPoint<
+      T, EXTRACTION_FloatingPoint_REPEAT_NUMBER>(x);
 }
 
 /* rsqrt newton method loop */
@@ -817,7 +820,7 @@ inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
 
 template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 typename std::enable_if<std::is_same<T, double>::value, T>::type
-exp_FP_mcloughlin_expansion_with_table(const T &x) {
+exp_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
 
   return Base::Math::exp_double_mcloughlin_expansion_with_table<
       MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
@@ -825,7 +828,7 @@ exp_FP_mcloughlin_expansion_with_table(const T &x) {
 
 template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 typename std::enable_if<std::is_same<T, float>::value, T>::type
-exp_FP_mcloughlin_expansion_with_table(const T &x) {
+exp_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
 
   return Base::Math::exp_float_mcloughlin_expansion_with_table<
       MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
@@ -834,7 +837,7 @@ exp_FP_mcloughlin_expansion_with_table(const T &x) {
 template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 inline T exp_mcloughlin_expansion_with_table(const T &x) {
 
-  return exp_FP_mcloughlin_expansion_with_table<
+  return exp_FloatingPoint_mcloughlin_expansion_with_table<
       T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
 }
 
