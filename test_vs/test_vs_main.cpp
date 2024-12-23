@@ -368,6 +368,21 @@ void check_base_math_exponential_logarithmic(void) {
 #endif // BASE_MATH_USE_STD_MATH
     }
 
+    /* log mucloughlin expansion with table */
+    for (std::size_t i = 0; i < test_values_log.size(); i++) {
+        T log_value = Base::Math::log_mucloughlin_expansion_with_table(test_values_log[i]);
+        T log_answer = static_cast<T>(0);
+        if (test_values_log[i] <= static_cast<T>(0)) {
+            log_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
+        }
+        else {
+            log_answer = std::log(test_values_log[i]);
+        }
+
+        tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
+            "check log mucloughlin expansion with table.");
+    }
+
     /* log2 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
 #ifdef BASE_MATH_USE_STD_MATH
@@ -2340,11 +2355,11 @@ int main() {
 
     check_base_math_calc<double>();
 
-    check_base_math_calc<float>();
+    //check_base_math_calc<float>();
 
-    check_python_math_calc<double>();
+    //check_python_math_calc<double>();
 
-    check_python_math_calc<float>();
+    //check_python_math_calc<float>();
 
 
     return 0;

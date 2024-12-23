@@ -89,6 +89,26 @@ using EXP_MCLOUGHLIN_FACTOR_List =
 constexpr auto EXP_MCLOUGHLIN_FACTOR =
     Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_List{});
 
+constexpr double TABLE_FOR_LOG_DOUBLE[17] = {
+    0.0,                      // log( 16 /16)
+    0.0606246218164348425806, // log( 17 /16)
+    0.1177830356563834545387, // log( 18 /16)
+    0.17185025692665922234,   // log( 19 /16)
+    0.2231435513142097557662, // log( 20 /16)
+    0.2719337154836417588316, // log( 21 /16)
+    0.3184537311185346158102, // log( 22 /16)
+    0.3629054936893684531378, // log( 23 /16)
+    0.405465108108164381978,  // log( 24 /16)
+    0.4462871026284195115325, // log( 25 /16)
+    0.4855078157817008078017, // log( 26 /16)
+    0.5232481437645478365168, // log( 27 /16)
+    0.5596157879354226862708, // log( 28 /16)
+    0.5947071077466927895143, // log( 29 /16)
+    0.6286086594223741377443, // log( 30 /16)
+    0.6613984822453650082602, // log( 31 /16)
+    0.6931471805599453094172, // log( 32 /16)
+};
+
 constexpr double LOG_OUTPUT_MIN = -1.0e20;
 constexpr double LOG_SCALE_FACTOR = 5.0;
 constexpr double LOG_OF_LOG_SCALE_FACTOR =
@@ -132,9 +152,9 @@ inline T fast_inverse_square_root(const T &input, const T &division_min) {
 
     x = static_cast<float>(input_wrapped) * static_cast<float>(0.5);
     y = static_cast<float>(input_wrapped);
-    std::memcpy(&i, &y, 4);
+    std::memcpy(&i, &y, static_cast<std::size_t>(4));
     i = static_cast<long>(0x5f3759df) - (i >> 1);
-    std::memcpy(&y, &i, 4);
+    std::memcpy(&y, &i, static_cast<std::size_t>(4));
     y = y * (static_cast<float>(1.5) - (x * y * y));
   }
 
@@ -754,8 +774,8 @@ inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
     r = x -
         ((q << static_cast<int>(1)) + static_cast<int>(1)) *
             (static_cast<double>(Base::Math::LN_2) / static_cast<double>(32));
-    w = static_cast<unsigned long long>(static_cast<int>(1023) +
-                                        static_cast<int>(q >> 4))
+    w = static_cast<unsigned long long>(
+            static_cast<int>(1023) + static_cast<int>(q >> static_cast<int>(4)))
             << static_cast<int>(52) ^
         static_cast<unsigned long long>(
             Base::Math::TABLE_FOR_EXP_DOUBLE[q & static_cast<int>(0xF)]);
@@ -801,12 +821,12 @@ inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
     r = x - ((q << static_cast<int>(1)) + static_cast<int>(1)) *
                 (static_cast<float>(Base::Math::LN_2) / static_cast<float>(32));
     w = static_cast<unsigned long>(static_cast<int>(127) +
-                                   static_cast<int>(q >> 4))
+                                   static_cast<int>(q >> static_cast<int>(4)))
             << static_cast<int>(23) ^
         static_cast<unsigned long>(
             Base::Math::TABLE_FOR_EXP_FLOAT[q & static_cast<int>(0xF)]);
 
-    std::memcpy(&z, &w, static_cast<int>(4));
+    std::memcpy(&z, &w, static_cast<std::size_t>(4));
 
     ExpMcLoughlinExpansionLoop<float,
                                MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y,
@@ -900,7 +920,53 @@ template <typename T> inline T exp2(const T &x) {
 #endif
 }
 
-/* log */
+/* log mucloughlin expansion with table */
+
+double log_mucloughlin_expansion_with_table(const double &x) {
+
+  double result = static_cast<double>(0);
+
+  if (x <= static_cast<double>(0)) {
+    result = static_cast<double>(Base::Math::LOG_OUTPUT_MIN);
+  } else {
+
+    unsigned long long w = static_cast<unsigned long long>(0);
+    unsigned long long kasuu16 = static_cast<unsigned long long>(0);
+    int q = static_cast<int>(0);
+    double y = static_cast<double>(0);
+    double h = static_cast<double>(0);
+    double z = static_cast<double>(0);
+
+    std::memcpy(&w, &x, static_cast<std::size_t>(8));
+
+    q = ((static_cast<int>(w >> static_cast<int>(47)) &
+          static_cast<unsigned long long>(0x1F)) +
+         static_cast<unsigned long long>(1)) >>
+        static_cast<int>(1);
+    kasuu16 = (w & static_cast<unsigned long long>(0xFFFFFFFFFFFFF)) ^
+              static_cast<unsigned long long>(
+                  0x4030000000000000); // mantissa*16  16<=kasuu16<32
+
+    std::memcpy(&h, &kasuu16, static_cast<std::size_t>(8));
+
+    z = (double)(q + static_cast<int>(16));
+    h = (h - z) / (h + z);
+    z = h * h;
+    y = (2.0 / 9.0) * z + 2.0 / 7.0;
+    y = y * z + 2.0 / 5.0;
+    y = y * z + 2.0 / 3.0;
+    y = y * z + 2.0;
+    y = y * h;
+    result =
+        (static_cast<int>(w >> static_cast<int>(52)) - static_cast<int>(1023)) *
+            static_cast<double>(Base::Math::LN_2) +
+        static_cast<double>(Base::Math::TABLE_FOR_LOG_DOUBLE[q]) + y;
+  }
+
+  return result;
+}
+
+/* log newton method */
 template <typename T, std::size_t N> struct LogNewtonIterationLoop {
   static void compute(T &exp_guess, T &guess, const T &scaled_x) {
     exp_guess = Base::Math::exp(guess);
