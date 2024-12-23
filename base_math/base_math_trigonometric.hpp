@@ -60,7 +60,33 @@ template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
   return result;
 }
 
-/* sin */
+/* cos mcloughlin expansion with DoubleAngleFormula */
+inline double
+cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
+
+  double x_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(x);
+
+  static double waru[5] = {1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10),
+                           -1.0 / (3 * 4 * 5 * 6 * 7 * 8),
+                           1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
+  double y, *p = waru;
+  int i;
+
+  x_wrapped = x_wrapped / 32.0;
+  x_wrapped = x_wrapped * x_wrapped;
+  y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 * 12);
+  do {
+    y = y * x_wrapped + (*p);
+    p++;
+  } while (p < waru + 5);
+  y = y * x_wrapped;
+  for (i = 0; i < 5; i++)
+    y = y * (4.0 - y);
+
+  return 1.0 - y / 2.0;
+}
+
+/* sin mcloughlin expansion */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
 struct SinMcloughlinLoop {
   static void compute(const T &x_squared, T &term, T &result) {
@@ -109,7 +135,7 @@ template <typename T> inline T sin(const T &x) {
 #endif
 }
 
-/* cos */
+/* cos mcloughlin expansion */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
 struct CosMcloughlinLoop {
   static void compute(const T &x_squared, T &term, T &result) {
@@ -158,7 +184,7 @@ template <typename T> inline T cos(const T &x) {
 #endif
 }
 
-/* tan */
+/* tan mcloughlin expansion */
 template <typename T, std::size_t SIN_LOOP_NUMBER, std::size_t COS_LOOP_NUMBER>
 inline T tan_mcloughlin_expansion(const T &x) {
 
@@ -178,7 +204,7 @@ template <typename T> inline T tan(const T &x) {
 #endif
 }
 
-/* atan */
+/* atan mcloughlin expansion */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T atan_mcloughlin_expansion(const T &x) {
 
@@ -216,6 +242,7 @@ inline T atan_mcloughlin_expansion(const T &x) {
   return result;
 }
 
+/* atan Chebyshev */
 template <typename T, int N> struct AtanChebyshevLoop {
   static T compute(const T &x_squared, const T &y) {
     return AtanChebyshevLoop<T, N - 1>::compute(

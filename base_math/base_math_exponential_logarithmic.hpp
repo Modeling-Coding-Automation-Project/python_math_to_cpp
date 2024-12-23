@@ -926,7 +926,7 @@ template <typename T> inline T exp2(const T &x) {
  *  Detail: calculates log with mcloughlin expansion and table.
  *  Fast but it depends on the IEEE 754 standard.
  **************************************************/
-double log_double_mucloughlin_expansion_with_table(const double &x) {
+inline double log_double_mucloughlin_expansion_with_table(const double &x) {
 
   double result = static_cast<double>(0);
 
@@ -974,7 +974,7 @@ double log_double_mucloughlin_expansion_with_table(const double &x) {
  *  Detail: calculates log with mcloughlin expansion and table.
  *  Fast but it depends on the IEEE 754 standard.
  **************************************************/
-float log_float_mucloughlin_expansion_with_table(const float &x) {
+inline float log_float_mucloughlin_expansion_with_table(const float &x) {
 
   float result = static_cast<float>(0);
 

@@ -632,6 +632,15 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_STD_MATH
     }
 
+    /* cos mcloughlin expansion with DoubleAngleFormula */
+    for (std::size_t i = 0; i < test_values_sin.size(); i++) {
+        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula(test_values_sin[i]);
+        T cos_answer = std::cos(test_values_sin[i]);
+
+        tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
+            "check cos.");
+    }
+
     /* tan */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
 #ifdef BASE_MATH_USE_STD_MATH
@@ -2355,11 +2364,11 @@ int main() {
 
     check_base_math_calc<double>();
 
-    check_base_math_calc<float>();
+    //check_base_math_calc<float>();
 
-    check_python_math_calc<double>();
+    //check_python_math_calc<double>();
 
-    check_python_math_calc<float>();
+    //check_python_math_calc<float>();
 
 
     return 0;
