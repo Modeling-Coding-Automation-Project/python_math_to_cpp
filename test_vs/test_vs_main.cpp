@@ -575,6 +575,7 @@ void check_base_math_trigonometric(void) {
         static_cast<T>(3 * Base::Math::PI / 2),
         static_cast<T>(2 * Base::Math::PI),
         static_cast<T>(-5 * Base::Math::PI / 4),
+        static_cast<T>(1),
         static_cast<T>(5 * Base::Math::PI / 4),
         static_cast<T>(-7 * Base::Math::PI / 4),
         static_cast<T>(7 * Base::Math::PI / 4),

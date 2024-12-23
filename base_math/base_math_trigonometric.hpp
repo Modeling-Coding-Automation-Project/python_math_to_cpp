@@ -66,21 +66,26 @@ cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
 
   double x_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(x);
 
-  static double waru[5] = {1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10),
-                           -1.0 / (3 * 4 * 5 * 6 * 7 * 8),
-                           1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
-  double y, *p = waru;
-  int i;
+  // static double waru[5] = {1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10),
+  //                          -1.0 / (3 * 4 * 5 * 6 * 7 * 8),
+  //                          1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
 
-  x_wrapped = x_wrapped / 32.0;
+  static double waru[3] = {1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
+
+  double y;
+
+  // x_wrapped = x_wrapped / 32.0;
+  x_wrapped = x_wrapped / 8.0;
   x_wrapped = x_wrapped * x_wrapped;
-  y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 * 12);
-  do {
-    y = y * x_wrapped + (*p);
-    p++;
-  } while (p < waru + 5);
+  // y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 * 12);
+  y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8);
+
+  for (int i = 0; i < 3; ++i) {
+    y = y * x_wrapped + waru[i];
+  }
+
   y = y * x_wrapped;
-  for (i = 0; i < 5; i++)
+  for (int i = 0; i < 3; i++)
     y = y * (4.0 - y);
 
   return 1.0 - y / 2.0;
