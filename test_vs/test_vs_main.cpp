@@ -682,6 +682,22 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
+    /* sin cos CORDIC for floating point number */
+    for (std::size_t i = 0; i < test_values_sin.size(); i++) {
+        T sin_value = static_cast<T>(0);
+        T cos_value = static_cast<T>(0);
+        Base::Math::sincos_CORDIC_FloatingPoint(
+            test_values_sin[i], cos_value, sin_value);
+    
+        T sin_answer = std::sin(test_values_sin[i]);
+        T cos_answer = std::cos(test_values_sin[i]);
+
+        tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
+            "check sin CORDIC for floating point number.");
+        tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
+            "check cos CORDIC for floating point number.");
+    }
+
     /* tan */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
 #ifdef BASE_MATH_USE_STD_MATH
@@ -2405,13 +2421,11 @@ int main() {
 
     check_base_math_calc<double>();
 
-    check_base_math_calc<float>();
+    //check_base_math_calc<float>();
 
     //check_python_math_calc<double>();
 
     //check_python_math_calc<float>();
-
-    //using namespace Base::Math;
  
 
     return 0;

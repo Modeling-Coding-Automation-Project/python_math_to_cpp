@@ -140,6 +140,46 @@ inline T cos_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
   return static_cast<T>(1) - y * static_cast<T>(0.5);
 }
 
+/* sin cos CORDIC for floating point number */
+inline void sincos_CORDIC_FloatingPoint(const double &theta, double &cos_value,
+                                        double &sin_value) {
+
+  double theta_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(theta);
+
+  static double waru[8] = {-1.0 / (3 * 4 * 5 * 6 * 7 * 8),
+                           -1.0 / (2 * 3 * 4 * 5 * 6 * 7),
+                           1.0 / (3 * 4 * 5 * 6),
+                           1.0 / (2 * 3 * 4 * 5),
+                           -1.0 / (3 * 4),
+                           -1.0 / (2 * 3),
+                           1.0,
+                           1.0};
+  double c = 1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10),
+         s = 1.0 / (2 * 3 * 4 * 5 * 6 * 7 * 8 * 9), *p = waru, z;
+  int i;
+
+  theta_wrapped = theta_wrapped / 32.0;
+  z = theta_wrapped * theta_wrapped;
+
+  do {
+    c = c * z + (*p);
+    p++;
+    s = s * z + (*p);
+    p++;
+  } while (p < waru + 8);
+
+  c = c * z;
+  s = s * theta_wrapped;
+
+  for (i = 0; i < 5; i++) {
+    s = s * (2.0 - c);
+    c = c * (4.0 - c);
+  }
+
+  cos_value = 1.0 - c / 2.0;
+  sin_value = s;
+}
+
 /* sin mcloughlin expansion */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
 struct SinMcloughlinLoop {
