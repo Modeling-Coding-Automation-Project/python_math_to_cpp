@@ -1168,7 +1168,7 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* tanh mcloughlin expansion */
+    /* tanh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
 #ifdef BASE_MATH_USE_STD_MATH
         T tanh_value = Base::Math::tanh(test_values_hyperbolic[i]);
@@ -1191,6 +1191,44 @@ void check_base_math_trigonometric(void) {
             "check tanh.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
+    }
+
+    /* tanh mcloughlin expansion */
+    for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T tanh_value = Base::Math::tanh_mcloughlin_expansion<
+            T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T tanh_answer = std::tanh(test_values_hyperbolic[i]);
+
+        tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_SOFT * std::abs(tanh_answer),
+            "check tanh mcloughlin expansion.");
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T tanh_value = Base::Math::tanh_mcloughlin_expansion<
+            T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T tanh_answer = std::tanh(test_values_hyperbolic[i]);
+
+        tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT * std::abs(tanh_answer),
+            "check tanh mcloughlin expansion.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+    }
+
+    /* tanh mcloughlin expansion with table */
+    for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T tanh_value = Base::Math::tanh_mcloughlin_expansion_with_table<
+            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T tanh_answer = std::tanh(test_values_hyperbolic[i]);
+
+        tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_SOFT * std::abs(tanh_answer),
+            "check tanh mcloughlin expansion with table.");
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T tanh_value = Base::Math::tanh_mcloughlin_expansion_with_table<
+            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T tanh_answer = std::tanh(test_values_hyperbolic[i]);
+
+        tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT * std::abs(tanh_answer),
+            "check tanh mcloughlin expansion with table.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
 
@@ -2560,9 +2598,9 @@ int main() {
 
     check_base_math_calc<float>();
 
-    //check_python_math_calc<double>();
+    check_python_math_calc<double>();
 
-    //check_python_math_calc<float>();
+    check_python_math_calc<float>();
  
 
     return 0;

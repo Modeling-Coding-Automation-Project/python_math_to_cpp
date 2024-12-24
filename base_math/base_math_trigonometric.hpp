@@ -645,6 +645,17 @@ template <typename T> inline T cosh(const T &x) {
 #endif
 }
 
+/* tanh mcloughlin expansion with table */
+template <typename T, std::size_t LOOP_NUMBER>
+inline T tanh_mcloughlin_expansion_with_table(const T &x) {
+
+  T a = Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(x);
+  T b = Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(-x);
+
+  return (a - b) / Base::Utility::avoid_zero_divide(
+                       a + b, static_cast<T>(TRIGONOMETRIC_DIVISION_MIN));
+}
+
 /* tanh mcloughlin expansion */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T tanh_mcloughlin_expansion(const T &x) {
