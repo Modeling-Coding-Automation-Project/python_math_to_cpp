@@ -149,33 +149,40 @@ inline T cos_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
 }
 
 /* sin cos Mcloughlin expansion with DoubleAngleFormula */
-inline void sincos_mcloughlin_expansion_with_DoubleAngle(const double &theta,
-                                                         double &cos_value,
-                                                         double &sin_value) {
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline void sincos_mcloughlin_expansion_with_DoubleAngle(const T &theta,
+                                                         T &cos_value,
+                                                         T &sin_value) {
 
-  double theta_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(theta);
+  T theta_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(theta);
 
-  double c = 1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10);
-  double s = 1.0 / (2 * 3 * 4 * 5 * 6 * 7 * 8 * 9);
-  double z;
+  T c = COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
+  T s = SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
+  T z;
 
-  theta_wrapped = theta_wrapped / 32.0;
+  theta_wrapped =
+      theta_wrapped /
+      static_cast<T>(Factorial_2<MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::value);
   z = theta_wrapped * theta_wrapped;
 
-  for (int i = 0; i < 4; i++) {
-    c = c * z + COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[4 - 1 - i];
-    s = s * z + SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[4 - 1 - i];
+  for (int i = 0; i < MCLOUGHLIN_EXPANSION_REPEAT_NUMBER; i++) {
+    c = c * z +
+        COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1 - i];
+    s = s * z +
+        SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1 - i];
   }
 
   c = c * z;
   s = s * theta_wrapped;
 
-  for (int i = 0; i < 5; i++) {
-    s = s * (2.0 - c);
-    c = c * (4.0 - c);
+  for (int i = 0; i < MCLOUGHLIN_EXPANSION_REPEAT_NUMBER; i++) {
+    s = s * (static_cast<T>(2) - c);
+    c = c * (static_cast<T>(4) - c);
   }
 
-  cos_value = 1.0 - c / 2.0;
+  cos_value = static_cast<T>(1) - c * static_cast<T>(0.5);
   sin_value = s;
 }
 

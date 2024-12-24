@@ -686,7 +686,7 @@ void check_base_math_trigonometric(void) {
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
         T sin_value = static_cast<T>(0);
         T cos_value = static_cast<T>(0);
-        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngle(
+        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngle<T, 4>(
             test_values_sin[i], cos_value, sin_value);
     
         T sin_answer = std::sin(test_values_sin[i]);
