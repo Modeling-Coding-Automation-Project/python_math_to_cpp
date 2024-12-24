@@ -83,8 +83,10 @@ constexpr unsigned long TABLE_FOR_EXP_FLOAT[16] = {
     0x7A83B2ul, // 2^( 31 /32)-1
 };
 
+constexpr std::size_t EXP_MCLOUGHLIN_FACTOR_MAX_SIZE = 7;
+
 using EXP_MCLOUGHLIN_FACTOR_LIST =
-    typename MakeExpMcloughlinFactorList<7>::type;
+    typename MakeExpMcloughlinFactorList<EXP_MCLOUGHLIN_FACTOR_MAX_SIZE>::type;
 
 constexpr auto EXP_MCLOUGHLIN_FACTOR =
     Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_LIST{});
@@ -752,6 +754,10 @@ template <typename T> struct ExpMcLoughlinExpansionLoop<T, 0> {
  **************************************************/
 template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
+  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <=
+                    Base::Math::EXP_MCLOUGHLIN_FACTOR_MAX_SIZE,
+                "The number of iterations is too large.");
+
   double result = static_cast<double>(1);
 
   if (x > static_cast<double>(Base::Math::EXP_INPUT_MAX)) {
