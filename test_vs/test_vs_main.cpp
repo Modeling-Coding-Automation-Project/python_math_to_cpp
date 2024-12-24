@@ -111,9 +111,8 @@ void check_base_math_exponential_logarithmic(void) {
             sqrt_answer = std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
         else {
-            sqrt_value = static_cast<T>(
-                Base::Math::sqrt_extraction<T, Base::Math::SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER>(
-                    test_values_sqrt[i]));
+            sqrt_value = Base::Math::sqrt_extraction<T, Base::Math::SQRT_EXTRACTION_REPEAT_NUMBER>(
+                    test_values_sqrt[i]);
             sqrt_answer = std::sqrt(test_values_sqrt[i]);
         }
 
@@ -214,6 +213,22 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* exp Mcloughlin Expansion with table double */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<T, 4>(test_values_exp[i]);
+        T exp_answer = static_cast<T>(0);
+        if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
+            exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
+        }
+        else if (test_values_exp[i] < static_cast<T>(Base::Math::EXP_INPUT_MIN)) {
+            exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MIN));
+        }
+        else {
+            exp_answer = std::exp(test_values_exp[i]);
+        }
+
+        tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_SOFT * std::abs(exp_answer)),
+            "check exp Mcloughlin Expansion with table.");
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<T, 4>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
@@ -228,6 +243,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT * std::abs(exp_answer)),
             "check exp Mcloughlin Expansion with table.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
 
@@ -370,6 +386,19 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* log mucloughlin expansion with table */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T log_value = Base::Math::log_mucloughlin_expansion_with_table(test_values_log[i]);
+        T log_answer = static_cast<T>(0);
+        if (test_values_log[i] <= static_cast<T>(0)) {
+            log_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
+        }
+        else {
+            log_answer = std::log(test_values_log[i]);
+        }
+
+        tester.expect_near(log_value, log_answer, NEAR_LIMIT_SOFT* std::abs(log_answer),
+            "check log mucloughlin expansion with table.");
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log_value = Base::Math::log_mucloughlin_expansion_with_table(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -381,6 +410,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
             "check log mucloughlin expansion with table.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
     /* log2 */
@@ -635,11 +665,21 @@ void check_base_math_trigonometric(void) {
 
     /* cos mcloughlin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<T, 3>(test_values_sin[i]);
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T cos_answer = std::cos(test_values_sin[i]);
+
+        tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_SOFT,
+            "check cos mcloughlin expansion with DoubleAngleFormula.");
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
             "check cos mcloughlin expansion with DoubleAngleFormula.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
     /* tan */

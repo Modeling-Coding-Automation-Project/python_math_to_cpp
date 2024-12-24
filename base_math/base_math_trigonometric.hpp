@@ -22,10 +22,16 @@ namespace Math {
 constexpr std::size_t SIN_REPEAT_NUMBER = 5;
 constexpr std::size_t COS_REPEAT_NUMBER = 6;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 3;
-#else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+
+constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 1;
+
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SIN_REPEAT_NUMBER = 8;
 constexpr std::size_t COS_REPEAT_NUMBER = 9;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 8;
+
+constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
+
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
