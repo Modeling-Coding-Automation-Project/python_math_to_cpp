@@ -153,12 +153,15 @@ template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 inline void sincos_mcloughlin_expansion_with_DoubleAngle(const T &theta,
                                                          T &cos_value,
                                                          T &sin_value) {
+  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <
+                    COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE,
+                "MCLOUGHLIN_EXPANSION_REPEAT_NUMBER is too large.");
 
   T theta_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(theta);
 
   T c = COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
   T s = SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
-  T z;
+  T z = static_cast<T>(0);
 
   theta_wrapped =
       theta_wrapped /
