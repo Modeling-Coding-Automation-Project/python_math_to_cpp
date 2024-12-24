@@ -635,7 +635,7 @@ void check_base_math_trigonometric(void) {
 
     /* cos mcloughlin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<5>(test_values_sin[i]);
+        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<3>(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,

@@ -78,23 +78,13 @@ cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
 
   double x_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(x);
 
-  // static double waru[5] = {1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10),
-  //                          -1.0 / (3 * 4 * 5 * 6 * 7 * 8),
-  //                          1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
-
-  // static double waru[3] = {1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
-
   double y;
-
-  // x_wrapped = x_wrapped / 32.0;
-  // x_wrapped = x_wrapped / 8.0;
 
   x_wrapped =
       x_wrapped / static_cast<double>(
                       Factorial_2<MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::value);
   x_wrapped = x_wrapped * x_wrapped;
-  // y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 * 12);
-  // y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8);
+
   y = COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
 
   for (int i = 0; i < MCLOUGHLIN_EXPANSION_REPEAT_NUMBER; ++i) {
@@ -107,7 +97,7 @@ cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
   for (int i = 0; i < MCLOUGHLIN_EXPANSION_REPEAT_NUMBER; i++)
     y = y * (4.0 - y);
 
-  return 1.0 - y / 2.0;
+  return static_cast<double>(1) - y * static_cast<double>(0.5);
 }
 
 /* sin mcloughlin expansion */
