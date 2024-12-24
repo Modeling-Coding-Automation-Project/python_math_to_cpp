@@ -805,6 +805,10 @@ inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
  **************************************************/
 template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
+  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <=
+                    Base::Math::EXP_MCLOUGHLIN_FACTOR_MAX_SIZE,
+                "The number of iterations is too large.");
+
   float result = static_cast<float>(1);
 
   if (x > static_cast<float>(Base::Math::EXP_INPUT_MAX)) {
