@@ -22,13 +22,18 @@ constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
 constexpr std::size_t LOG_REPEAT_NUMBER = 6;
 
 constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 6;
-#else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+constexpr std::size_t EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER = 1;
+
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
 constexpr std::size_t EXP_REPEAT_NUMBER = 9;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 
 constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 19;
+
+constexpr std::size_t EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER = 4;
+
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 constexpr std::size_t SQRT_REPEAT_NUMBER_MOSTLY_ACCURATE = 2;
@@ -930,13 +935,13 @@ template <typename T> inline T exp2(const T &x) {
 #endif
 }
 
-/* log mucloughlin expansion with table */
+/* log mcloughlin expansion with table */
 /*************************************************
  *  Function: log_double_mcloughlin_expansion_with_table
  *  Detail: calculates log with mcloughlin expansion and table.
  *  Fast but it depends on the IEEE 754 standard.
  **************************************************/
-inline double log_double_mucloughlin_expansion_with_table(const double &x) {
+inline double log_double_mcloughlin_expansion_with_table(const double &x) {
 
   double result = static_cast<double>(0);
 
@@ -984,7 +989,7 @@ inline double log_double_mucloughlin_expansion_with_table(const double &x) {
  *  Detail: calculates log with mcloughlin expansion and table.
  *  Fast but it depends on the IEEE 754 standard.
  **************************************************/
-inline float log_float_mucloughlin_expansion_with_table(const float &x) {
+inline float log_float_mcloughlin_expansion_with_table(const float &x) {
 
   float result = static_cast<float>(0);
 
@@ -1029,22 +1034,21 @@ inline float log_float_mucloughlin_expansion_with_table(const float &x) {
 
 template <typename T>
 typename std::enable_if<std::is_same<T, double>::value, T>::type
-log_FloatingPoint_mucloughlin_expansion_with_table(const T &x) {
+log_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
 
-  return Base::Math::log_double_mucloughlin_expansion_with_table(x);
+  return Base::Math::log_double_mcloughlin_expansion_with_table(x);
 }
 
 template <typename T>
 typename std::enable_if<std::is_same<T, float>::value, T>::type
-log_FloatingPoint_mucloughlin_expansion_with_table(const T &x) {
+log_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
 
-  return Base::Math::log_float_mucloughlin_expansion_with_table(x);
+  return Base::Math::log_float_mcloughlin_expansion_with_table(x);
 }
 
-template <typename T>
-inline T log_mucloughlin_expansion_with_table(const T &x) {
+template <typename T> inline T log_mcloughlin_expansion_with_table(const T &x) {
 
-  return Base::Math::log_FloatingPoint_mucloughlin_expansion_with_table<T>(x);
+  return Base::Math::log_FloatingPoint_mcloughlin_expansion_with_table<T>(x);
 }
 
 /* log newton method */

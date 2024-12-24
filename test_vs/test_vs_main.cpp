@@ -214,7 +214,8 @@ void check_base_math_exponential_logarithmic(void) {
     /* exp Mcloughlin Expansion with table double */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<T, 4>(test_values_exp[i]);
+        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<
+            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
             exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
@@ -229,7 +230,8 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_SOFT * std::abs(exp_answer)),
             "check exp Mcloughlin Expansion with table.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<T, 4>(test_values_exp[i]);
+        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<
+            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
             exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
@@ -384,10 +386,10 @@ void check_base_math_exponential_logarithmic(void) {
 #endif // BASE_MATH_USE_STD_MATH
     }
 
-    /* log mucloughlin expansion with table */
+    /* log mcloughlin expansion with table */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T log_value = Base::Math::log_mucloughlin_expansion_with_table(test_values_log[i]);
+        T log_value = Base::Math::log_mcloughlin_expansion_with_table(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
             log_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
@@ -397,9 +399,9 @@ void check_base_math_exponential_logarithmic(void) {
         }
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_SOFT* std::abs(log_answer),
-            "check log mucloughlin expansion with table.");
+            "check log mcloughlin expansion with table.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T log_value = Base::Math::log_mucloughlin_expansion_with_table(test_values_log[i]);
+        T log_value = Base::Math::log_mcloughlin_expansion_with_table(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
             log_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
@@ -409,7 +411,7 @@ void check_base_math_exponential_logarithmic(void) {
         }
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
-            "check log mucloughlin expansion with table.");
+            "check log mcloughlin expansion with table.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
