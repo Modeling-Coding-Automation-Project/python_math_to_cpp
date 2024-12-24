@@ -598,8 +598,19 @@ template <typename T> inline T rsqrt(const T &x) {
 #else
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::fast_inverse_square_root(
-      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+
+  T x_wrapped = x;
+
+  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+    x_wrapped =
+        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  }
+
+  return Base::Math::sqrt_extraction<T,
+                                     Base::Math::SQRT_EXTRACTION_REPEAT_NUMBER>(
+             x_wrapped) /
+         static_cast<T>(x_wrapped);
+
 #else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
   return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
@@ -661,18 +672,26 @@ template <typename T> inline T sqrt(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return std::sqrt(x);
 #else
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::fast_square_root(x);
-#else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  T x_wrapped = x;
+
+  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+    x_wrapped =
+        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  }
+
+  return Base::Math::sqrt_extraction<T,
+                                     Base::Math::SQRT_EXTRACTION_REPEAT_NUMBER>(
+      x_wrapped);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
-
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
 }
 
