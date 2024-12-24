@@ -684,11 +684,27 @@ void check_base_math_trigonometric(void) {
 
     /* sin cos CORDIC for floating point number */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sin_value = static_cast<T>(0);
         T cos_value = static_cast<T>(0);
-        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngle<T, 4>(
+        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngle<
+            T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(
             test_values_sin[i], cos_value, sin_value);
     
+        T sin_answer = std::sin(test_values_sin[i]);
+        T cos_answer = std::cos(test_values_sin[i]);
+
+        tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_SOFT,
+            "check sin CORDIC for floating point number.");
+        tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_SOFT,
+            "check cos CORDIC for floating point number.");
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T sin_value = static_cast<T>(0);
+        T cos_value = static_cast<T>(0);
+        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngle<
+            T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(
+                test_values_sin[i], cos_value, sin_value);
+
         T sin_answer = std::sin(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
@@ -696,6 +712,7 @@ void check_base_math_trigonometric(void) {
             "check sin CORDIC for floating point number.");
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
             "check cos CORDIC for floating point number.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
     /* tan */
