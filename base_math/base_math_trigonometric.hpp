@@ -69,6 +69,40 @@ template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
 }
 
 /* cos mcloughlin expansion with DoubleAngleFormula */
+template <std::size_t N, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+struct CosMcloughlinExpansionFirstLoop {
+  static void compute(double &y, double &x_wrapped) {
+    CosMcloughlinExpansionFirstLoop<
+        N - 1, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y, x_wrapped);
+    y = y * x_wrapped +
+        COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1 - N];
+  }
+};
+
+template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+struct CosMcloughlinExpansionFirstLoop<0, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER> {
+  static void compute(double &y, double &x_wrapped) {
+    y = y * x_wrapped +
+        COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1];
+  }
+};
+
+template <std::size_t N> struct CosMcloughlinExpansionSecondLoop {
+  static void compute(double &y) {
+    y = y * (static_cast<double>(4) - y);
+    CosMcloughlinExpansionSecondLoop<N - 1>::compute(y);
+  }
+};
+
+template <> struct CosMcloughlinExpansionSecondLoop<0> {
+  static void compute(double &y) {
+    static_cast<void>(y);
+    /* Do Nothing. */
+  }
+};
+
 template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 inline double
 cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
@@ -77,8 +111,7 @@ cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
                 "MCLOUGHLIN_EXPANSION_REPEAT_NUMBER is too large.");
 
   double x_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(x);
-
-  double y;
+  double y = static_cast<double>(0);
 
   x_wrapped =
       x_wrapped / static_cast<double>(
@@ -87,15 +120,14 @@ cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
 
   y = COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
 
-  for (int i = 0; i < MCLOUGHLIN_EXPANSION_REPEAT_NUMBER; ++i) {
-    y = y * x_wrapped +
-        COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
-                                          1 - i];
-  }
+  CosMcloughlinExpansionFirstLoop<
+      (MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1),
+      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y, x_wrapped);
 
   y = y * x_wrapped;
-  for (int i = 0; i < MCLOUGHLIN_EXPANSION_REPEAT_NUMBER; i++)
-    y = y * (4.0 - y);
+
+  CosMcloughlinExpansionSecondLoop<MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(
+      y);
 
   return static_cast<double>(1) - y * static_cast<double>(0.5);
 }
