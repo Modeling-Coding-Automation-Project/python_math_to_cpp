@@ -741,16 +741,6 @@ inline T exp_mcloughlin_expansion(const T &x) {
   return result;
 }
 
-template <typename T> inline T exp(const T &x) {
-
-#ifdef BASE_MATH_USE_STD_MATH
-  return std::exp(x);
-#else
-  return Base::Math::exp_mcloughlin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
-      x);
-#endif
-}
-
 /* exp Mcloughlin Expansion with table */
 template <typename T, std::size_t N> struct ExpMcLoughlinExpansionLoop {
   static void compute(T &y, T &r) {
@@ -889,6 +879,28 @@ inline T exp_mcloughlin_expansion_with_table(const T &x) {
 
   return exp_FloatingPoint_mcloughlin_expansion_with_table<
       T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+}
+
+/* exp */
+template <typename T> inline T exp(const T &x) {
+
+#ifdef BASE_MATH_USE_STD_MATH
+  return std::exp(x);
+#else
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return exp_mcloughlin_expansion_with_table<
+      T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(x);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return Base::Math::exp_mcloughlin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
+      x);
+
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
 /* exp2 */
