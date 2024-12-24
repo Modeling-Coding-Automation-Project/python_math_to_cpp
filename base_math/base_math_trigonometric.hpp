@@ -28,6 +28,14 @@ constexpr std::size_t COS_REPEAT_NUMBER = 9;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 8;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
+constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
+
+using COS_MCLOUGHLIN_FACTOR_LIST = typename MakeCosMcloughlinFactorList<
+    COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE>::type;
+
+constexpr auto COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR =
+    Base::Math::to_cos_mcloughlin_factor_array(COS_MCLOUGHLIN_FACTOR_LIST{});
+
 static constexpr double CHEBYSHEV_COEFFICIENT_FOR_ATAN[11] = {
     static_cast<double>(1.0),
     static_cast<double>(-0.3333333333333333),
@@ -61,8 +69,12 @@ template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
 }
 
 /* cos mcloughlin expansion with DoubleAngleFormula */
+template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
 inline double
 cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
+  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <
+                    COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE,
+                "MCLOUGHLIN_EXPANSION_REPEAT_NUMBER is too large.");
 
   double x_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(x);
 
@@ -70,22 +82,29 @@ cos_mcloughlin_expansion_with_DoubleAngleFormula(const double &x) {
   //                          -1.0 / (3 * 4 * 5 * 6 * 7 * 8),
   //                          1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
 
-  static double waru[3] = {1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
+  // static double waru[3] = {1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
 
   double y;
 
   // x_wrapped = x_wrapped / 32.0;
-  x_wrapped = x_wrapped / 8.0;
+  // x_wrapped = x_wrapped / 8.0;
+
+  x_wrapped =
+      x_wrapped / static_cast<double>(
+                      Factorial_2<MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::value);
   x_wrapped = x_wrapped * x_wrapped;
   // y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 * 12);
-  y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8);
+  // y = -1.0 / (3 * 4 * 5 * 6 * 7 * 8);
+  y = COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
 
-  for (int i = 0; i < 3; ++i) {
-    y = y * x_wrapped + waru[i];
+  for (int i = 0; i < MCLOUGHLIN_EXPANSION_REPEAT_NUMBER; ++i) {
+    y = y * x_wrapped +
+        COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1 - i];
   }
 
   y = y * x_wrapped;
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < MCLOUGHLIN_EXPANSION_REPEAT_NUMBER; i++)
     y = y * (4.0 - y);
 
   return 1.0 - y / 2.0;

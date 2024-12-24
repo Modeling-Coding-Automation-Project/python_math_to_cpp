@@ -635,11 +635,11 @@ void check_base_math_trigonometric(void) {
 
     /* cos mcloughlin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula(test_values_sin[i]);
+        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<5>(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
-            "check cos.");
+            "check cos mcloughlin expansion with DoubleAngleFormula.");
     }
 
     /* tan */
@@ -2371,6 +2371,17 @@ int main() {
 
     //check_python_math_calc<float>();
 
+    //using namespace Base::Math;
+
+
+    //using COS_MCLOUGHLIN_FACTOR_LIST =
+    //    typename MakeCosMcloughlinFactorList<5>::type;
+
+    //constexpr auto COS_MCLOUGHLIN_FACTOR =
+    //    Base::Math::to_cos_mcloughlin_factor_array(COS_MCLOUGHLIN_FACTOR_LIST{});
+
+    //constexpr std::size_t a = Factorial_2<1>::value;
+ 
 
     return 0;
 }

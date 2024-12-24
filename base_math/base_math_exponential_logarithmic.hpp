@@ -83,11 +83,11 @@ constexpr unsigned long TABLE_FOR_EXP_FLOAT[16] = {
     0x7A83B2ul, // 2^( 31 /32)-1
 };
 
-using EXP_MCLOUGHLIN_FACTOR_List =
+using EXP_MCLOUGHLIN_FACTOR_LIST =
     typename MakeExpMcloughlinFactorList<7>::type;
 
 constexpr auto EXP_MCLOUGHLIN_FACTOR =
-    Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_List{});
+    Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_LIST{});
 
 constexpr double TABLE_FOR_LOG_DOUBLE[17] = {
     0.0,                      // log( 16 /16)
