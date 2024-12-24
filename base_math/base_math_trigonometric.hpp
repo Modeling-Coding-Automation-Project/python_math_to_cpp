@@ -192,9 +192,9 @@ template <typename T> struct SinCosMcLoughlinExpansionSecondLoop<T, 0> {
 };
 
 template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
-inline void sincos_mcloughlin_expansion_with_DoubleAngle(const T &theta,
-                                                         T &cos_value,
-                                                         T &sin_value) {
+inline void sincos_mcloughlin_expansion_with_DoubleAngleFormula(const T &theta,
+                                                                T &cos_value,
+                                                                T &sin_value) {
   static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <
                     COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE,
                 "MCLOUGHLIN_EXPANSION_REPEAT_NUMBER is too large.");
@@ -233,6 +233,20 @@ inline T sin_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
   return Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<
       T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(
       x - static_cast<T>(Base::Math::HALF_PI));
+}
+
+/* tan mcloughlin expansion with DoubleAngleFormula */
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline T tan_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
+  T cos_value = static_cast<T>(0);
+  T sin_value = static_cast<T>(0);
+
+  Base::Math::sincos_mcloughlin_expansion_with_DoubleAngleFormula<
+      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x, cos_value, sin_value);
+
+  return sin_value /
+         Base::Utility::avoid_zero_divide(
+             cos_value, static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN));
 }
 
 /* sin mcloughlin expansion */

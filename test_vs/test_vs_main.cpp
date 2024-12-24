@@ -689,7 +689,7 @@ void check_base_math_trigonometric(void) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sin_value = static_cast<T>(0);
         T cos_value = static_cast<T>(0);
-        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngle<
+        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngleFormula<
             T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(
             test_values_sin[i], cos_value, sin_value);
     
@@ -703,7 +703,7 @@ void check_base_math_trigonometric(void) {
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sin_value = static_cast<T>(0);
         T cos_value = static_cast<T>(0);
-        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngle<
+        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngleFormula<
             T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(
                 test_values_sin[i], cos_value, sin_value);
 
@@ -733,6 +733,37 @@ void check_base_math_trigonometric(void) {
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
             "check sin mcloughlin expansion with DoubleAngleFormula.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+    }
+
+    /* tan mcloughlin expansion with DoubleAngleFormula */
+    for (std::size_t i = 0; i < test_values_sin.size(); i++) {
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T tan_value = Base::Math::tan_mcloughlin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T tan_answer = std::tan(test_values_sin[i]);
+
+        if (std::abs(tan_value) > static_cast<T>(1 / NEAR_LIMIT_SOFT) &&
+            std::abs(tan_answer) > static_cast<T>(1 / NEAR_LIMIT_SOFT)) {
+            /* Do Nothing. */
+    }
+        else {
+            tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_SOFT,
+                "check tan mcloughlin expansion with DoubleAngleFormula.");
+        }
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T tan_value = Base::Math::tan_mcloughlin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T tan_answer = std::tan(test_values_sin[i]);
+
+        if (std::abs(tan_value) > static_cast<T>(1 / NEAR_LIMIT_STRICT) &&
+            std::abs(tan_answer) > static_cast<T>(1 / NEAR_LIMIT_STRICT)) {
+            /* Do Nothing. */
+        }
+        else {
+            tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_STRICT,
+                "check tan mcloughlin expansion with DoubleAngleFormula.");
+        }
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
