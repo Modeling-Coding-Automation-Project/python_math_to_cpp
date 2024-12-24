@@ -24,6 +24,9 @@ constexpr std::size_t COS_REPEAT_NUMBER = 6;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 3;
 
 constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 1;
+constexpr std::size_t SIN_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER =
+    COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER;
+
 constexpr std::size_t SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 2;
 
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
@@ -32,6 +35,9 @@ constexpr std::size_t COS_REPEAT_NUMBER = 9;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 8;
 
 constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
+constexpr std::size_t SIN_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER =
+    COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER;
+
 constexpr std::size_t SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
 
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
@@ -155,16 +161,16 @@ template <typename T, std::size_t N, std::size_t I>
 struct SinCosMcLoughlinExpansionFirstLoop {
   static void compute(T &c, T &s, const T &z) {
     SinCosMcLoughlinExpansionFirstLoop<T, N, I - 1>::compute(c, s, z);
-    c = c * z + COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1 - I];
-    s = s * z + SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1 - I];
+    c = c * z + static_cast<T>(COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1 - I]);
+    s = s * z + static_cast<T>(SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1 - I]);
   }
 };
 
 template <typename T, std::size_t N>
 struct SinCosMcLoughlinExpansionFirstLoop<T, N, 0> {
   static void compute(T &c, T &s, const T &z) {
-    c = c * z + COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1];
-    s = s * z + SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1];
+    c = c * z + static_cast<T>(COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1]);
+    s = s * z + static_cast<T>(SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1]);
   }
 };
 
@@ -195,8 +201,10 @@ inline void sincos_mcloughlin_expansion_with_DoubleAngle(const T &theta,
 
   T theta_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(theta);
 
-  T c = COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
-  T s = SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
+  T c = static_cast<T>(
+      COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER]);
+  T s = static_cast<T>(
+      SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER]);
   T z = static_cast<T>(0);
 
   theta_wrapped =
@@ -216,6 +224,15 @@ inline void sincos_mcloughlin_expansion_with_DoubleAngle(const T &theta,
 
   cos_value = static_cast<T>(1) - c * static_cast<T>(0.5);
   sin_value = s;
+}
+
+/* sin mcloughlin expansion with DoubleAngleFormula */
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline T sin_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
+
+  return Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<
+      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(
+      x - static_cast<T>(Base::Math::HALF_PI));
 }
 
 /* sin mcloughlin expansion */
