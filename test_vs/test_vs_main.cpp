@@ -1113,15 +1113,8 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* cosh mcloughlin expansion */
+    /* cosh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T cosh_value = Base::Math::cosh(test_values_hyperbolic[i]);
-        T cosh_answer = std::cosh(test_values_hyperbolic[i]);
-
-        tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
-            "check cosh.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T cosh_value = Base::Math::cosh(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
@@ -1135,7 +1128,44 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
             "check cosh.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
+    }
+
+    /* cosh mcloughlin expansion */
+    for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T cosh_value = Base::Math::cosh_mcloughlin_expansion<
+            T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T cosh_answer = std::cosh(test_values_hyperbolic[i]);
+
+        tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_SOFT * std::abs(cosh_answer),
+            "check cosh mcloughlin expansion.");
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T cosh_value = Base::Math::cosh_mcloughlin_expansion<
+            T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T cosh_answer = std::cosh(test_values_hyperbolic[i]);
+
+        tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
+            "check cosh mcloughlin expansion.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+    }
+
+    /* cosh mcloughlin expansion with table */
+    for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T cosh_value = Base::Math::cosh_mcloughlin_expansion_with_table<
+            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T cosh_answer = std::cosh(test_values_hyperbolic[i]);
+
+        tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_SOFT * std::abs(cosh_answer),
+            "check cosh mcloughlin expansion with table.");
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+        T cosh_value = Base::Math::cosh_mcloughlin_expansion_with_table<
+            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T cosh_answer = std::cosh(test_values_hyperbolic[i]);
+
+        tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
+            "check cosh mcloughlin expansion with table.");
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
     /* tanh mcloughlin expansion */

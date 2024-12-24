@@ -618,6 +618,14 @@ template <typename T> inline T sinh(const T &x) {
 #endif
 }
 
+/* cosh Mcloughlin Expansion with table */
+template <typename T, std::size_t LOOP_NUMBER>
+inline T cosh_mcloughlin_expansion_with_table(const T &x) {
+  return (Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(x) +
+          Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(-x)) *
+         static_cast<T>(0.5);
+}
+
 /* cosh mcloughlin expansion */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T cosh_mcloughlin_expansion(const T &x) {
