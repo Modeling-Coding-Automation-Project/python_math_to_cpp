@@ -581,7 +581,7 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
 
   result = static_cast<T>(r);
 
-  h = x * result * result;
+  h = x_wrapped * result * result;
   result *= static_cast<T>(1.875) -
             h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
 
@@ -596,21 +596,17 @@ template <typename T> inline T rsqrt(const T &x) {
 #ifdef BASE_MATH_USE_STD_MATH
   return static_cast<T>(1) / std::sqrt(x);
 #else
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
   return Base::Math::fast_inverse_square_root(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
-#else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
-      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
-
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
 }
 
