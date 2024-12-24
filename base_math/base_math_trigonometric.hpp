@@ -76,8 +76,8 @@ struct CosMcloughlinExpansionFirstLoop {
     CosMcloughlinExpansionFirstLoop<
         T, N - 1, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y, x_wrapped);
     y = y * x_wrapped +
-        COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
-                                          1 - N];
+        static_cast<T>(COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR
+                           [MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1 - N]);
   }
 };
 
@@ -86,8 +86,8 @@ struct CosMcloughlinExpansionFirstLoop<T, 0,
                                        MCLOUGHLIN_EXPANSION_REPEAT_NUMBER> {
   static void compute(T &y, T &x_wrapped) {
     y = y * x_wrapped +
-        COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
-                                          1];
+        static_cast<T>(COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR
+                           [MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1]);
   }
 };
 
@@ -119,7 +119,8 @@ inline T cos_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
       static_cast<T>(Factorial_2<MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::value);
   x_wrapped = x_wrapped * x_wrapped;
 
-  y = COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER];
+  y = static_cast<T>(
+      COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER]);
 
   CosMcloughlinExpansionFirstLoop<
       T, (MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1),
