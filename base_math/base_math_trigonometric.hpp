@@ -42,6 +42,14 @@ using COS_MCLOUGHLIN_FACTOR_LIST = typename MakeCosMcloughlinFactorList<
 constexpr auto COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR =
     Base::Math::to_cos_mcloughlin_factor_array(COS_MCLOUGHLIN_FACTOR_LIST{});
 
+constexpr std::size_t SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
+
+using SIN_MCLOUGHLIN_FACTOR_LIST = typename MakeSinMcloughlinFactorList<
+    SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE>::type;
+
+constexpr auto SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR =
+    Base::Math::to_sin_mcloughlin_factor_array(SIN_MCLOUGHLIN_FACTOR_LIST{});
+
 static constexpr double CHEBYSHEV_COEFFICIENT_FOR_ATAN[11] = {
     static_cast<double>(1.0),
     static_cast<double>(-0.3333333333333333),
@@ -140,18 +148,12 @@ inline T cos_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
   return static_cast<T>(1) - y * static_cast<T>(0.5);
 }
 
-/* sin cos Mcloughlin expansion with CORDIC */
-inline void sincos_mcloughlin_expansion_with_CORDIC(const double &theta,
-                                                    double &cos_value,
-                                                    double &sin_value) {
+/* sin cos Mcloughlin expansion with DoubleAngleFormula */
+inline void sincos_mcloughlin_expansion_with_DoubleAngle(const double &theta,
+                                                         double &cos_value,
+                                                         double &sin_value) {
 
   double theta_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(theta);
-
-  static double COS_TABLE[4] = {-1.0 / (3 * 4 * 5 * 6 * 7 * 8),
-                                1.0 / (3 * 4 * 5 * 6), -1.0 / (3 * 4), 1.0};
-
-  static double SIN_TABLE[4] = {-1.0 / (2 * 3 * 4 * 5 * 6 * 7),
-                                1.0 / (2 * 3 * 4 * 5), -1.0 / (2 * 3), 1.0};
 
   double c = 1.0 / (3 * 4 * 5 * 6 * 7 * 8 * 9 * 10);
   double s = 1.0 / (2 * 3 * 4 * 5 * 6 * 7 * 8 * 9);
@@ -161,8 +163,8 @@ inline void sincos_mcloughlin_expansion_with_CORDIC(const double &theta,
   z = theta_wrapped * theta_wrapped;
 
   for (int i = 0; i < 4; i++) {
-    c = c * z + COS_TABLE[i];
-    s = s * z + SIN_TABLE[i];
+    c = c * z + COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[4 - 1 - i];
+    s = s * z + SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[4 - 1 - i];
   }
 
   c = c * z;

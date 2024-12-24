@@ -83,7 +83,25 @@ constexpr std::array<double, sizeof...(Values)>
 to_cos_mcloughlin_factor_array(ValueArgumentIntList<Values...>) {
   return {static_cast<double>(static_cast<double>(2) /
                               static_cast<double>(Values))...};
-  // return {static_cast<double>(static_cast<double>(Values))...};
+}
+
+/* sin Mcloughlin factor */
+template <int N> struct MakeSinMcloughlinFactorList {
+  using type = typename AppendInt<
+      (static_cast<int>(Factorial<(2 * N - 1)>::value) *
+       EvenOddSign<(N + 1)>::value),
+      typename MakeSinMcloughlinFactorList<N - 1>::type>::type;
+};
+
+template <> struct MakeSinMcloughlinFactorList<1> {
+  using type = ValueArgumentIntList<(Factorial<1>::value)>;
+};
+
+template <int... Values>
+constexpr std::array<double, sizeof...(Values)>
+to_sin_mcloughlin_factor_array(ValueArgumentIntList<Values...>) {
+  return {static_cast<double>(static_cast<double>(1) /
+                              static_cast<double>(Values))...};
 }
 
 } // namespace Math
