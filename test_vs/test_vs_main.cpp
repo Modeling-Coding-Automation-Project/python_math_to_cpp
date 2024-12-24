@@ -105,10 +105,11 @@ void check_base_math_exponential_logarithmic(void) {
 #ifdef BASE_MATH_USE_STD_MATH
         T rsqrt_value = static_cast<T>(0);
         T rsqrt_answer = static_cast<T>(0);
-        if (test_values_sqrt[i] < static_cast<T>(0)) {
-            rsqrt_value = Base::Math::rsqrt(static_cast<T>(0));
+        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+            rsqrt_value = Base::Math::rsqrt(
+                static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
             rsqrt_answer = static_cast<T>(1) / 
-                std::sqrt(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+                std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
         }
         else {
             rsqrt_value = Base::Math::rsqrt(test_values_sqrt[i]);
@@ -2656,11 +2657,11 @@ int main() {
 
     check_base_math_calc<double>();
 
-    //check_base_math_calc<float>();
+    check_base_math_calc<float>();
 
-    //check_python_math_calc<double>();
+    check_python_math_calc<double>();
 
-    //check_python_math_calc<float>();
+    check_python_math_calc<float>();
  
 
     return 0;
