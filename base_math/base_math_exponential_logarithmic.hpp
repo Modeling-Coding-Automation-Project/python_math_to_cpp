@@ -606,10 +606,10 @@ template <typename T> inline T rsqrt(const T &x) {
         static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
   }
 
-  return Base::Math::sqrt_extraction<T,
+  return static_cast<T>(1) /
+         Base::Math::sqrt_extraction<T,
                                      Base::Math::SQRT_EXTRACTION_REPEAT_NUMBER>(
-             x_wrapped) /
-         static_cast<T>(x_wrapped);
+             x_wrapped);
 
 #else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
