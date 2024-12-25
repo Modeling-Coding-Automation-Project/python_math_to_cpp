@@ -1,8 +1,9 @@
 #ifndef BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP
 #define BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP
 
-#include "base_math_arithmetic.hpp"
 #include "base_math_macros.hpp"
+
+#include "base_math_arithmetic.hpp"
 #include "base_math_mathematical_constants.hpp"
 #include "base_math_templates.hpp"
 
@@ -682,15 +683,14 @@ template <typename T> inline T fast_square_root(const T &input) {
 }
 
 /* sqrt */
-template <typename T> inline T sqrt(const T &x) {
+template <typename T> inline T sqrt(const T &x, const T &division_min) {
 
 #ifdef BASE_MATH_USE_STD_MATH
 
   T x_wrapped = x;
 
-  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
-    x_wrapped =
-        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  if (x < division_min) {
+    x_wrapped = division_min;
   }
 
   return std::sqrt(x_wrapped);
@@ -701,9 +701,8 @@ template <typename T> inline T sqrt(const T &x) {
 
   T x_wrapped = x;
 
-  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
-    x_wrapped =
-        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  if (x < division_min) {
+    x_wrapped = division_min;
   }
 
   return Base::Math::sqrt_extraction<T,
@@ -712,11 +711,18 @@ template <typename T> inline T sqrt(const T &x) {
 
 #else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-  return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+  return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
+      x, division_min);
 
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
 #endif // BASE_MATH_USE_STD_MATH
+}
+
+template <typename T> inline T sqrt(const T &x) {
+
+  return Base::Math::sqrt<T>(
+      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
 
 /* exp Mcloughlin Expansion */
