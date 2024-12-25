@@ -1284,20 +1284,29 @@ template <typename T> inline T log10(const T &x) {
 #endif // BASE_MATH_USE_STD_MATH
 }
 
-/* pow */
+/* pow mcloughlin expansion */
 template <typename T, std::size_t EXP_LOOP_NUMBER, std::size_t LOG_LOOP_NUMBER>
 inline T pow_base_math(const T &x, const T &y) {
   return Base::Math::exp_mcloughlin_expansion<T, EXP_LOOP_NUMBER>(
       y * Base::Math::log_newton_method<T, LOG_LOOP_NUMBER>(x));
 }
 
+template <typename T, std::size_t EXP_LOOP_NUMBER>
+inline T pow_mcloughlin_expansion_with_table(const T &x, const T &y) {
+  return Base::Math::exp_mcloughlin_expansion_with_table<T, EXP_LOOP_NUMBER>(
+      y * Base::Math::log_mcloughlin_expansion_with_table<T>(x));
+}
+
+/* pow */
 template <typename T> inline T pow(const T &x, const T &y) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::pow(x, y);
-#else  // BASE_MATH_USE_STD_MATH
-  return Base::Math::pow_base_math<T, Base::Math::EXP_REPEAT_NUMBER,
-                                   Base::Math::LOG_REPEAT_NUMBER>(x, y);
+#else // BASE_MATH_USE_STD_MATH
+
+  return Base::Math::pow_mcloughlin_expansion_with_table<
+      T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(x, y);
+
 #endif // BASE_MATH_USE_STD_MATH
 }
 

@@ -489,13 +489,6 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* pow */
     for (std::size_t i = 0; i < test_values_pow.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T pow_value = Base::Math::pow(test_values_pow[i].first, test_values_pow[i].second);
-        T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
-
-        tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_STRICT * std::abs(pow_answer),
-            "check pow.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T pow_value = Base::Math::pow(test_values_pow[i].first, test_values_pow[i].second);
         T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
@@ -506,10 +499,9 @@ void check_base_math_exponential_logarithmic(void) {
         T pow_value = Base::Math::pow(test_values_pow[i].first, test_values_pow[i].second);
         T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
 
-        tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_SOFT * std::abs(pow_answer),
+        tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_STRICT * std::abs(pow_answer),
             "check pow.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 
@@ -1791,13 +1783,6 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* pow */
     for (std::size_t i = 0; i < test_values_pow.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T pow_value = PythonMath::pow(test_values_pow[i].first, test_values_pow[i].second);
-        T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
-
-        tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_STRICT * std::abs(pow_answer),
-            "check pow.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T pow_value = PythonMath::pow(test_values_pow[i].first, test_values_pow[i].second);
         T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
@@ -1808,10 +1793,9 @@ void check_python_math_exponential_logarithmic(void) {
         T pow_value = PythonMath::pow(test_values_pow[i].first, test_values_pow[i].second);
         T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
 
-        tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_SOFT * std::abs(pow_answer),
+        tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_STRICT * std::abs(pow_answer),
             "check pow.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 #ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
