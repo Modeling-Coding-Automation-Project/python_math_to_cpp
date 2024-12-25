@@ -544,13 +544,6 @@ void check_base_math_trigonometric(void) {
 
     /* sin */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T sin_value = Base::Math::sin(test_values_sin[i]);
-        T sin_answer = std::sin(test_values_sin[i]);
-
-        tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
-            "check sin.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sin_value = Base::Math::sin(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
@@ -564,18 +557,10 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
             "check sin.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* cos */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T cos_value = Base::Math::cos(test_values_sin[i]);
-        T cos_answer = std::cos(test_values_sin[i]);
-
-        tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
-            "check cos.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T cos_value = Base::Math::cos(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
@@ -589,7 +574,6 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
             "check cos.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* cos mcloughlin expansion with DoubleAngleFormula */
@@ -696,19 +680,6 @@ void check_base_math_trigonometric(void) {
 
     /* tan */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T tan_value = Base::Math::tan(test_values_sin[i]);
-        T tan_answer = std::tan(test_values_sin[i]);
-
-        if (std::abs(tan_value) > static_cast<T>(1 / NEAR_LIMIT_STRICT) &&
-            std::abs(tan_answer) > static_cast<T>(1 / NEAR_LIMIT_STRICT)) {
-            /* Do Nothing. */
-        }
-        else {
-            tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_STRICT,
-                "check tan.");
-        }
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T tan_value = Base::Math::tan(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
@@ -734,7 +705,6 @@ void check_base_math_trigonometric(void) {
                 "check tan.");
         }
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 
@@ -756,13 +726,6 @@ void check_base_math_trigonometric(void) {
 
     /* atan */
     for (std::size_t i = 0; i < test_values_atan.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T atan_value = Base::Math::atan(test_values_atan[i]);
-        T atan_answer = std::atan(test_values_atan[i]);
-
-        tester.expect_near(atan_value, atan_answer, NEAR_LIMIT_STRICT,
-            "check atan.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T atan_value = Base::Math::atan(test_values_atan[i]);
         T atan_answer = std::atan(test_values_atan[i]);
@@ -776,7 +739,6 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(atan_value, atan_answer, NEAR_LIMIT_STRICT,
             "check atan.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     std::vector<std::pair<T, T>> test_values_atan2({
@@ -1908,13 +1870,6 @@ void check_python_math_trigonometric(void) {
 
     /* sin */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T sin_value = PythonMath::sin(test_values_sin[i]);
-        T sin_answer = std::sin(test_values_sin[i]);
-
-        tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
-            "check sin.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sin_value = PythonMath::sin(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
@@ -1928,18 +1883,10 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
             "check sin.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* cos */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T cos_value = PythonMath::cos(test_values_sin[i]);
-        T cos_answer = std::cos(test_values_sin[i]);
-
-        tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
-            "check cos.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T cos_value = PythonMath::cos(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
@@ -1953,24 +1900,10 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
             "check cos.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* tan */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T tan_value = PythonMath::tan(test_values_sin[i]);
-        T tan_answer = std::tan(test_values_sin[i]);
-
-        if (std::abs(tan_value) > static_cast<T>(1 / NEAR_LIMIT_STRICT) &&
-            std::abs(tan_answer) > static_cast<T>(1 / NEAR_LIMIT_STRICT)) {
-            /* Do Nothing. */
-        }
-        else {
-            tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_STRICT,
-                "check tan.");
-        }
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T tan_value = PythonMath::tan(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
@@ -1996,7 +1929,6 @@ void check_python_math_trigonometric(void) {
                 "check tan.");
         }
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 
@@ -2018,13 +1950,6 @@ void check_python_math_trigonometric(void) {
 
     /* atan */
     for (std::size_t i = 0; i < test_values_atan.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T atan_value = PythonMath::atan(test_values_atan[i]);
-        T atan_answer = std::atan(test_values_atan[i]);
-
-        tester.expect_near(atan_value, atan_answer, NEAR_LIMIT_STRICT,
-            "check atan.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T atan_value = PythonMath::atan(test_values_atan[i]);
         T atan_answer = std::atan(test_values_atan[i]);
@@ -2038,7 +1963,6 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(atan_value, atan_answer, NEAR_LIMIT_STRICT,
             "check atan.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     std::vector<std::pair<T, T>> test_values_atan2({

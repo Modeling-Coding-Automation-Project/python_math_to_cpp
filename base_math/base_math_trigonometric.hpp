@@ -480,6 +480,7 @@ inline T atan_chebyshev(const T &x) {
   return result;
 }
 
+/* atan */
 template <typename T> inline T atan(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
