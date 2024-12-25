@@ -592,15 +592,14 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
 }
 
 /* rsqrt */
-template <typename T> inline T rsqrt(const T &x) {
+template <typename T> inline T rsqrt(const T &x, const T &division_min) {
 
 #ifdef BASE_MATH_USE_STD_MATH
 
   T x_wrapped = x;
 
-  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
-    x_wrapped =
-        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  if (x < division_min) {
+    x_wrapped = division_min;
   }
 
   return static_cast<T>(1) / std::sqrt(x_wrapped);
@@ -611,9 +610,8 @@ template <typename T> inline T rsqrt(const T &x) {
 
   T x_wrapped = x;
 
-  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
-    x_wrapped =
-        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  if (x < division_min) {
+    x_wrapped = division_min;
   }
 
   return static_cast<T>(1) /
@@ -624,11 +622,17 @@ template <typename T> inline T rsqrt(const T &x) {
 #else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
   return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
-      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+      x, division_min);
 
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
 #endif // BASE_MATH_USE_STD_MATH
+}
+
+template <typename T> inline T rsqrt(const T &x) {
+
+  return Base::Math::rsqrt<T>(
+      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
 
 /* sqrt newton method */
