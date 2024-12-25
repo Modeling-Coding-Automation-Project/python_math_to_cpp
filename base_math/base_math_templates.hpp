@@ -1,6 +1,8 @@
 #ifndef BASE_MATH_TEMPLATES_HPP
 #define BASE_MATH_TEMPLATES_HPP
 
+#include "base_math_macros.hpp"
+
 #include <array>
 
 namespace Base {

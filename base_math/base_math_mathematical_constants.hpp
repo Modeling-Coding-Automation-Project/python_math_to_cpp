@@ -1,6 +1,8 @@
 #ifndef BASE_MATH_MATHEMATICAL_CONSTANTS_HPP
 #define BASE_MATH_MATHEMATICAL_CONSTANTS_HPP
 
+#include "base_math_macros.hpp"
+
 #include <cmath>
 
 namespace Base {
