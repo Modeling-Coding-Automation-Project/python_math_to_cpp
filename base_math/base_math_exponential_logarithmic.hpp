@@ -905,7 +905,16 @@ inline T exp_mcloughlin_expansion_with_table(const T &x) {
 template <typename T> inline T exp(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::exp(x);
+
+  if (x > static_cast<float>(Base::Math::EXP_INPUT_MAX)) {
+    return static_cast<float>(Base::Math::EXP_OUTPUT_MAX);
+  } else if (x < static_cast<float>(Base::Math::EXP_INPUT_MIN)) {
+    return static_cast<float>(Base::Math::EXP_OUTPUT_MIN);
+  } else {
+
+    return std::exp(x);
+  }
+
 #else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD

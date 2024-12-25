@@ -185,25 +185,6 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* exp */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T exp_value = static_cast<T>(0);
-        T exp_answer = static_cast<T>(0);
-        if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
-            exp_value = Base::Math::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
-            exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
-        }
-        else if (test_values_exp[i] < static_cast<T>(Base::Math::EXP_INPUT_MIN)) {
-            exp_value = Base::Math::exp(static_cast<T>(Base::Math::EXP_INPUT_MIN));
-            exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MIN));
-        }
-        else {
-            exp_value = Base::Math::exp(test_values_exp[i]);
-            exp_answer = std::exp(test_values_exp[i]);
-        }
-
-        tester.expect_near(exp_value, exp_answer, NEAR_LIMIT_STRICT,
-            "check exp.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T exp_value = Base::Math::exp(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
@@ -232,10 +213,9 @@ void check_base_math_exponential_logarithmic(void) {
             exp_answer = std::exp(test_values_exp[i]);
         }
 
-        tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_SOFT* std::abs(exp_answer)),
+        tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT * std::abs(exp_answer)),
             "check exp.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* exp Mcloughlin Expansion with table double */
@@ -1496,25 +1476,6 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* exp */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T exp_value = static_cast<T>(0);
-        T exp_answer = static_cast<T>(0);
-        if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
-            exp_value = PythonMath::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
-            exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
-        }
-        else if (test_values_exp[i] < static_cast<T>(Base::Math::EXP_INPUT_MIN)) {
-            exp_value = PythonMath::exp(static_cast<T>(Base::Math::EXP_INPUT_MIN));
-            exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MIN));
-        }
-        else {
-            exp_value = PythonMath::exp(test_values_exp[i]);
-            exp_answer = std::exp(test_values_exp[i]);
-        }
-
-        tester.expect_near(exp_value, exp_answer, NEAR_LIMIT_STRICT,
-            "check exp.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T exp_value = PythonMath::exp(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
@@ -1543,10 +1504,9 @@ void check_python_math_exponential_logarithmic(void) {
             exp_answer = std::exp(test_values_exp[i]);
         }
 
-        tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_SOFT * std::abs(exp_answer)),
+        tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT * std::abs(exp_answer)),
             "check exp.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 #ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
