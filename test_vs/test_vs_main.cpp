@@ -891,13 +891,6 @@ void check_base_math_trigonometric(void) {
 
     /* sinh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T sinh_value = Base::Math::sinh(test_values_hyperbolic[i]);
-        T sinh_answer = std::sinh(test_values_hyperbolic[i]);
-
-        tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
-            "check sinh.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sinh_value = Base::Math::sinh(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
@@ -911,7 +904,6 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
             "check sinh.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* sinh mcloughlin expansion */
@@ -1009,13 +1001,6 @@ void check_base_math_trigonometric(void) {
 
     /* tanh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T tanh_value = Base::Math::tanh(test_values_hyperbolic[i]);
-        T tanh_answer = std::tanh(test_values_hyperbolic[i]);
-
-        tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT,
-            "check tanh.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T tanh_value = Base::Math::tanh(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
@@ -1029,7 +1014,6 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT,
             "check tanh.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* tanh mcloughlin expansion */
@@ -2138,13 +2122,6 @@ void check_python_math_trigonometric(void) {
 
     /* sinh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T sinh_value = PythonMath::sinh(test_values_hyperbolic[i]);
-        T sinh_answer = std::sinh(test_values_hyperbolic[i]);
-
-        tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
-            "check sinh.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sinh_value = PythonMath::sinh(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
@@ -2158,18 +2135,10 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
             "check sinh.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* cosh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T cosh_value = PythonMath::cosh(test_values_hyperbolic[i]);
-        T cosh_answer = std::cosh(test_values_hyperbolic[i]);
-
-        tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
-            "check cosh.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T cosh_value = PythonMath::cosh(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
@@ -2183,18 +2152,10 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
             "check cosh.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* tanh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T tanh_value = PythonMath::tanh(test_values_hyperbolic[i]);
-        T tanh_answer = std::tanh(test_values_hyperbolic[i]);
-
-        tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT,
-            "check tanh.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T tanh_value = PythonMath::tanh(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
@@ -2208,7 +2169,6 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT,
             "check tanh.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 
