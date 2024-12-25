@@ -1,9 +1,10 @@
 #ifndef BASE_MATH_TRIGONOMETRIC_HPP
 #define BASE_MATH_TRIGONOMETRIC_HPP
 
+#include "base_math_macros.hpp"
+
 #include "base_math_arithmetic.hpp"
 #include "base_math_exponential_logarithmic.hpp"
-#include "base_math_macros.hpp"
 #include "base_math_mathematical_constants.hpp"
 #include "base_utility.hpp"
 
@@ -21,11 +22,41 @@ namespace Math {
 constexpr std::size_t SIN_REPEAT_NUMBER = 5;
 constexpr std::size_t COS_REPEAT_NUMBER = 6;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 3;
-#else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+
+constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 1;
+constexpr std::size_t SIN_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER =
+    COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER;
+
+constexpr std::size_t SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 2;
+
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SIN_REPEAT_NUMBER = 8;
 constexpr std::size_t COS_REPEAT_NUMBER = 9;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 8;
+
+constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
+constexpr std::size_t SIN_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER =
+    COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER;
+
+constexpr std::size_t SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
+
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+
+constexpr std::size_t COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
+
+using COS_MCLOUGHLIN_FACTOR_LIST = typename MakeCosMcloughlinFactorList<
+    COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE>::type;
+
+constexpr auto COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR =
+    Base::Math::to_cos_mcloughlin_factor_array(COS_MCLOUGHLIN_FACTOR_LIST{});
+
+constexpr std::size_t SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
+
+using SIN_MCLOUGHLIN_FACTOR_LIST = typename MakeSinMcloughlinFactorList<
+    SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE>::type;
+
+constexpr auto SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR =
+    Base::Math::to_sin_mcloughlin_factor_array(SIN_MCLOUGHLIN_FACTOR_LIST{});
 
 static constexpr double CHEBYSHEV_COEFFICIENT_FOR_ATAN[11] = {
     static_cast<double>(1.0),
@@ -59,7 +90,166 @@ template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
   return result;
 }
 
-/* sin */
+/* cos mcloughlin expansion with DoubleAngleFormula */
+template <typename T, std::size_t N,
+          std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+struct CosMcloughlinExpansionFirstLoop {
+  static void compute(T &y, T &x_wrapped) {
+    CosMcloughlinExpansionFirstLoop<
+        T, N - 1, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y, x_wrapped);
+    y = y * x_wrapped +
+        static_cast<T>(COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR
+                           [MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1 - N]);
+  }
+};
+
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+struct CosMcloughlinExpansionFirstLoop<T, 0,
+                                       MCLOUGHLIN_EXPANSION_REPEAT_NUMBER> {
+  static void compute(T &y, T &x_wrapped) {
+    y = y * x_wrapped +
+        static_cast<T>(COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR
+                           [MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1]);
+  }
+};
+
+template <typename T, std::size_t N> struct CosMcloughlinExpansionSecondLoop {
+  static void compute(T &y) {
+    y = y * (static_cast<T>(4) - y);
+    CosMcloughlinExpansionSecondLoop<T, N - 1>::compute(y);
+  }
+};
+
+template <typename T> struct CosMcloughlinExpansionSecondLoop<T, 0> {
+  static void compute(T &y) {
+    static_cast<void>(y);
+    /* Do Nothing. */
+  }
+};
+
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline T cos_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
+  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <
+                    COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE,
+                "MCLOUGHLIN_EXPANSION_REPEAT_NUMBER is too large.");
+
+  T x_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(x);
+  T y = static_cast<T>(0);
+
+  x_wrapped =
+      x_wrapped /
+      static_cast<T>(Factorial_2<MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::value);
+  x_wrapped = x_wrapped * x_wrapped;
+
+  y = static_cast<T>(
+      COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER]);
+
+  CosMcloughlinExpansionFirstLoop<
+      T, (MCLOUGHLIN_EXPANSION_REPEAT_NUMBER - 1),
+      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y, x_wrapped);
+
+  y = y * x_wrapped;
+
+  CosMcloughlinExpansionSecondLoop<
+      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y);
+
+  return static_cast<T>(1) - y * static_cast<T>(0.5);
+}
+
+/* sin cos Mcloughlin expansion with DoubleAngleFormula */
+template <typename T, std::size_t N, std::size_t I>
+struct SinCosMcLoughlinExpansionFirstLoop {
+  static void compute(T &c, T &s, const T &z) {
+    SinCosMcLoughlinExpansionFirstLoop<T, N, I - 1>::compute(c, s, z);
+    c = c * z + static_cast<T>(COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1 - I]);
+    s = s * z + static_cast<T>(SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1 - I]);
+  }
+};
+
+template <typename T, std::size_t N>
+struct SinCosMcLoughlinExpansionFirstLoop<T, N, 0> {
+  static void compute(T &c, T &s, const T &z) {
+    c = c * z + static_cast<T>(COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1]);
+    s = s * z + static_cast<T>(SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[N - 1]);
+  }
+};
+
+template <typename T, std::size_t N>
+struct SinCosMcLoughlinExpansionSecondLoop {
+  static void compute(T &s, T &c) {
+    s = s * (static_cast<T>(2) - c);
+    c = c * (static_cast<T>(4) - c);
+    SinCosMcLoughlinExpansionSecondLoop<T, N - 1>::compute(s, c);
+  }
+};
+
+template <typename T> struct SinCosMcLoughlinExpansionSecondLoop<T, 0> {
+  static void compute(T &s, T &c) {
+    static_cast<void>(s);
+    static_cast<void>(c);
+    /* Do Nothing. */
+  }
+};
+
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline void sincos_mcloughlin_expansion_with_DoubleAngleFormula(const T &theta,
+                                                                T &cos_value,
+                                                                T &sin_value) {
+  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <
+                    COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR_MAX_SIZE,
+                "MCLOUGHLIN_EXPANSION_REPEAT_NUMBER is too large.");
+
+  T theta_wrapped = Base::Math::wrap_value_in_minus_pi_and_pi(theta);
+
+  T c = static_cast<T>(
+      COS_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER]);
+  T s = static_cast<T>(
+      SIN_MCLOUGHLIN_DOUBLEANGLE_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER]);
+  T z = static_cast<T>(0);
+
+  theta_wrapped =
+      theta_wrapped /
+      static_cast<T>(Factorial_2<MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::value);
+  z = theta_wrapped * theta_wrapped;
+
+  SinCosMcLoughlinExpansionFirstLoop<T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER,
+                                     (MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                      1)>::compute(c, s, z);
+
+  c = c * z;
+  s = s * theta_wrapped;
+
+  SinCosMcLoughlinExpansionSecondLoop<
+      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(s, c);
+
+  cos_value = static_cast<T>(1) - c * static_cast<T>(0.5);
+  sin_value = s;
+}
+
+/* sin mcloughlin expansion with DoubleAngleFormula */
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline T sin_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
+
+  return Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<
+      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(
+      x - static_cast<T>(Base::Math::HALF_PI));
+}
+
+/* tan mcloughlin expansion with DoubleAngleFormula */
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline T tan_mcloughlin_expansion_with_DoubleAngleFormula(const T &x) {
+  T cos_value = static_cast<T>(0);
+  T sin_value = static_cast<T>(0);
+
+  Base::Math::sincos_mcloughlin_expansion_with_DoubleAngleFormula<
+      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x, cos_value, sin_value);
+
+  return sin_value /
+         Base::Utility::avoid_zero_divide(
+             cos_value, static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN));
+}
+
+/* sin mcloughlin expansion */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
 struct SinMcloughlinLoop {
   static void compute(const T &x_squared, T &term, T &result) {
@@ -98,17 +288,20 @@ inline T sin_mcloughlin_expansion(const T &x) {
   return result;
 }
 
+/* sin */
 template <typename T> inline T sin(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::sin(x);
-#else
-  return Base::Math::sin_mcloughlin_expansion<T, Base::Math::SIN_REPEAT_NUMBER>(
-      x);
-#endif
+#else // BASE_MATH_USE_STD_MATH
+
+  return Base::Math::sin_mcloughlin_expansion_with_DoubleAngleFormula<
+      T, Base::Math::SIN_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* cos */
+/* cos mcloughlin expansion */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
 struct CosMcloughlinLoop {
   static void compute(const T &x_squared, T &term, T &result) {
@@ -147,17 +340,20 @@ inline T cos_mcloughlin_expansion(const T &x) {
   return result;
 }
 
+/* cos */
 template <typename T> inline T cos(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::cos(x);
-#else
-  return Base::Math::cos_mcloughlin_expansion<T, Base::Math::COS_REPEAT_NUMBER>(
-      x);
-#endif
+#else // BASE_MATH_USE_STD_MATH
+
+  return Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<
+      T, Base::Math::COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* tan */
+/* tan mcloughlin expansion */
 template <typename T, std::size_t SIN_LOOP_NUMBER, std::size_t COS_LOOP_NUMBER>
 inline T tan_mcloughlin_expansion(const T &x) {
 
@@ -167,17 +363,20 @@ inline T tan_mcloughlin_expansion(const T &x) {
              static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN));
 }
 
+/* tan */
 template <typename T> inline T tan(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::tan(x);
-#else
-  return Base::Math::tan_mcloughlin_expansion<T, Base::Math::SIN_REPEAT_NUMBER,
-                                              Base::Math::COS_REPEAT_NUMBER>(x);
-#endif
+#else // BASE_MATH_USE_STD_MATH
+
+  return Base::Math::tan_mcloughlin_expansion_with_DoubleAngleFormula<
+      T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* atan */
+/* atan mcloughlin expansion */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T atan_mcloughlin_expansion(const T &x) {
 
@@ -215,6 +414,7 @@ inline T atan_mcloughlin_expansion(const T &x) {
   return result;
 }
 
+/* atan Chebyshev */
 template <typename T, int N> struct AtanChebyshevLoop {
   static T compute(const T &x_squared, const T &y) {
     return AtanChebyshevLoop<T, N - 1>::compute(
@@ -280,20 +480,19 @@ inline T atan_chebyshev(const T &x) {
   return result;
 }
 
+/* atan */
 template <typename T> inline T atan(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::atan(x);
-#else
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // BASE_MATH_USE_STD_MATH
+
   return Base::Math::atan_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER>(x);
-#else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::atan_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER>(x);
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* atan2 */
+/* atan2 Chebyshev */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T atan2_chebyshev(const T &y, const T &x) {
   T result = static_cast<T>(0);
@@ -335,16 +534,19 @@ inline T atan2_chebyshev(const T &y, const T &x) {
   return result;
 }
 
+/* atan2 */
 template <typename T> inline T atan2(const T &y, const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::atan2(y, x);
-#else
+#else // BASE_MATH_USE_STD_MATH
+
   return Base::Math::atan2_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER>(y, x);
-#endif
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* asin */
+/* asin Chebyshev */
 template <typename T, std::size_t ATAN_LOOP_NUMBER,
           std::size_t SQRT_LOOP_NUMBER>
 inline T asin_chebyshev(const T &x) {
@@ -371,17 +573,32 @@ inline T asin_chebyshev(const T &x) {
   return result;
 }
 
+/* asin */
 template <typename T> inline T asin(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::asin(x);
-#else
+
+  if (x >= static_cast<T>(1)) {
+
+    return static_cast<T>(Base::Math::HALF_PI);
+
+  } else if (x <= static_cast<T>(-1)) {
+
+    return -static_cast<T>(Base::Math::HALF_PI);
+
+  } else {
+
+    return std::asin(x);
+  }
+#else // BASE_MATH_USE_STD_MATH
+
   return Base::Math::asin_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
                                     Base::Math::SQRT_REPEAT_NUMBER>(x);
-#endif
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* acos */
+/* acos Chebyshev */
 template <typename T, std::size_t ATAN_LOOP_NUMBER,
           std::size_t SQRT_LOOP_NUMBER>
 inline T acos_chebyshev(const T &x) {
@@ -390,17 +607,40 @@ inline T acos_chebyshev(const T &x) {
          Base::Math::asin_chebyshev<T, ATAN_LOOP_NUMBER, SQRT_LOOP_NUMBER>(x);
 }
 
+/* acos */
 template <typename T> inline T acos(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::acos(x);
-#else
+
+  if (x > static_cast<T>(1)) {
+
+    return static_cast<T>(0);
+
+  } else if (x < static_cast<T>(-1)) {
+
+    return static_cast<T>(Base::Math::PI);
+
+  } else {
+
+    return std::acos(x);
+  }
+#else // BASE_MATH_USE_STD_MATH
+
   return Base::Math::acos_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
                                     Base::Math::SQRT_REPEAT_NUMBER>(x);
-#endif
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* sinh */
+/* sinh Mcloughlin Expansion with table */
+template <typename T, std::size_t LOOP_NUMBER>
+inline T sinh_mcloughlin_expansion_with_table(const T &x) {
+  return (Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(x) -
+          Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(-x)) *
+         static_cast<T>(0.5);
+}
+
+/* sinh mcloughlin expansion */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sinh_mcloughlin_expansion(const T &x) {
   return (Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(x) -
@@ -408,18 +648,29 @@ inline T sinh_mcloughlin_expansion(const T &x) {
          static_cast<T>(0.5);
 }
 
+/* sinh */
 template <typename T> inline T sinh(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::sinh(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
+
   return Base::Math::sinh_mcloughlin_expansion<T,
                                                Base::Math::EXP_REPEAT_NUMBER>(
       x);
-#endif
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* cosh */
+/* cosh Mcloughlin Expansion with table */
+template <typename T, std::size_t LOOP_NUMBER>
+inline T cosh_mcloughlin_expansion_with_table(const T &x) {
+  return (Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(x) +
+          Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(-x)) *
+         static_cast<T>(0.5);
+}
+
+/* cosh mcloughlin expansion */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T cosh_mcloughlin_expansion(const T &x) {
   return (Base::Math::exp_mcloughlin_expansion<T, LOOP_NUMBER>(x) +
@@ -427,18 +678,32 @@ inline T cosh_mcloughlin_expansion(const T &x) {
          static_cast<T>(0.5);
 }
 
+/* cosh */
 template <typename T> inline T cosh(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::cosh(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
+
   return Base::Math::cosh_mcloughlin_expansion<T,
                                                Base::Math::EXP_REPEAT_NUMBER>(
       x);
-#endif
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* tanh */
+/* tanh mcloughlin expansion with table */
+template <typename T, std::size_t LOOP_NUMBER>
+inline T tanh_mcloughlin_expansion_with_table(const T &x) {
+
+  T a = Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(x);
+  T b = Base::Math::exp_mcloughlin_expansion_with_table<T, LOOP_NUMBER>(-x);
+
+  return (a - b) / Base::Utility::avoid_zero_divide(
+                       a + b, static_cast<T>(TRIGONOMETRIC_DIVISION_MIN));
+}
+
+/* tanh mcloughlin expansion */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T tanh_mcloughlin_expansion(const T &x) {
 
@@ -449,15 +714,18 @@ inline T tanh_mcloughlin_expansion(const T &x) {
                        a + b, static_cast<T>(TRIGONOMETRIC_DIVISION_MIN));
 }
 
+/* tanh */
 template <typename T> inline T tanh(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::tanh(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
+
   return Base::Math::tanh_mcloughlin_expansion<T,
                                                Base::Math::EXP_REPEAT_NUMBER>(
       x);
-#endif
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
 } // namespace Math

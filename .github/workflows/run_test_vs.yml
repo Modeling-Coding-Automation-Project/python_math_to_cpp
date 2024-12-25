@@ -9,6 +9,18 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        define:
+          - ""
+          - "-DBASE_MATH_USE_STD_MATH"
+          - "-DBASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS"
+          - "-DBASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD"
+          - "-DBASE_MATH_USE_STD_MATH -DBASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS"
+          - "-DBASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS -DBASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD"
+          - "-DBASE_MATH_USE_STD_MATH -DBASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD"
+          - "-DBASE_MATH_USE_STD_MATH -DBASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS -DBASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD"
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -18,34 +30,6 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y g++
 
-    - name: Build C++ application
+    - name: Build and Run C++ application
       run: |
-        g++ -std=c++11 -Wall -I ./base_math -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp
-
-    - name: Run the application
-      run: |
-        ./test_vs/app
-
-    - name: Build C++ application with BASE_MATH_USE_STD_MATH
-      run: |
-        g++ -std=c++11 -Wall -DBASE_MATH_USE_STD_MATH -I ./base_math -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp
-
-    - name: Run the application
-      run: |
-        ./test_vs/app
-
-    - name: Build C++ application with BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-      run: |
-        g++ -std=c++11 -Wall -DBASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS -I ./base_math -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp
-
-    - name: Run the application
-      run: |
-        ./test_vs/app
-
-    - name: Build C++ application with BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS, BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-      run: |
-        g++ -std=c++11 -DBASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS -DBASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD -Wall -I ./base_math -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp
-
-    - name: Run the application
-      run: |
-        ./test_vs/app
+        g++ -std=c++11 -Wall ${{ matrix.define }} -I ./base_math -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp && ./test_vs/app

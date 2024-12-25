@@ -4,6 +4,7 @@
 #include "base_math_arithmetic.hpp"
 #include "base_math_macros.hpp"
 #include "base_math_mathematical_constants.hpp"
+#include "base_math_templates.hpp"
 
 #include <cmath>
 #include <cstddef>
@@ -20,16 +21,19 @@ constexpr std::size_t EXP_REPEAT_NUMBER = 5;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
 constexpr std::size_t LOG_REPEAT_NUMBER = 6;
 
-constexpr int SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER = -21;
-constexpr int SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER = -6;
-#else  // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 6;
+constexpr std::size_t EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER = 1;
+
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
 constexpr std::size_t EXP_REPEAT_NUMBER = 9;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
 constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 
-constexpr int SQRT_EXTRACTION_DOUBLE_REPEAT_NUMBER = -7;
-constexpr int SQRT_EXTRACTION_FLOAT_REPEAT_NUMBER = 8;
+constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 19;
+
+constexpr std::size_t EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER = 4;
+
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
 constexpr std::size_t SQRT_REPEAT_NUMBER_MOSTLY_ACCURATE = 2;
@@ -45,6 +49,72 @@ constexpr double EXP2_INPUT_MAX = 126.0;
 constexpr double EXP2_OUTPUT_MAX = 8.507059173023462e+37;
 constexpr double EXP2_INPUT_MIN = -126.0;
 constexpr double EXP2_OUTPUT_MIN = 1.1754943508222875e-38;
+
+constexpr unsigned long long TABLE_FOR_EXP_DOUBLE[16] = {
+    0x059B0D3158574ull, // 2^( 1 /32)-1
+    0x11301D0125B51ull, // 2^( 3 /32)-1
+    0x1D4873168B9AAull, // 2^( 5 /32)-1
+    0x29E9DF51FDEE1ull, // 2^( 7 /32)-1
+    0x371A7373AA9CBull, // 2^( 9 /32)-1
+    0x44E086061892Dull, // 2^( 11 /32)-1
+    0x5342B569D4F82ull, // 2^( 13 /32)-1
+    0x6247EB03A5585ull, // 2^( 15 /32)-1
+    0x71F75E8EC5F74ull, // 2^( 17 /32)-1
+    0x82589994CCE13ull, // 2^( 19 /32)-1
+    0x93737B0CDC5E5ull, // 2^( 21 /32)-1
+    0xA5503B23E255Dull, // 2^( 23 /32)-1
+    0xB7F76F2FB5E47ull, // 2^( 25 /32)-1
+    0xCB720DCEF9069ull, // 2^( 27 /32)-1
+    0xDFC97337B9B5Full, // 2^( 29 /32)-1
+    0xF50765B6E4540ull, // 2^( 31 /32)-1
+};
+
+constexpr unsigned long TABLE_FOR_EXP_FLOAT[16] = {
+    0x02CD86ul, // 2^( 1 /32)-1
+    0x08980Eul, // 2^( 3 /32)-1
+    0x0EA439ul, // 2^( 5 /32)-1
+    0x14F4EFul, // 2^( 7 /32)-1
+    0x1B8D39ul, // 2^( 9 /32)-1
+    0x227043ul, // 2^( 11 /32)-1
+    0x29A15Aul, // 2^( 13 /32)-1
+    0x3123F5ul, // 2^( 15 /32)-1
+    0x38FBAFul, // 2^( 17 /32)-1
+    0x412C4Cul, // 2^( 19 /32)-1
+    0x49B9BDul, // 2^( 21 /32)-1
+    0x52A81Dul, // 2^( 23 /32)-1
+    0x5BFBB7ul, // 2^( 25 /32)-1
+    0x65B906ul, // 2^( 27 /32)-1
+    0x6FE4B9ul, // 2^( 29 /32)-1
+    0x7A83B2ul, // 2^( 31 /32)-1
+};
+
+constexpr std::size_t EXP_MCLOUGHLIN_FACTOR_MAX_SIZE = 7;
+
+using EXP_MCLOUGHLIN_FACTOR_LIST =
+    typename MakeExpMcloughlinFactorList<EXP_MCLOUGHLIN_FACTOR_MAX_SIZE>::type;
+
+constexpr auto EXP_MCLOUGHLIN_FACTOR =
+    Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_LIST{});
+
+constexpr double TABLE_FOR_LOG_DOUBLE[17] = {
+    0.0,                      // log( 16 /16)
+    0.0606246218164348425806, // log( 17 /16)
+    0.1177830356563834545387, // log( 18 /16)
+    0.17185025692665922234,   // log( 19 /16)
+    0.2231435513142097557662, // log( 20 /16)
+    0.2719337154836417588316, // log( 21 /16)
+    0.3184537311185346158102, // log( 22 /16)
+    0.3629054936893684531378, // log( 23 /16)
+    0.405465108108164381978,  // log( 24 /16)
+    0.4462871026284195115325, // log( 25 /16)
+    0.4855078157817008078017, // log( 26 /16)
+    0.5232481437645478365168, // log( 27 /16)
+    0.5596157879354226862708, // log( 28 /16)
+    0.5947071077466927895143, // log( 29 /16)
+    0.6286086594223741377443, // log( 30 /16)
+    0.6613984822453650082602, // log( 31 /16)
+    0.6931471805599453094172, // log( 32 /16)
+};
 
 constexpr double LOG_OUTPUT_MIN = -1.0e20;
 constexpr double LOG_SCALE_FACTOR = 5.0;
@@ -89,9 +159,9 @@ inline T fast_inverse_square_root(const T &input, const T &division_min) {
 
     x = static_cast<float>(input_wrapped) * static_cast<float>(0.5);
     y = static_cast<float>(input_wrapped);
-    std::memcpy(&i, &y, 4);
+    std::memcpy(&i, &y, static_cast<std::size_t>(4));
     i = static_cast<long>(0x5f3759df) - (i >> 1);
-    std::memcpy(&y, &i, 4);
+    std::memcpy(&y, &i, static_cast<std::size_t>(4));
     y = y * (static_cast<float>(1.5) - (x * y * y));
   }
 
@@ -193,11 +263,11 @@ template <> struct SqrtExtractionDoubleSecondLoop<-1> {
  *  Function: sqrt_extraction_double
  *  Detail: calculates sqrt with extraction of mantissa.
  *  Input value depends on the IEEE 754 standard.
- *  When In_r is specified as the maximum 26,
+ *  When REPEAT_NUMBER is specified as the maximum 26,
  *  it completely matches math.h's sqrt().
- *  When In_r is 0, the error is within 8.0e^-7 [%].
- *  When In_r is -10, the error is within 8.0e^-3 [%].
- *  When In_r is -20, the error is within 8 [%].
+ *  When REPEAT_NUMBER is 0, the error is within 8.0e^-7 [%].
+ *  When REPEAT_NUMBER is -10, the error is within 8.0e^-3 [%].
+ *  When REPEAT_NUMBER is -20, the error is within 8 [%].
  *  At -26, since almost no calculation is performed, the error is very large.
  **************************************************/
 template <int EXTRACTION_DOUBLE_REPEAT_NUMBER>
@@ -442,7 +512,33 @@ inline float sqrt_extraction_float(const float &value) {
   return result;
 }
 
-/* rsqrt loop */
+/* sqrt extraction */
+template <typename T, int EXTRACTION_FloatingPoint_REPEAT_NUMBER>
+typename std::enable_if<std::is_same<T, double>::value, T>::type
+sqrt_extraction_FloatingPoint(const T &x) {
+
+  return Base::Math::sqrt_extraction_double<
+      static_cast<int>(EXTRACTION_FloatingPoint_REPEAT_NUMBER) -
+      static_cast<int>(26)>(x);
+}
+
+template <typename T, int EXTRACTION_FloatingPoint_REPEAT_NUMBER>
+typename std::enable_if<std::is_same<T, float>::value, T>::type
+sqrt_extraction_FloatingPoint(const T &x) {
+
+  return Base::Math::sqrt_extraction_float<
+      static_cast<int>(EXTRACTION_FloatingPoint_REPEAT_NUMBER) -
+      static_cast<int>(12)>(x);
+}
+
+template <typename T, int EXTRACTION_FloatingPoint_REPEAT_NUMBER>
+inline T sqrt_extraction(const T &x) {
+
+  return Base::Math::sqrt_extraction_FloatingPoint<
+      T, EXTRACTION_FloatingPoint_REPEAT_NUMBER>(x);
+}
+
+/* rsqrt newton method loop */
 template <typename T, int N> struct RsqrtNewtonLoop {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
@@ -464,6 +560,7 @@ template <typename T> struct RsqrtNewtonLoop<T, 0> {
   }
 };
 
+/* rsqrt newton method */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T rsqrt_newton_method(const T &x, const T &division_min) {
   T result = static_cast<T>(0);
@@ -484,7 +581,7 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
 
   result = static_cast<T>(r);
 
-  h = x * result * result;
+  h = x_wrapped * result * result;
   result *= static_cast<T>(1.875) -
             h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
 
@@ -494,30 +591,51 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
   return result;
 }
 
-template <typename T> inline T rsqrt(const T &x) {
+/* rsqrt */
+template <typename T> inline T rsqrt(const T &x, const T &division_min) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return static_cast<T>(1) / std::sqrt(x);
-#else
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+
+  T x_wrapped = x;
+
+  if (x < division_min) {
+    x_wrapped = division_min;
+  }
+
+  return static_cast<T>(1) / std::sqrt(x_wrapped);
+
+#else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::fast_inverse_square_root(
-      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
-#else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  T x_wrapped = x;
+
+  if (x < division_min) {
+    x_wrapped = division_min;
+  }
+
+  return static_cast<T>(1) /
+         Base::Math::sqrt_extraction<T,
+                                     Base::Math::SQRT_EXTRACTION_REPEAT_NUMBER>(
+             x_wrapped);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
-      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+      x, division_min);
+
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
-      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
-
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
 }
 
-/* sqrt */
+template <typename T> inline T rsqrt(const T &x) {
+
+  return Base::Math::rsqrt<T>(
+      x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
+}
+
+/* sqrt newton method */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sqrt_newton_method(const T &x) {
 
@@ -563,27 +681,45 @@ template <typename T> inline T fast_square_root(const T &input) {
              static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
 
+/* sqrt */
 template <typename T> inline T sqrt(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::sqrt(x);
-#else
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+
+  T x_wrapped = x;
+
+  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+    x_wrapped =
+        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  }
+
+  return std::sqrt(x_wrapped);
+
+#else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
-  return Base::Math::fast_square_root(x);
-#else  // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  T x_wrapped = x;
+
+  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+    x_wrapped =
+        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  }
+
+  return Base::Math::sqrt_extraction<T,
+                                     Base::Math::SQRT_EXTRACTION_REPEAT_NUMBER>(
+      x_wrapped);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
+
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-  return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(x);
-
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
 }
 
-/* exp */
+/* exp Mcloughlin Expansion */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
 struct ExpMcloughlinIterationLoop {
   static void compute(T &result, T &term, const T &remainder) {
@@ -629,14 +765,175 @@ inline T exp_mcloughlin_expansion(const T &x) {
   return result;
 }
 
+/* exp Mcloughlin Expansion with table */
+template <typename T, std::size_t N> struct ExpMcLoughlinExpansionLoop {
+  static void compute(T &y, T &r) {
+    y = y * r + static_cast<T>(Base::Math::EXP_MCLOUGHLIN_FACTOR[N - 1]);
+    ExpMcLoughlinExpansionLoop<T, N - 1>::compute(y, r);
+  }
+};
+
+template <typename T> struct ExpMcLoughlinExpansionLoop<T, 0> {
+  static void compute(T &y, T &r) {
+    static_cast<void>(y);
+    static_cast<void>(r);
+    // Do nothing
+  }
+};
+
+/*************************************************
+ *  Function: exp_double_mcloughlin_expansion_with_table
+ *  Detail: calculates exp with mcloughlin expansion and table.
+ *  Fast but it depends on the IEEE 754 standard.
+ **************************************************/
+template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
+  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <=
+                    Base::Math::EXP_MCLOUGHLIN_FACTOR_MAX_SIZE,
+                "The number of iterations is too large.");
+
+  double result = static_cast<double>(1);
+
+  if (x > static_cast<double>(Base::Math::EXP_INPUT_MAX)) {
+    result = static_cast<double>(Base::Math::EXP_OUTPUT_MAX);
+  } else if (x < static_cast<double>(Base::Math::EXP_INPUT_MIN)) {
+    result = static_cast<double>(Base::Math::EXP_OUTPUT_MIN);
+  } else {
+
+    double y =
+        Base::Math::EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1];
+
+    double z = static_cast<double>(0);
+    double r = static_cast<double>(0);
+    int q = static_cast<int>(0);
+    unsigned long long w = static_cast<unsigned long long>(0);
+
+    z = x * (static_cast<double>(16) / static_cast<double>(Base::Math::LN_2));
+    q = static_cast<int>(z) - (x < static_cast<double>(0));
+    r = x -
+        ((q << static_cast<int>(1)) + static_cast<int>(1)) *
+            (static_cast<double>(Base::Math::LN_2) / static_cast<double>(32));
+    w = static_cast<unsigned long long>(
+            static_cast<int>(1023) + static_cast<int>(q >> static_cast<int>(4)))
+            << static_cast<int>(52) ^
+        static_cast<unsigned long long>(
+            Base::Math::TABLE_FOR_EXP_DOUBLE[q & static_cast<int>(0xF)]);
+
+    std::memcpy(&z, &w, static_cast<int>(8));
+
+    ExpMcLoughlinExpansionLoop<double,
+                               MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                            r);
+
+    result = y * z;
+  }
+
+  return result;
+}
+
+/*************************************************
+ *  Function: exp_float_mcloughlin_expansion_with_table
+ *  Detail: calculates exp with mcloughlin expansion and table.
+ *  Fast but it depends on the IEEE 754 standard.
+ **************************************************/
+template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
+  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <=
+                    Base::Math::EXP_MCLOUGHLIN_FACTOR_MAX_SIZE,
+                "The number of iterations is too large.");
+
+  float result = static_cast<float>(1);
+
+  if (x > static_cast<float>(Base::Math::EXP_INPUT_MAX)) {
+    result = static_cast<float>(Base::Math::EXP_OUTPUT_MAX);
+  } else if (x < static_cast<float>(Base::Math::EXP_INPUT_MIN)) {
+    result = static_cast<float>(Base::Math::EXP_OUTPUT_MIN);
+  } else {
+
+    float y = static_cast<float>(
+        Base::Math::EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
+                                          1]);
+
+    float z = static_cast<float>(0);
+    float r = static_cast<float>(0);
+    int q = static_cast<int>(0);
+    unsigned long w = static_cast<unsigned long>(0);
+
+    z = x * (static_cast<float>(16) / static_cast<float>(Base::Math::LN_2));
+    q = static_cast<int>(z) - (x < static_cast<float>(0));
+    r = x - ((q << static_cast<int>(1)) + static_cast<int>(1)) *
+                (static_cast<float>(Base::Math::LN_2) / static_cast<float>(32));
+    w = static_cast<unsigned long>(static_cast<int>(127) +
+                                   static_cast<int>(q >> static_cast<int>(4)))
+            << static_cast<int>(23) ^
+        static_cast<unsigned long>(
+            Base::Math::TABLE_FOR_EXP_FLOAT[q & static_cast<int>(0xF)]);
+
+    std::memcpy(&z, &w, static_cast<std::size_t>(4));
+
+    ExpMcLoughlinExpansionLoop<float,
+                               MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                            r);
+
+    result = y * z;
+  }
+
+  return result;
+}
+
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+typename std::enable_if<std::is_same<T, double>::value, T>::type
+exp_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::exp_double_mcloughlin_expansion_with_table<
+      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+}
+
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+typename std::enable_if<std::is_same<T, float>::value, T>::type
+exp_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::exp_float_mcloughlin_expansion_with_table<
+      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+}
+
+template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+inline T exp_mcloughlin_expansion_with_table(const T &x) {
+
+  return exp_FloatingPoint_mcloughlin_expansion_with_table<
+      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+}
+
+/* exp */
 template <typename T> inline T exp(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::exp(x);
-#else
+
+  if (x > static_cast<float>(Base::Math::EXP_INPUT_MAX)) {
+    return static_cast<float>(Base::Math::EXP_OUTPUT_MAX);
+  } else if (x < static_cast<float>(Base::Math::EXP_INPUT_MIN)) {
+    return static_cast<float>(Base::Math::EXP_OUTPUT_MIN);
+  } else {
+
+    return std::exp(x);
+  }
+
+#else // BASE_MATH_USE_STD_MATH
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return exp_mcloughlin_expansion_with_table<
+      T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(x);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::exp_mcloughlin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
-#endif
+
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
 /* exp2 */
@@ -690,15 +987,139 @@ inline T exp2_mcloughlin_expansion(const T &x) {
 template <typename T> inline T exp2(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::exp2(x);
-#else
+
+  if (x > static_cast<T>(Base::Math::EXP2_INPUT_MAX)) {
+    return static_cast<T>(Base::Math::EXP2_OUTPUT_MAX);
+  } else if (x < static_cast<T>(Base::Math::EXP2_INPUT_MIN)) {
+    return static_cast<T>(Base::Math::EXP2_OUTPUT_MIN);
+  } else {
+
+    return std::exp2(x);
+  }
+#else // BASE_MATH_USE_STD_MATH
   return Base::Math::exp2_mcloughlin_expansion<T,
                                                Base::Math::EXP2_REPEAT_NUMBER>(
       x);
 #endif
 }
 
-/* log */
+/* log mcloughlin expansion with table */
+/*************************************************
+ *  Function: log_double_mcloughlin_expansion_with_table
+ *  Detail: calculates log with mcloughlin expansion and table.
+ *  Fast but it depends on the IEEE 754 standard.
+ **************************************************/
+inline double log_double_mcloughlin_expansion_with_table(const double &x) {
+
+  double result = static_cast<double>(0);
+
+  if (x <= static_cast<double>(0)) {
+    result = static_cast<double>(Base::Math::LOG_OUTPUT_MIN);
+  } else {
+
+    unsigned long long w = static_cast<unsigned long long>(0);
+    unsigned long long mantissa16 = static_cast<unsigned long long>(0);
+    int q = static_cast<int>(0);
+    double y = static_cast<double>(0);
+    double h = static_cast<double>(0);
+    double z = static_cast<double>(0);
+
+    std::memcpy(&w, &x, static_cast<std::size_t>(8));
+
+    q = ((static_cast<int>(w >> static_cast<int>(47)) &
+          static_cast<int>(0x1F)) +
+         static_cast<int>(1)) >>
+        static_cast<int>(1);
+    mantissa16 = (w & static_cast<unsigned long long>(0xFFFFFFFFFFFFF)) ^
+                 static_cast<unsigned long long>(
+                     0x4030000000000000); // mantissa*16  16<=mantissa16<32
+
+    std::memcpy(&h, &mantissa16, static_cast<std::size_t>(8));
+
+    z = static_cast<double>(q + static_cast<int>(16));
+    h = (h - z) / (h + z);
+    z = h * h;
+
+    y = static_cast<double>(1.5) * z + static_cast<double>(2);
+    y = y * h;
+
+    result = static_cast<double>(static_cast<int>(w >> static_cast<int>(52)) -
+                                 static_cast<int>(1023)) *
+                 static_cast<double>(Base::Math::LN_2) +
+             static_cast<double>(Base::Math::TABLE_FOR_LOG_DOUBLE[q]) + y;
+  }
+
+  return result;
+}
+
+/*************************************************
+ *  Function: log_float_mcloughlin_expansion_with_table
+ *  Detail: calculates log with mcloughlin expansion and table.
+ *  Fast but it depends on the IEEE 754 standard.
+ **************************************************/
+inline float log_float_mcloughlin_expansion_with_table(const float &x) {
+
+  float result = static_cast<float>(0);
+
+  if (x <= static_cast<float>(0)) {
+    result = static_cast<float>(Base::Math::LOG_OUTPUT_MIN);
+  } else {
+
+    unsigned long w = static_cast<unsigned long>(0);
+    unsigned long mantissa16 = static_cast<unsigned long>(0);
+    int q = static_cast<int>(0);
+    float y = static_cast<float>(0);
+    float h = static_cast<float>(0);
+    float z = static_cast<float>(0);
+
+    std::memcpy(&w, &x, static_cast<std::size_t>(4));
+
+    q = ((static_cast<int>(w >> static_cast<int>(18)) &
+          static_cast<int>(0x1F)) +
+         static_cast<int>(1)) >>
+        static_cast<int>(1);
+    mantissa16 =
+        (w & static_cast<unsigned long>(0x7FFFFF)) ^
+        static_cast<unsigned long>(0x41800000); // mantissa*16 16<=mantissa16<32
+
+    std::memcpy(&h, &mantissa16, static_cast<std::size_t>(4));
+
+    z = static_cast<float>(q + static_cast<int>(16));
+    h = (h - z) / (h + z);
+    z = h * h;
+
+    y = static_cast<float>(1.5) * z + static_cast<float>(2);
+    y = y * h;
+
+    result = static_cast<float>(static_cast<int>(w >> static_cast<int>(23)) -
+                                static_cast<int>(127)) *
+                 static_cast<float>(Base::Math::LN_2) +
+             static_cast<float>(Base::Math::TABLE_FOR_LOG_DOUBLE[q]) + y;
+  }
+
+  return result;
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, double>::value, T>::type
+log_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_double_mcloughlin_expansion_with_table(x);
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, float>::value, T>::type
+log_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_float_mcloughlin_expansion_with_table(x);
+}
+
+template <typename T> inline T log_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_FloatingPoint_mcloughlin_expansion_with_table<T>(x);
+}
+
+/* log newton method */
 template <typename T, std::size_t N> struct LogNewtonIterationLoop {
   static void compute(T &exp_guess, T &guess, const T &scaled_x) {
     exp_guess = Base::Math::exp(guess);
@@ -755,16 +1176,33 @@ inline T log_newton_method(const T &x) {
   return result;
 }
 
+/* log */
 template <typename T> inline T log(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::log(x);
-#else
+
+  if (x <= static_cast<T>(0)) {
+    return static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
+  } else {
+
+    return std::log(x);
+  }
+#else // BASE_MATH_USE_STD_MATH
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return log_mcloughlin_expansion_with_table<T>(x);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::log_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
-#endif
+
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* log2 */
+/* log2 newton method */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T log2_newton_method(const T &x) {
 
@@ -772,16 +1210,42 @@ inline T log2_newton_method(const T &x) {
          static_cast<T>(Base::Math::LN_2);
 }
 
+/* log2 mcloughlin expansion with table */
+template <typename T>
+inline T log2_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_mcloughlin_expansion_with_table<T>(x) /
+         static_cast<T>(Base::Math::LN_2);
+}
+
+/* log2 */
 template <typename T> inline T log2(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::log2(x);
-#else
+
+  if (x <= static_cast<T>(0)) {
+    return static_cast<T>(Base::Math::LOG_OUTPUT_MIN) /
+           static_cast<T>(Base::Math::LN_2);
+  } else {
+
+    return std::log2(x);
+  }
+#else // BASE_MATH_USE_STD_MATH
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return Base::Math::log2_mcloughlin_expansion_with_table<T>(x);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::log2_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
-#endif
+
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* log10 */
+/* log10 newton method  */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T log10_newton_method(const T &x) {
 
@@ -789,30 +1253,65 @@ inline T log10_newton_method(const T &x) {
          static_cast<T>(Base::Math::LN_10);
 }
 
+/* log10 mcloughlin expansion with table */
+template <typename T>
+inline T log10_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_mcloughlin_expansion_with_table<T>(x) /
+         static_cast<T>(Base::Math::LN_10);
+}
+
+/* log10 */
 template <typename T> inline T log10(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::log10(x);
-#else
+
+  if (x <= static_cast<T>(0)) {
+    return static_cast<T>(Base::Math::LOG_OUTPUT_MIN) /
+           static_cast<T>(Base::Math::LN_10);
+  } else {
+
+    return std::log10(x);
+  }
+#else // BASE_MATH_USE_STD_MATH
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return Base::Math::log10_mcloughlin_expansion_with_table<T>(x);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::log10_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
-#endif
+
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
-/* pow */
+/* pow mcloughlin expansion */
 template <typename T, std::size_t EXP_LOOP_NUMBER, std::size_t LOG_LOOP_NUMBER>
 inline T pow_base_math(const T &x, const T &y) {
   return Base::Math::exp_mcloughlin_expansion<T, EXP_LOOP_NUMBER>(
       y * Base::Math::log_newton_method<T, LOG_LOOP_NUMBER>(x));
 }
 
+template <typename T, std::size_t EXP_LOOP_NUMBER>
+inline T pow_mcloughlin_expansion_with_table(const T &x, const T &y) {
+  return Base::Math::exp_mcloughlin_expansion_with_table<T, EXP_LOOP_NUMBER>(
+      y * Base::Math::log_mcloughlin_expansion_with_table<T>(x));
+}
+
+/* pow */
 template <typename T> inline T pow(const T &x, const T &y) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::pow(x, y);
-#else
-  return Base::Math::pow_base_math<T, Base::Math::EXP_REPEAT_NUMBER,
-                                   Base::Math::LOG_REPEAT_NUMBER>(x, y);
-#endif
+#else // BASE_MATH_USE_STD_MATH
+
+  return Base::Math::pow_mcloughlin_expansion_with_table<
+      T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(x, y);
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
 } // namespace Math
