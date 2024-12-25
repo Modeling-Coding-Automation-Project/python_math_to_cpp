@@ -559,7 +559,7 @@ void check_base_math_exponential_logarithmic(void) {
             log10_answer = std::log10(test_values_log[i]);
         }
 
-        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_SOFT,
+        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_SOFT * std::abs(log10_answer),
             "check log10.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log10_value = Base::Math::log10(test_values_log[i]);
@@ -572,7 +572,7 @@ void check_base_math_exponential_logarithmic(void) {
             log10_answer = std::log10(test_values_log[i]);
         }
 
-        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT,
+        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT * std::abs(log10_answer),
             "check log10.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH
@@ -1939,7 +1939,7 @@ void check_python_math_exponential_logarithmic(void) {
             log10_answer = std::log10(test_values_log[i]);
         }
 
-        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_SOFT,
+        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_SOFT * std::abs(log10_answer),
             "check log10.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log10_value = PythonMath::log10(test_values_log[i]);
@@ -1952,7 +1952,7 @@ void check_python_math_exponential_logarithmic(void) {
             log10_answer = std::log10(test_values_log[i]);
         }
 
-        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT,
+        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT * std::abs(log10_answer),
             "check log10.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 #endif // BASE_MATH_USE_STD_MATH

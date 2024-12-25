@@ -1197,12 +1197,29 @@ inline T log10_newton_method(const T &x) {
          static_cast<T>(Base::Math::LN_10);
 }
 
+template <typename T>
+inline T log10_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_mcloughlin_expansion_with_table<T>(x) /
+         static_cast<T>(Base::Math::LN_10);
+}
+
 template <typename T> inline T log10(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log10(x);
-#else  // BASE_MATH_USE_STD_MATH
+#else // BASE_MATH_USE_STD_MATH
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return Base::Math::log10_mcloughlin_expansion_with_table<T>(x);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::log10_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
+
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
 #endif // BASE_MATH_USE_STD_MATH
 }
 
