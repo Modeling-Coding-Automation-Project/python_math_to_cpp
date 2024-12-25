@@ -595,7 +595,7 @@ template <typename T> inline T rsqrt(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return static_cast<T>(1) / std::sqrt(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
@@ -671,7 +671,7 @@ template <typename T> inline T sqrt(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::sqrt(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
@@ -886,7 +886,7 @@ template <typename T> inline T exp(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
@@ -955,7 +955,7 @@ template <typename T> inline T exp2(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::exp2(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
   return Base::Math::exp2_mcloughlin_expansion<T,
                                                Base::Math::EXP2_REPEAT_NUMBER>(
       x);
@@ -1135,13 +1135,24 @@ inline T log_newton_method(const T &x) {
   return result;
 }
 
+/* log */
 template <typename T> inline T log(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return log_mcloughlin_expansion_with_table<T>(x);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::log_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
-#endif
+
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
 /* log2 */
@@ -1152,13 +1163,30 @@ inline T log2_newton_method(const T &x) {
          static_cast<T>(Base::Math::LN_2);
 }
 
+template <typename T>
+inline T log2_mcloughlin_expansion_with_table(const T &x) {
+
+  return Base::Math::log_mcloughlin_expansion_with_table<T>(x) /
+         static_cast<T>(Base::Math::LN_2);
+}
+
 template <typename T> inline T log2(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log2(x);
-#else
+#else // BASE_MATH_USE_STD_MATH
+
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+  return Base::Math::log2_mcloughlin_expansion_with_table<T>(x);
+
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
   return Base::Math::log2_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
-#endif
+
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
+
+#endif // BASE_MATH_USE_STD_MATH
 }
 
 /* log10 */
@@ -1173,9 +1201,9 @@ template <typename T> inline T log10(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::log10(x);
-#else
+#else  // BASE_MATH_USE_STD_MATH
   return Base::Math::log10_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
-#endif
+#endif // BASE_MATH_USE_STD_MATH
 }
 
 /* pow */
@@ -1189,10 +1217,10 @@ template <typename T> inline T pow(const T &x, const T &y) {
 
 #ifdef BASE_MATH_USE_STD_MATH
   return std::pow(x, y);
-#else
+#else  // BASE_MATH_USE_STD_MATH
   return Base::Math::pow_base_math<T, Base::Math::EXP_REPEAT_NUMBER,
                                    Base::Math::LOG_REPEAT_NUMBER>(x, y);
-#endif
+#endif // BASE_MATH_USE_STD_MATH
 }
 
 } // namespace Math
