@@ -577,7 +577,19 @@ inline T asin_chebyshev(const T &x) {
 template <typename T> inline T asin(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::asin(x);
+
+  if (x >= static_cast<T>(1)) {
+
+    return static_cast<T>(Base::Math::HALF_PI);
+
+  } else if (x <= static_cast<T>(-1)) {
+
+    return -static_cast<T>(Base::Math::HALF_PI);
+
+  } else {
+
+    return std::asin(x);
+  }
 #else // BASE_MATH_USE_STD_MATH
 
   return Base::Math::asin_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
@@ -599,7 +611,19 @@ inline T acos_chebyshev(const T &x) {
 template <typename T> inline T acos(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::acos(x);
+
+  if (x > static_cast<T>(1)) {
+
+    return static_cast<T>(0);
+
+  } else if (x < static_cast<T>(-1)) {
+
+    return static_cast<T>(Base::Math::PI);
+
+  } else {
+
+    return std::acos(x);
+  }
 #else // BASE_MATH_USE_STD_MATH
 
   return Base::Math::acos_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,

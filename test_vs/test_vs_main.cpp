@@ -766,13 +766,6 @@ void check_base_math_trigonometric(void) {
 
     /* atan2 */
     for (std::size_t i = 0; i < test_values_atan2.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T atan2_value = Base::Math::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
-        T atan2_answer = std::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
-
-        tester.expect_near(atan2_value, atan2_answer, NEAR_LIMIT_STRICT,
-            "check atan2.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T atan2_value = Base::Math::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
         T atan2_answer = std::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
@@ -786,7 +779,6 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(atan2_value, atan2_answer, NEAR_LIMIT_STRICT,
             "check atan2.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     std::vector<T> test_values_asin_acos = {
@@ -807,26 +799,6 @@ void check_base_math_trigonometric(void) {
 
     /* asin */
     for (std::size_t i = 0; i < test_values_asin_acos.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T asin_value = static_cast<T>(0);
-        T asin_answer = static_cast<T>(0);
-        if (test_values_asin_acos[i] < static_cast<T>(-1)) {
-            asin_value = Base::Math::asin(static_cast<T>(-1));
-            asin_answer = std::asin(static_cast<T>(-1));
-        }
-        else if (test_values_asin_acos[i] > static_cast<T>(1)) {
-            asin_value = Base::Math::asin(static_cast<T>(1));
-            asin_answer = std::asin(static_cast<T>(1));
-        }
-        else
-        {
-            asin_value = Base::Math::asin(test_values_asin_acos[i]);
-            asin_answer = std::asin(test_values_asin_acos[i]);
-        }
-
-        tester.expect_near(asin_value, asin_answer, NEAR_LIMIT_STRICT,
-            "check asin.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T asin_value = Base::Math::asin(test_values_asin_acos[i]);
 
@@ -862,31 +834,10 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(asin_value, asin_answer, NEAR_LIMIT_STRICT,
             "check asin.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* acos */
     for (std::size_t i = 0; i < test_values_asin_acos.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T acos_value = static_cast<T>(0);
-        T acos_answer = static_cast<T>(0);
-        if (test_values_asin_acos[i] < static_cast<T>(-1)) {
-            acos_value = Base::Math::acos(static_cast<T>(-1));
-            acos_answer = std::acos(static_cast<T>(-1));
-        }
-        else if (test_values_asin_acos[i] > static_cast<T>(1)) {
-            acos_value = Base::Math::acos(static_cast<T>(1));
-            acos_answer = std::acos(static_cast<T>(1));
-        }
-        else
-        {
-            acos_value = Base::Math::acos(test_values_asin_acos[i]);
-            acos_answer = std::acos(test_values_asin_acos[i]);
-        }
-
-        tester.expect_near(acos_value, acos_answer, NEAR_LIMIT_STRICT,
-            "check acos.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T acos_value = Base::Math::acos(test_values_asin_acos[i]);
 
@@ -922,7 +873,6 @@ void check_base_math_trigonometric(void) {
         tester.expect_near(acos_value, acos_answer, NEAR_LIMIT_STRICT,
             "check acos.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     std::vector<T> test_values_hyperbolic({
@@ -1990,13 +1940,6 @@ void check_python_math_trigonometric(void) {
 
     /* atan2 */
     for (std::size_t i = 0; i < test_values_atan2.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T atan2_value = PythonMath::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
-        T atan2_answer = std::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
-
-        tester.expect_near(atan2_value, atan2_answer, NEAR_LIMIT_STRICT,
-            "check atan2.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T atan2_value = PythonMath::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
         T atan2_answer = std::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
@@ -2010,7 +1953,6 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(atan2_value, atan2_answer, NEAR_LIMIT_STRICT,
             "check atan2.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 #ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
@@ -2104,26 +2046,6 @@ void check_python_math_trigonometric(void) {
 
     /* asin */
     for (std::size_t i = 0; i < test_values_asin_acos.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T asin_value = static_cast<T>(0);
-        T asin_answer = static_cast<T>(0);
-        if (test_values_asin_acos[i] < static_cast<T>(-1)) {
-            asin_value = PythonMath::asin(static_cast<T>(-1));
-            asin_answer = std::asin(static_cast<T>(-1));
-        }
-        else if (test_values_asin_acos[i] > static_cast<T>(1)) {
-            asin_value = PythonMath::asin(static_cast<T>(1));
-            asin_answer = std::asin(static_cast<T>(1));
-        }
-        else
-        {
-            asin_value = PythonMath::asin(test_values_asin_acos[i]);
-            asin_answer = std::asin(test_values_asin_acos[i]);
-        }
-
-        tester.expect_near(asin_value, asin_answer, NEAR_LIMIT_STRICT,
-            "check asin.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T asin_value = PythonMath::asin(test_values_asin_acos[i]);
 
@@ -2159,31 +2081,10 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(asin_value, asin_answer, NEAR_LIMIT_STRICT,
             "check asin.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* acos */
     for (std::size_t i = 0; i < test_values_asin_acos.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T acos_value = static_cast<T>(0);
-        T acos_answer = static_cast<T>(0);
-        if (test_values_asin_acos[i] < static_cast<T>(-1)) {
-            acos_value = PythonMath::acos(static_cast<T>(-1));
-            acos_answer = std::acos(static_cast<T>(-1));
-        }
-        else if (test_values_asin_acos[i] > static_cast<T>(1)) {
-            acos_value = PythonMath::acos(static_cast<T>(1));
-            acos_answer = std::acos(static_cast<T>(1));
-        }
-        else
-        {
-            acos_value = PythonMath::acos(test_values_asin_acos[i]);
-            acos_answer = std::acos(test_values_asin_acos[i]);
-        }
-
-        tester.expect_near(acos_value, acos_answer, NEAR_LIMIT_STRICT,
-            "check acos.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T acos_value = PythonMath::acos(test_values_asin_acos[i]);
 
@@ -2219,7 +2120,6 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(acos_value, acos_answer, NEAR_LIMIT_STRICT,
             "check acos.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     std::vector<T> test_values_hyperbolic({
