@@ -983,7 +983,15 @@ inline T exp2_mcloughlin_expansion(const T &x) {
 template <typename T> inline T exp2(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::exp2(x);
+
+  if (x > static_cast<T>(Base::Math::EXP2_INPUT_MAX)) {
+    return static_cast<T>(Base::Math::EXP2_OUTPUT_MAX);
+  } else if (x < static_cast<T>(Base::Math::EXP2_INPUT_MIN)) {
+    return static_cast<T>(Base::Math::EXP2_OUTPUT_MIN);
+  } else {
+
+    return std::exp2(x);
+  }
 #else // BASE_MATH_USE_STD_MATH
   return Base::Math::exp2_mcloughlin_expansion<T,
                                                Base::Math::EXP2_REPEAT_NUMBER>(
