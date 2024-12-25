@@ -2,7 +2,7 @@ name: Run test VS
 
 on:
   push:
-    branches: [ develop, revise_calculation_speed ]
+    branches: [ develop ]
 
 jobs:
   build:
