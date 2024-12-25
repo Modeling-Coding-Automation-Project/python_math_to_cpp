@@ -15,16 +15,12 @@ template<typename T>
 void check_base_math_exponential_logarithmic(void) {
     MCAPTester<T> tester;
 
-#ifdef BASE_MATH_USE_STD_MATH
-    constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     const T NEAR_LIMIT_SOFT = 1.0e-2F;
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
-    const T NEAR_LIMIT_SOFT = 1.0e-2F;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
+
 
     std::vector<T> test_values_sqrt({
         static_cast<T>(-1),
@@ -1191,16 +1187,11 @@ void check_python_math_exponential_logarithmic(void) {
 
     MCAPTester<T> tester;
 
-#ifdef BASE_MATH_USE_STD_MATH
-    constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     const T NEAR_LIMIT_SOFT = 1.0e-2F;
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
-    const T NEAR_LIMIT_SOFT = 1.0e-2F;
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
 
 
     std::vector<T> test_values_sqrt({
