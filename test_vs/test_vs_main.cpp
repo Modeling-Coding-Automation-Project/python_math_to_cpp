@@ -86,23 +86,6 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* rsqrt */
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T rsqrt_value = static_cast<T>(0);
-        T rsqrt_answer = static_cast<T>(0);
-        if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
-            rsqrt_value = Base::Math::rsqrt(
-                static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
-            rsqrt_answer = static_cast<T>(1) / 
-                std::sqrt(static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
-        }
-        else {
-            rsqrt_value = Base::Math::rsqrt(test_values_sqrt[i]);
-            rsqrt_answer = static_cast<T>(1) / std::sqrt(test_values_sqrt[i]);
-        }
-
-        tester.expect_near(rsqrt_value, rsqrt_answer, NEAR_LIMIT_STRICT,
-            "check rsqrt.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T rsqrt_value = Base::Math::rsqrt(test_values_sqrt[i]);
         T rsqrt_answer = static_cast<T>(0);
@@ -131,7 +114,6 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(rsqrt_value, rsqrt_answer, NEAR_LIMIT_STRICT * std::abs(rsqrt_answer),
             "check rsqrt.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
 }
 
     /* sqrt check avoid zero divide */

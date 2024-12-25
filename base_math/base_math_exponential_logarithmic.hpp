@@ -591,10 +591,20 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
   return result;
 }
 
+/* rsqrt */
 template <typename T> inline T rsqrt(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return static_cast<T>(1) / std::sqrt(x);
+
+  T x_wrapped = x;
+
+  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+    x_wrapped =
+        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  }
+
+  return static_cast<T>(1) / std::sqrt(x_wrapped);
+
 #else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
