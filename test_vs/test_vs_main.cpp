@@ -329,21 +329,6 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* log */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T log_value = static_cast<T>(0);
-        T log_answer = static_cast<T>(0);
-        if (test_values_log[i] <= static_cast<T>(0)) {
-            log_value = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
-            log_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
-        }
-        else {
-            log_value = Base::Math::log(test_values_log[i]);
-            log_answer = std::log(test_values_log[i]);
-        }
-
-        tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT,
-            "check log.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log_value = Base::Math::log(test_values_log[i]);
         T log_answer = static_cast<T>(0);
@@ -370,7 +355,6 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
             "check log.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* log mcloughlin expansion with table */
@@ -404,23 +388,6 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* log2 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T log2_value = static_cast<T>(0);
-        T log2_answer = static_cast<T>(0);
-        if (test_values_log[i] <= static_cast<T>(0)) {
-            log2_value = static_cast<T>(Base::Math::LOG_OUTPUT_MIN)
-                / static_cast<T>(Base::Math::LN_2);
-            log2_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN)
-                / static_cast<T>(Base::Math::LN_2);
-        }
-        else {
-            log2_value = Base::Math::log2(test_values_log[i]);
-            log2_answer = std::log2(test_values_log[i]);
-        }
-
-        tester.expect_near(log2_value, log2_answer, NEAR_LIMIT_STRICT,
-            "check log2.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log2_value = Base::Math::log2(test_values_log[i]);
         T log2_answer = static_cast<T>(0);
@@ -450,28 +417,10 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(log2_value, log2_answer, NEAR_LIMIT_STRICT * std::abs(log2_answer),
             "check log2.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* log10 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T log10_value = static_cast<T>(0);
-        T log10_answer = static_cast<T>(0);
-        if (test_values_log[i] <= static_cast<T>(0)) {
-            log10_value = static_cast<T>(Base::Math::LOG_OUTPUT_MIN)
-                / static_cast<T>(Base::Math::LN_10);
-            log10_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN)
-                / static_cast<T>(Base::Math::LN_10);
-        }
-        else {
-            log10_value = Base::Math::log10(test_values_log[i]);
-            log10_answer = std::log10(test_values_log[i]);
-        }
-
-        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT,
-            "check log10.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log10_value = Base::Math::log10(test_values_log[i]);
         T log10_answer = static_cast<T>(0);
@@ -501,7 +450,6 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT * std::abs(log10_answer),
             "check log10.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     std::vector<std::pair<T, T>> test_values_pow({
@@ -1622,21 +1570,6 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* log */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T log_value = static_cast<T>(0);
-        T log_answer = static_cast<T>(0);
-        if (test_values_log[i] <= static_cast<T>(0)) {
-            log_value = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
-            log_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
-        }
-        else {
-            log_value = PythonMath::log(test_values_log[i]);
-            log_answer = std::log(test_values_log[i]);
-        }
-
-        tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT,
-            "check log.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log_value = PythonMath::log(test_values_log[i]);
         T log_answer = static_cast<T>(0);
@@ -1663,7 +1596,6 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
             "check log.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 #ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
@@ -1698,23 +1630,6 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* log2 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T log2_value = static_cast<T>(0);
-        T log2_answer = static_cast<T>(0);
-        if (test_values_log[i] <= static_cast<T>(0)) {
-            log2_value = static_cast<T>(Base::Math::LOG_OUTPUT_MIN)
-                / static_cast<T>(Base::Math::LN_2);
-            log2_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN)
-                / static_cast<T>(Base::Math::LN_2);
-        }
-        else {
-            log2_value = PythonMath::log2(test_values_log[i]);
-            log2_answer = std::log2(test_values_log[i]);
-        }
-
-        tester.expect_near(log2_value, log2_answer, NEAR_LIMIT_STRICT,
-            "check log2.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log2_value = PythonMath::log2(test_values_log[i]);
         T log2_answer = static_cast<T>(0);
@@ -1744,7 +1659,6 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(log2_value, log2_answer, NEAR_LIMIT_STRICT * std::abs(log2_answer),
             "check log2.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 #ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
@@ -1779,23 +1693,6 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* log10 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T log10_value = static_cast<T>(0);
-        T log10_answer = static_cast<T>(0);
-        if (test_values_log[i] <= static_cast<T>(0)) {
-            log10_value = static_cast<T>(Base::Math::LOG_OUTPUT_MIN)
-                / static_cast<T>(Base::Math::LN_10);
-            log10_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN)
-                / static_cast<T>(Base::Math::LN_10);
-        }
-        else {
-            log10_value = PythonMath::log10(test_values_log[i]);
-            log10_answer = std::log10(test_values_log[i]);
-        }
-
-        tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT,
-            "check log10.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T log10_value = PythonMath::log10(test_values_log[i]);
         T log10_answer = static_cast<T>(0);
@@ -1825,7 +1722,6 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT * std::abs(log10_answer),
             "check log10.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 #ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS

@@ -1176,7 +1176,13 @@ inline T log_newton_method(const T &x) {
 template <typename T> inline T log(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::log(x);
+
+  if (x <= static_cast<T>(0)) {
+    return static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
+  } else {
+
+    return std::log(x);
+  }
 #else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
@@ -1192,7 +1198,7 @@ template <typename T> inline T log(const T &x) {
 #endif // BASE_MATH_USE_STD_MATH
 }
 
-/* log2 */
+/* log2 newton method */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T log2_newton_method(const T &x) {
 
@@ -1200,6 +1206,7 @@ inline T log2_newton_method(const T &x) {
          static_cast<T>(Base::Math::LN_2);
 }
 
+/* log2 mcloughlin expansion with table */
 template <typename T>
 inline T log2_mcloughlin_expansion_with_table(const T &x) {
 
@@ -1207,10 +1214,18 @@ inline T log2_mcloughlin_expansion_with_table(const T &x) {
          static_cast<T>(Base::Math::LN_2);
 }
 
+/* log2 */
 template <typename T> inline T log2(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::log2(x);
+
+  if (x <= static_cast<T>(0)) {
+    return static_cast<T>(Base::Math::LOG_OUTPUT_MIN) /
+           static_cast<T>(Base::Math::LN_2);
+  } else {
+
+    return std::log2(x);
+  }
 #else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
@@ -1226,7 +1241,7 @@ template <typename T> inline T log2(const T &x) {
 #endif // BASE_MATH_USE_STD_MATH
 }
 
-/* log10 */
+/* log10 newton method  */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T log10_newton_method(const T &x) {
 
@@ -1234,6 +1249,7 @@ inline T log10_newton_method(const T &x) {
          static_cast<T>(Base::Math::LN_10);
 }
 
+/* log10 mcloughlin expansion with table */
 template <typename T>
 inline T log10_mcloughlin_expansion_with_table(const T &x) {
 
@@ -1241,10 +1257,18 @@ inline T log10_mcloughlin_expansion_with_table(const T &x) {
          static_cast<T>(Base::Math::LN_10);
 }
 
+/* log10 */
 template <typename T> inline T log10(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::log10(x);
+
+  if (x <= static_cast<T>(0)) {
+    return static_cast<T>(Base::Math::LOG_OUTPUT_MIN) /
+           static_cast<T>(Base::Math::LN_10);
+  } else {
+
+    return std::log10(x);
+  }
 #else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
