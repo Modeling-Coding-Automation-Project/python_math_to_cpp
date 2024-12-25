@@ -621,7 +621,7 @@ template <typename T> inline T rsqrt(const T &x) {
 #endif // BASE_MATH_USE_STD_MATH
 }
 
-/* sqrt */
+/* sqrt newton method */
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sqrt_newton_method(const T &x) {
 
@@ -667,10 +667,20 @@ template <typename T> inline T fast_square_root(const T &input) {
              static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
 
+/* sqrt */
 template <typename T> inline T sqrt(const T &x) {
 
 #ifdef BASE_MATH_USE_STD_MATH
-  return std::sqrt(x);
+
+  T x_wrapped = x;
+
+  if (x < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
+    x_wrapped =
+        static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN);
+  }
+
+  return std::sqrt(x_wrapped);
+
 #else // BASE_MATH_USE_STD_MATH
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD

@@ -46,21 +46,6 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* sqrt */
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T sqrt_value = static_cast<T>(0);
-        T sqrt_answer = static_cast<T>(0);
-        if (test_values_sqrt[i] < static_cast<T>(0)) {
-            sqrt_value = Base::Math::sqrt(static_cast<T>(0));
-            sqrt_answer = std::sqrt(static_cast<T>(0));
-        }
-        else {
-            sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);
-            sqrt_answer = std::sqrt(test_values_sqrt[i]);
-        }
-
-        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT,
-            "check sqrt.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
@@ -87,7 +72,6 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
             "check sqrt.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
     /* sqrt check avoid zero divide */
@@ -1457,21 +1441,6 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* sqrt */
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
-#ifdef BASE_MATH_USE_STD_MATH
-        T sqrt_value = static_cast<T>(0);
-        T sqrt_answer = static_cast<T>(0);
-        if (test_values_sqrt[i] < static_cast<T>(0)) {
-            sqrt_value = PythonMath::sqrt(static_cast<T>(0));
-            sqrt_answer = std::sqrt(static_cast<T>(0));
-        }
-        else {
-            sqrt_value = PythonMath::sqrt(test_values_sqrt[i]);
-            sqrt_answer = std::sqrt(test_values_sqrt[i]);
-        }
-
-        tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT,
-            "check sqrt.");
-#else // BASE_MATH_USE_STD_MATH
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sqrt_value = PythonMath::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
@@ -1497,7 +1466,6 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT,
             "check sqrt.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-#endif // BASE_MATH_USE_STD_MATH
     }
 
 #ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
