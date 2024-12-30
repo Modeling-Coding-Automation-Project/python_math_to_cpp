@@ -23,7 +23,7 @@ constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
 constexpr std::size_t LOG_REPEAT_NUMBER = 6;
 
 constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 6;
-constexpr std::size_t EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER = 1;
+constexpr std::size_t EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER = 1;
 
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
@@ -33,7 +33,7 @@ constexpr std::size_t LOG_REPEAT_NUMBER = 7;
 
 constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 19;
 
-constexpr std::size_t EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER = 4;
+constexpr std::size_t EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER = 4;
 
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
 
@@ -89,13 +89,13 @@ constexpr unsigned long TABLE_FOR_EXP_FLOAT[16] = {
     0x7A83B2ul, // 2^( 31 /32)-1
 };
 
-constexpr std::size_t EXP_MCLOUGHLIN_FACTOR_MAX_SIZE = 7;
+constexpr std::size_t EXP_MACLAURIN_FACTOR_MAX_SIZE = 7;
 
-using EXP_MCLOUGHLIN_FACTOR_LIST =
-    typename MakeExpMcloughlinFactorList<EXP_MCLOUGHLIN_FACTOR_MAX_SIZE>::type;
+using EXP_MACLAURIN_FACTOR_LIST =
+    typename MakeExpMaclaurinFactorList<EXP_MACLAURIN_FACTOR_MAX_SIZE>::type;
 
-constexpr auto EXP_MCLOUGHLIN_FACTOR =
-    Base::Math::to_exp_mcloughlin_factor_array(EXP_MCLOUGHLIN_FACTOR_LIST{});
+constexpr auto EXP_MACLAURIN_FACTOR =
+    Base::Math::to_exp_maclaurin_factor_array(EXP_MACLAURIN_FACTOR_LIST{});
 
 constexpr double TABLE_FOR_LOG_DOUBLE[17] = {
     0.0,                      // log( 16 /16)
@@ -725,20 +725,20 @@ template <typename T> inline T sqrt(const T &x) {
       x, static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN));
 }
 
-/* exp Mcloughlin Expansion */
+/* exp Maclaurin Expansion */
 template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct ExpMcloughlinIterationLoop {
+struct ExpMaclaurinIterationLoop {
   static void compute(T &result, T &term, const T &remainder) {
     term *= remainder / static_cast<T>(LOOP_MAX - N);
     result += term;
 
-    ExpMcloughlinIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term,
-                                                            remainder);
+    ExpMaclaurinIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term,
+                                                           remainder);
   }
 };
 
 template <typename T, std::size_t LOOP_MAX>
-struct ExpMcloughlinIterationLoop<T, LOOP_MAX, 0> {
+struct ExpMaclaurinIterationLoop<T, LOOP_MAX, 0> {
   static void compute(T &result, T &term, const T &remainder) {
     /* Do Nothing. */
     static_cast<void>(result);
@@ -748,7 +748,7 @@ struct ExpMcloughlinIterationLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T exp_mcloughlin_expansion(const T &x) {
+inline T exp_maclaurin_expansion(const T &x) {
 
   T result = static_cast<T>(1);
 
@@ -762,7 +762,7 @@ inline T exp_mcloughlin_expansion(const T &x) {
     T remainder = x - n * static_cast<T>(Base::Math::LN_2);
     T term = static_cast<T>(1);
 
-    ExpMcloughlinIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
+    ExpMaclaurinIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
         result, term, remainder);
 
     result = ldexp(result, n);
@@ -771,10 +771,10 @@ inline T exp_mcloughlin_expansion(const T &x) {
   return result;
 }
 
-/* exp Mcloughlin Expansion with table */
+/* exp Maclaurin Expansion with table */
 template <typename T, std::size_t N> struct ExpMcLoughlinExpansionLoop {
   static void compute(T &y, T &r) {
-    y = y * r + static_cast<T>(Base::Math::EXP_MCLOUGHLIN_FACTOR[N - 1]);
+    y = y * r + static_cast<T>(Base::Math::EXP_MACLAURIN_FACTOR[N - 1]);
     ExpMcLoughlinExpansionLoop<T, N - 1>::compute(y, r);
   }
 };
@@ -788,14 +788,14 @@ template <typename T> struct ExpMcLoughlinExpansionLoop<T, 0> {
 };
 
 /*************************************************
- *  Function: exp_double_mcloughlin_expansion_with_table
- *  Detail: calculates exp with mcloughlin expansion and table.
+ *  Function: exp_double_maclaurin_expansion_with_table
+ *  Detail: calculates exp with maclaurin expansion and table.
  *  Fast but it depends on the IEEE 754 standard.
  **************************************************/
-template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
-inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
-  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <=
-                    Base::Math::EXP_MCLOUGHLIN_FACTOR_MAX_SIZE,
+template <std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
+inline double exp_double_maclaurin_expansion_with_table(const double &x) {
+  static_assert(MACLAURIN_EXPANSION_REPEAT_NUMBER <=
+                    Base::Math::EXP_MACLAURIN_FACTOR_MAX_SIZE,
                 "The number of iterations is too large.");
 
   double result = static_cast<double>(1);
@@ -807,8 +807,7 @@ inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
   } else {
 
     double y =
-        Base::Math::EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
-                                          1];
+        Base::Math::EXP_MACLAURIN_FACTOR[MACLAURIN_EXPANSION_REPEAT_NUMBER - 1];
 
     double z = static_cast<double>(0);
     double r = static_cast<double>(0);
@@ -829,8 +828,8 @@ inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
     std::memcpy(&z, &w, static_cast<int>(8));
 
     ExpMcLoughlinExpansionLoop<double,
-                               MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y,
-                                                                            r);
+                               MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                           r);
 
     result = y * z;
   }
@@ -839,14 +838,14 @@ inline double exp_double_mcloughlin_expansion_with_table(const double &x) {
 }
 
 /*************************************************
- *  Function: exp_float_mcloughlin_expansion_with_table
- *  Detail: calculates exp with mcloughlin expansion and table.
+ *  Function: exp_float_maclaurin_expansion_with_table
+ *  Detail: calculates exp with maclaurin expansion and table.
  *  Fast but it depends on the IEEE 754 standard.
  **************************************************/
-template <std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
-inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
-  static_assert(MCLOUGHLIN_EXPANSION_REPEAT_NUMBER <=
-                    Base::Math::EXP_MCLOUGHLIN_FACTOR_MAX_SIZE,
+template <std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
+inline float exp_float_maclaurin_expansion_with_table(const float &x) {
+  static_assert(MACLAURIN_EXPANSION_REPEAT_NUMBER <=
+                    Base::Math::EXP_MACLAURIN_FACTOR_MAX_SIZE,
                 "The number of iterations is too large.");
 
   float result = static_cast<float>(1);
@@ -858,8 +857,8 @@ inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
   } else {
 
     float y = static_cast<float>(
-        Base::Math::EXP_MCLOUGHLIN_FACTOR[MCLOUGHLIN_EXPANSION_REPEAT_NUMBER -
-                                          1]);
+        Base::Math::EXP_MACLAURIN_FACTOR[MACLAURIN_EXPANSION_REPEAT_NUMBER -
+                                         1]);
 
     float z = static_cast<float>(0);
     float r = static_cast<float>(0);
@@ -879,8 +878,8 @@ inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
     std::memcpy(&z, &w, static_cast<std::size_t>(4));
 
     ExpMcLoughlinExpansionLoop<float,
-                               MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>::compute(y,
-                                                                            r);
+                               MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                           r);
 
     result = y * z;
   }
@@ -888,27 +887,27 @@ inline float exp_float_mcloughlin_expansion_with_table(const float &x) {
   return result;
 }
 
-template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+template <typename T, std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
 typename std::enable_if<std::is_same<T, double>::value, T>::type
-exp_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
+exp_FloatingPoint_maclaurin_expansion_with_table(const T &x) {
 
-  return Base::Math::exp_double_mcloughlin_expansion_with_table<
-      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+  return Base::Math::exp_double_maclaurin_expansion_with_table<
+      MACLAURIN_EXPANSION_REPEAT_NUMBER>(x);
 }
 
-template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
+template <typename T, std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
 typename std::enable_if<std::is_same<T, float>::value, T>::type
-exp_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
+exp_FloatingPoint_maclaurin_expansion_with_table(const T &x) {
 
-  return Base::Math::exp_float_mcloughlin_expansion_with_table<
-      MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+  return Base::Math::exp_float_maclaurin_expansion_with_table<
+      MACLAURIN_EXPANSION_REPEAT_NUMBER>(x);
 }
 
-template <typename T, std::size_t MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>
-inline T exp_mcloughlin_expansion_with_table(const T &x) {
+template <typename T, std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
+inline T exp_maclaurin_expansion_with_table(const T &x) {
 
-  return exp_FloatingPoint_mcloughlin_expansion_with_table<
-      T, MCLOUGHLIN_EXPANSION_REPEAT_NUMBER>(x);
+  return exp_FloatingPoint_maclaurin_expansion_with_table<
+      T, MACLAURIN_EXPANSION_REPEAT_NUMBER>(x);
 }
 
 /* exp */
@@ -929,12 +928,12 @@ template <typename T> inline T exp(const T &x) {
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-  return exp_mcloughlin_expansion_with_table<
-      T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(x);
+  return exp_maclaurin_expansion_with_table<
+      T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(x);
 
 #else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-  return Base::Math::exp_mcloughlin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
+  return Base::Math::exp_maclaurin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 
 #endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
@@ -966,7 +965,7 @@ struct Exp2NewtonIterationLoop<T, LOOP_MAX, 0> {
 };
 
 template <typename T, std::size_t LOOP_NUMBER>
-inline T exp2_mcloughlin_expansion(const T &x) {
+inline T exp2_maclaurin_expansion(const T &x) {
 
   T result = static_cast<T>(1);
 
@@ -1003,19 +1002,19 @@ template <typename T> inline T exp2(const T &x) {
     return std::exp2(x);
   }
 #else // BASE_MATH_USE_STD_MATH
-  return Base::Math::exp2_mcloughlin_expansion<T,
-                                               Base::Math::EXP2_REPEAT_NUMBER>(
+  return Base::Math::exp2_maclaurin_expansion<T,
+                                              Base::Math::EXP2_REPEAT_NUMBER>(
       x);
 #endif
 }
 
-/* log mcloughlin expansion with table */
+/* log maclaurin expansion with table */
 /*************************************************
- *  Function: log_double_mcloughlin_expansion_with_table
- *  Detail: calculates log with mcloughlin expansion and table.
+ *  Function: log_double_maclaurin_expansion_with_table
+ *  Detail: calculates log with maclaurin expansion and table.
  *  Fast but it depends on the IEEE 754 standard.
  **************************************************/
-inline double log_double_mcloughlin_expansion_with_table(const double &x) {
+inline double log_double_maclaurin_expansion_with_table(const double &x) {
 
   double result = static_cast<double>(0);
 
@@ -1059,11 +1058,11 @@ inline double log_double_mcloughlin_expansion_with_table(const double &x) {
 }
 
 /*************************************************
- *  Function: log_float_mcloughlin_expansion_with_table
- *  Detail: calculates log with mcloughlin expansion and table.
+ *  Function: log_float_maclaurin_expansion_with_table
+ *  Detail: calculates log with maclaurin expansion and table.
  *  Fast but it depends on the IEEE 754 standard.
  **************************************************/
-inline float log_float_mcloughlin_expansion_with_table(const float &x) {
+inline float log_float_maclaurin_expansion_with_table(const float &x) {
 
   float result = static_cast<float>(0);
 
@@ -1108,21 +1107,21 @@ inline float log_float_mcloughlin_expansion_with_table(const float &x) {
 
 template <typename T>
 typename std::enable_if<std::is_same<T, double>::value, T>::type
-log_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
+log_FloatingPoint_maclaurin_expansion_with_table(const T &x) {
 
-  return Base::Math::log_double_mcloughlin_expansion_with_table(x);
+  return Base::Math::log_double_maclaurin_expansion_with_table(x);
 }
 
 template <typename T>
 typename std::enable_if<std::is_same<T, float>::value, T>::type
-log_FloatingPoint_mcloughlin_expansion_with_table(const T &x) {
+log_FloatingPoint_maclaurin_expansion_with_table(const T &x) {
 
-  return Base::Math::log_float_mcloughlin_expansion_with_table(x);
+  return Base::Math::log_float_maclaurin_expansion_with_table(x);
 }
 
-template <typename T> inline T log_mcloughlin_expansion_with_table(const T &x) {
+template <typename T> inline T log_maclaurin_expansion_with_table(const T &x) {
 
-  return Base::Math::log_FloatingPoint_mcloughlin_expansion_with_table<T>(x);
+  return Base::Math::log_FloatingPoint_maclaurin_expansion_with_table<T>(x);
 }
 
 /* log newton method */
@@ -1197,7 +1196,7 @@ template <typename T> inline T log(const T &x) {
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-  return log_mcloughlin_expansion_with_table<T>(x);
+  return log_maclaurin_expansion_with_table<T>(x);
 
 #else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
@@ -1216,11 +1215,10 @@ inline T log2_newton_method(const T &x) {
          static_cast<T>(Base::Math::LN_2);
 }
 
-/* log2 mcloughlin expansion with table */
-template <typename T>
-inline T log2_mcloughlin_expansion_with_table(const T &x) {
+/* log2 maclaurin expansion with table */
+template <typename T> inline T log2_maclaurin_expansion_with_table(const T &x) {
 
-  return Base::Math::log_mcloughlin_expansion_with_table<T>(x) /
+  return Base::Math::log_maclaurin_expansion_with_table<T>(x) /
          static_cast<T>(Base::Math::LN_2);
 }
 
@@ -1240,7 +1238,7 @@ template <typename T> inline T log2(const T &x) {
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-  return Base::Math::log2_mcloughlin_expansion_with_table<T>(x);
+  return Base::Math::log2_maclaurin_expansion_with_table<T>(x);
 
 #else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
@@ -1259,11 +1257,11 @@ inline T log10_newton_method(const T &x) {
          static_cast<T>(Base::Math::LN_10);
 }
 
-/* log10 mcloughlin expansion with table */
+/* log10 maclaurin expansion with table */
 template <typename T>
-inline T log10_mcloughlin_expansion_with_table(const T &x) {
+inline T log10_maclaurin_expansion_with_table(const T &x) {
 
-  return Base::Math::log_mcloughlin_expansion_with_table<T>(x) /
+  return Base::Math::log_maclaurin_expansion_with_table<T>(x) /
          static_cast<T>(Base::Math::LN_10);
 }
 
@@ -1283,7 +1281,7 @@ template <typename T> inline T log10(const T &x) {
 
 #ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
-  return Base::Math::log10_mcloughlin_expansion_with_table<T>(x);
+  return Base::Math::log10_maclaurin_expansion_with_table<T>(x);
 
 #else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD
 
@@ -1294,17 +1292,17 @@ template <typename T> inline T log10(const T &x) {
 #endif // BASE_MATH_USE_STD_MATH
 }
 
-/* pow mcloughlin expansion */
+/* pow maclaurin expansion */
 template <typename T, std::size_t EXP_LOOP_NUMBER, std::size_t LOG_LOOP_NUMBER>
 inline T pow_base_math(const T &x, const T &y) {
-  return Base::Math::exp_mcloughlin_expansion<T, EXP_LOOP_NUMBER>(
+  return Base::Math::exp_maclaurin_expansion<T, EXP_LOOP_NUMBER>(
       y * Base::Math::log_newton_method<T, LOG_LOOP_NUMBER>(x));
 }
 
 template <typename T, std::size_t EXP_LOOP_NUMBER>
-inline T pow_mcloughlin_expansion_with_table(const T &x, const T &y) {
-  return Base::Math::exp_mcloughlin_expansion_with_table<T, EXP_LOOP_NUMBER>(
-      y * Base::Math::log_mcloughlin_expansion_with_table<T>(x));
+inline T pow_maclaurin_expansion_with_table(const T &x, const T &y) {
+  return Base::Math::exp_maclaurin_expansion_with_table<T, EXP_LOOP_NUMBER>(
+      y * Base::Math::log_maclaurin_expansion_with_table<T>(x));
 }
 
 /* pow */
@@ -1314,8 +1312,8 @@ template <typename T> inline T pow(const T &x, const T &y) {
   return std::pow(x, y);
 #else // BASE_MATH_USE_STD_MATH
 
-  return Base::Math::pow_mcloughlin_expansion_with_table<
-      T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(x, y);
+  return Base::Math::pow_maclaurin_expansion_with_table<
+      T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(x, y);
 
 #endif // BASE_MATH_USE_STD_MATH
 }
