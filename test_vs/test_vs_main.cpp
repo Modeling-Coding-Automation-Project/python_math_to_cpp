@@ -214,11 +214,11 @@ void check_base_math_exponential_logarithmic(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* exp Mcloughlin Expansion with table double */
+    /* exp Maclaurin Expansion with table double */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<
-            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_exp[i]);
+        T exp_value = Base::Math::exp_maclaurin_expansion_with_table<
+            T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
             exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
@@ -231,10 +231,10 @@ void check_base_math_exponential_logarithmic(void) {
         }
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_SOFT * std::abs(exp_answer)),
-            "check exp Mcloughlin Expansion with table.");
+            "check exp Maclaurin Expansion with table.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T exp_value = Base::Math::exp_mcloughlin_expansion_with_table<
-            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_exp[i]);
+        T exp_value = Base::Math::exp_maclaurin_expansion_with_table<
+            T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
             exp_answer = std::exp(static_cast<T>(Base::Math::EXP_INPUT_MAX));
@@ -247,7 +247,7 @@ void check_base_math_exponential_logarithmic(void) {
         }
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT * std::abs(exp_answer)),
-            "check exp Mcloughlin Expansion with table.");
+            "check exp Maclaurin Expansion with table.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
@@ -353,10 +353,10 @@ void check_base_math_exponential_logarithmic(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* log mcloughlin expansion with table */
+    /* log maclaurin expansion with table */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T log_value = Base::Math::log_mcloughlin_expansion_with_table(test_values_log[i]);
+        T log_value = Base::Math::log_maclaurin_expansion_with_table(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
             log_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
@@ -366,9 +366,9 @@ void check_base_math_exponential_logarithmic(void) {
         }
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_SOFT * std::abs(log_answer),
-            "check log mcloughlin expansion with table.");
+            "check log maclaurin expansion with table.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T log_value = Base::Math::log_mcloughlin_expansion_with_table(test_values_log[i]);
+        T log_value = Base::Math::log_maclaurin_expansion_with_table(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
             log_answer = static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
@@ -378,7 +378,7 @@ void check_base_math_exponential_logarithmic(void) {
         }
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
-            "check log mcloughlin expansion with table.");
+            "check log maclaurin expansion with table.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
@@ -572,32 +572,32 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* cos mcloughlin expansion with DoubleAngleFormula */
+    /* cos maclaurin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<
-            T, Base::Math::COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T cos_value = Base::Math::cos_maclaurin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::COS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_SOFT,
-            "check cos mcloughlin expansion with DoubleAngleFormula.");
+            "check cos maclaurin expansion with DoubleAngleFormula.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T cos_value = Base::Math::cos_mcloughlin_expansion_with_DoubleAngleFormula<
-            T, Base::Math::COS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T cos_value = Base::Math::cos_maclaurin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::COS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
-            "check cos mcloughlin expansion with DoubleAngleFormula.");
+            "check cos maclaurin expansion with DoubleAngleFormula.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* sin cos Mcloughlin expansion with DoubleAngleFormula */
+    /* sin cos Maclaurin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sin_value = static_cast<T>(0);
         T cos_value = static_cast<T>(0);
-        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngleFormula<
-            T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(
+        Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(
             test_values_sin[i], cos_value, sin_value);
     
         T sin_answer = std::sin(test_values_sin[i]);
@@ -610,8 +610,8 @@ void check_base_math_trigonometric(void) {
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
         T sin_value = static_cast<T>(0);
         T cos_value = static_cast<T>(0);
-        Base::Math::sincos_mcloughlin_expansion_with_DoubleAngleFormula<
-            T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(
+        Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(
                 test_values_sin[i], cos_value, sin_value);
 
         T sin_answer = std::sin(test_values_sin[i]);
@@ -624,30 +624,30 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* sin mcloughlin expansion with DoubleAngleFormula */
+    /* sin maclaurin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T sin_value = Base::Math::sin_mcloughlin_expansion_with_DoubleAngleFormula<
-            T, Base::Math::SIN_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T sin_value = Base::Math::sin_maclaurin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_SOFT,
-            "check sin mcloughlin expansion with DoubleAngleFormula.");
+            "check sin maclaurin expansion with DoubleAngleFormula.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T sin_value = Base::Math::sin_mcloughlin_expansion_with_DoubleAngleFormula<
-            T, Base::Math::SIN_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T sin_value = Base::Math::sin_maclaurin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
-            "check sin mcloughlin expansion with DoubleAngleFormula.");
+            "check sin maclaurin expansion with DoubleAngleFormula.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* tan mcloughlin expansion with DoubleAngleFormula */
+    /* tan maclaurin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T tan_value = Base::Math::tan_mcloughlin_expansion_with_DoubleAngleFormula<
-            T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T tan_value = Base::Math::tan_maclaurin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
 
         if (std::abs(tan_value) > static_cast<T>(1 / NEAR_LIMIT_SOFT) &&
@@ -656,11 +656,11 @@ void check_base_math_trigonometric(void) {
     }
         else {
             tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_SOFT,
-                "check tan mcloughlin expansion with DoubleAngleFormula.");
+                "check tan maclaurin expansion with DoubleAngleFormula.");
         }
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T tan_value = Base::Math::tan_mcloughlin_expansion_with_DoubleAngleFormula<
-            T, Base::Math::SINCOS_MCLOUGHLIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
+        T tan_value = Base::Math::tan_maclaurin_expansion_with_DoubleAngleFormula<
+            T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
 
         if (std::abs(tan_value) > static_cast<T>(1 / NEAR_LIMIT_STRICT) &&
@@ -669,7 +669,7 @@ void check_base_math_trigonometric(void) {
         }
         else {
             tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_STRICT,
-                "check tan mcloughlin expansion with DoubleAngleFormula.");
+                "check tan maclaurin expansion with DoubleAngleFormula.");
         }
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
@@ -902,41 +902,41 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* sinh mcloughlin expansion */
+    /* sinh maclaurin expansion */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T sinh_value = Base::Math::sinh_mcloughlin_expansion<
+        T sinh_value = Base::Math::sinh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_SOFT * std::abs(sinh_answer),
-            "check sinh mcloughlin expansion.");
+            "check sinh maclaurin expansion.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T sinh_value = Base::Math::sinh_mcloughlin_expansion<
+        T sinh_value = Base::Math::sinh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
-            "check sinh mcloughlin expansion.");
+            "check sinh maclaurin expansion.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* sinh mcloughlin expansion with table */
+    /* sinh maclaurin expansion with table */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T sinh_value = Base::Math::sinh_mcloughlin_expansion_with_table<
-            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T sinh_value = Base::Math::sinh_maclaurin_expansion_with_table<
+            T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_SOFT * std::abs(sinh_answer),
-            "check sinh mcloughlin expansion with table.");
+            "check sinh maclaurin expansion with table.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T sinh_value = Base::Math::sinh_mcloughlin_expansion_with_table<
-            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T sinh_value = Base::Math::sinh_maclaurin_expansion_with_table<
+            T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
-            "check sinh mcloughlin expansion with table.");
+            "check sinh maclaurin expansion with table.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
@@ -957,41 +957,41 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* cosh mcloughlin expansion */
+    /* cosh maclaurin expansion */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T cosh_value = Base::Math::cosh_mcloughlin_expansion<
+        T cosh_value = Base::Math::cosh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_SOFT * std::abs(cosh_answer),
-            "check cosh mcloughlin expansion.");
+            "check cosh maclaurin expansion.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T cosh_value = Base::Math::cosh_mcloughlin_expansion<
+        T cosh_value = Base::Math::cosh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
-            "check cosh mcloughlin expansion.");
+            "check cosh maclaurin expansion.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* cosh mcloughlin expansion with table */
+    /* cosh maclaurin expansion with table */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T cosh_value = Base::Math::cosh_mcloughlin_expansion_with_table<
-            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T cosh_value = Base::Math::cosh_maclaurin_expansion_with_table<
+            T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_SOFT * std::abs(cosh_answer),
-            "check cosh mcloughlin expansion with table.");
+            "check cosh maclaurin expansion with table.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T cosh_value = Base::Math::cosh_mcloughlin_expansion_with_table<
-            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T cosh_value = Base::Math::cosh_maclaurin_expansion_with_table<
+            T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
-            "check cosh mcloughlin expansion with table.");
+            "check cosh maclaurin expansion with table.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
@@ -1012,41 +1012,41 @@ void check_base_math_trigonometric(void) {
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* tanh mcloughlin expansion */
+    /* tanh maclaurin expansion */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T tanh_value = Base::Math::tanh_mcloughlin_expansion<
+        T tanh_value = Base::Math::tanh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_SOFT * std::abs(tanh_answer),
-            "check tanh mcloughlin expansion.");
+            "check tanh maclaurin expansion.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T tanh_value = Base::Math::tanh_mcloughlin_expansion<
+        T tanh_value = Base::Math::tanh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT * std::abs(tanh_answer),
-            "check tanh mcloughlin expansion.");
+            "check tanh maclaurin expansion.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
-    /* tanh mcloughlin expansion with table */
+    /* tanh maclaurin expansion with table */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
 #ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T tanh_value = Base::Math::tanh_mcloughlin_expansion_with_table<
-            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T tanh_value = Base::Math::tanh_maclaurin_expansion_with_table<
+            T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_SOFT * std::abs(tanh_answer),
-            "check tanh mcloughlin expansion with table.");
+            "check tanh maclaurin expansion with table.");
 #else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
-        T tanh_value = Base::Math::tanh_mcloughlin_expansion_with_table<
-            T, Base::Math::EXP_MCLOUGHLIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
+        T tanh_value = Base::Math::tanh_maclaurin_expansion_with_table<
+            T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT * std::abs(tanh_answer),
-            "check tanh mcloughlin expansion with table.");
+            "check tanh maclaurin expansion with table.");
 #endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
     }
 
