@@ -570,10 +570,10 @@ inline T asin_chebyshev(const T &x) {
   } else {
 
     result = static_cast<T>(2) *
-             Base::Math::atan2_chebyshev<T, ATAN_LOOP_NUMBER>(
-                 x, static_cast<T>(1) +
-                        Base::Math::sqrt_newton_method<T, SQRT_LOOP_NUMBER>(
-                            static_cast<T>(1) - x * x));
+             Base::Math::atan_chebyshev<T, ATAN_LOOP_NUMBER>(
+                 x / (static_cast<T>(1) +
+                      Base::Math::sqrt_newton_method<T, SQRT_LOOP_NUMBER>(
+                          static_cast<T>(1) - x * x)));
   }
 
   return result;
