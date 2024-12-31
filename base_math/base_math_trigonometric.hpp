@@ -58,18 +58,20 @@ using SIN_MACLAURIN_FACTOR_LIST = typename MakeSinMaclaurinFactorList<
 constexpr auto SIN_MACLAURIN_DOUBLEANGLE_FACTOR =
     Base::Math::to_sin_maclaurin_factor_array(SIN_MACLAURIN_FACTOR_LIST{});
 
-static constexpr double CHEBYSHEV_COEFFICIENT_FOR_ATAN[11] = {
-    static_cast<double>(1.0),
-    static_cast<double>(-0.3333333333333333),
-    static_cast<double>(0.2),
-    static_cast<double>(-0.14285714285714285),
-    static_cast<double>(0.1111111111111111),
-    static_cast<double>(-0.09090909090909091),
-    static_cast<double>(0.07692307692307693),
-    static_cast<double>(-0.06666666666666667),
-    static_cast<double>(0.058823529411764705),
-    static_cast<double>(-0.05263157894736842),
-    static_cast<double>(0.047619047619047616)};
+constexpr std::size_t CHEBYSHEV_COEFFICIENT_FOR_ATAN_SIZE = 11;
+static constexpr double
+    CHEBYSHEV_COEFFICIENT_FOR_ATAN[CHEBYSHEV_COEFFICIENT_FOR_ATAN_SIZE] = {
+        static_cast<double>(1.0),
+        static_cast<double>(-0.3333333333333333),
+        static_cast<double>(0.2),
+        static_cast<double>(-0.14285714285714285),
+        static_cast<double>(0.1111111111111111),
+        static_cast<double>(-0.09090909090909091),
+        static_cast<double>(0.07692307692307693),
+        static_cast<double>(-0.06666666666666667),
+        static_cast<double>(0.058823529411764705),
+        static_cast<double>(-0.05263157894736842),
+        static_cast<double>(0.047619047619047616)};
 
 constexpr double TRIGONOMETRIC_DIVISION_MIN = 1e-10;
 
@@ -462,6 +464,9 @@ inline T atan_chebyshev_core_wide(const T &x) {
 
 template <typename T, std::size_t LOOP_NUMBER>
 inline T atan_chebyshev(const T &x) {
+
+  static_assert(LOOP_NUMBER <= Base::Math::CHEBYSHEV_COEFFICIENT_FOR_ATAN_SIZE,
+                "LOOP_NUMBER is too large.");
 
   T result = static_cast<T>(0);
 
