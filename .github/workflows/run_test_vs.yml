@@ -2,7 +2,7 @@ name: Run test VS
 
 on:
   push:
-    branches: [ develop, revise_asin_acos ]
+    branches: [ develop ]
 
 jobs:
   build:
