@@ -1,8 +1,8 @@
-#ifndef PYTHON_MATH_HPP
-#define PYTHON_MATH_HPP
+#ifndef __PYTHON_MATH_HPP__
+#define __PYTHON_MATH_HPP__
 
 #include "python_math_arithmetic.hpp"
 #include "python_math_exponential_logarithmic.hpp"
 #include "python_math_trigonometric.hpp"
 
-#endif // PYTHON_MATH_HPP
+#endif // __PYTHON_MATH_HPP__

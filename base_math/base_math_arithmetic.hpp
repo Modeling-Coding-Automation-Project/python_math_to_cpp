@@ -1,5 +1,5 @@
-#ifndef BASE_MATH_ARITHMETIC_HPP
-#define BASE_MATH_ARITHMETIC_HPP
+#ifndef __BASE_MATH_ARITHMETIC_HPP__
+#define __BASE_MATH_ARITHMETIC_HPP__
 
 #include "base_math_macros.hpp"
 
@@ -7,10 +7,10 @@
 
 #include <cstddef>
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
 #include <cmath>
-#else  // BASE_MATH_USE_STD_MATH
-#endif // BASE_MATH_USE_STD_MATH
+#else  // __BASE_MATH_USE_STD_MATH__
+#endif // __BASE_MATH_USE_STD_MATH__
 
 namespace Base {
 namespace Math {
@@ -26,11 +26,11 @@ template <typename T> inline T abs_base_math(const T &x) {
 
 template <typename T> inline T abs(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::abs(x);
-#else  // BASE_MATH_USE_STD_MATH
+#else  // __BASE_MATH_USE_STD_MATH__
   return Base::Math::abs_base_math(x);
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* mod */
@@ -50,15 +50,15 @@ inline T mod_with_casting_integer(const T &x, const T &y,
 
 template <typename T> inline T mod(const T &x, const T &y) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::fmod(x, y);
-#else  // BASE_MATH_USE_STD_MATH
+#else  // __BASE_MATH_USE_STD_MATH__
   return Base::Math::mod_with_casting_integer(
       x, y, static_cast<T>(Base::Math::ARITHMETIC_DIVISION_MIN));
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 } // namespace Math
 } // namespace Base
 
-#endif // BASE_MATH_ARITHMETIC_HPP
+#endif // __BASE_MATH_ARITHMETIC_HPP__

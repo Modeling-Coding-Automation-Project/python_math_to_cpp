@@ -1,5 +1,5 @@
-#ifndef PYTHON_MATH_TRIGONOMETRIC_HPP
-#define PYTHON_MATH_TRIGONOMETRIC_HPP
+#ifndef __PYTHON_MATH_TRIGONOMETRIC_HPP__
+#define __PYTHON_MATH_TRIGONOMETRIC_HPP__
 
 #include "base_math.hpp"
 
@@ -264,4 +264,4 @@ inline std::array<T, N> tanh(const std::array<T, N> &array) {
 
 } // namespace PythonMath
 
-#endif // PYTHON_MATH_TRIGONOMETRIC_HPP
+#endif // __PYTHON_MATH_TRIGONOMETRIC_HPP__

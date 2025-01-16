@@ -15,11 +15,11 @@ template<typename T>
 void check_base_math_exponential_logarithmic(void) {
     MCAPTester<T> tester;
 
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     const T NEAR_LIMIT_SOFT = 1.0e-2F;
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
 
     std::vector<T> test_values_sqrt({
@@ -42,7 +42,7 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* sqrt */
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
@@ -55,7 +55,7 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(sqrt_value, sqrt_answer,
             NEAR_LIMIT_SOFT * std::abs(sqrt_answer) * static_cast<T>(10),
             "check sqrt.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sqrt_value = Base::Math::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
@@ -67,7 +67,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
             "check sqrt.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* sqrt check avoid zero divide */
@@ -82,7 +82,7 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* rsqrt */
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T rsqrt_value = Base::Math::rsqrt(test_values_sqrt[i]);
         T rsqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
@@ -96,7 +96,7 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(rsqrt_value, rsqrt_answer,
             NEAR_LIMIT_SOFT * std::abs(rsqrt_answer) * static_cast<T>(10),
             "check rsqrt.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T rsqrt_value = Base::Math::rsqrt(test_values_sqrt[i]);
         T rsqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
@@ -109,7 +109,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(rsqrt_value, rsqrt_answer, NEAR_LIMIT_STRICT * std::abs(rsqrt_answer),
             "check rsqrt.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 }
 
     /* sqrt check avoid zero divide */
@@ -124,7 +124,7 @@ void check_base_math_exponential_logarithmic(void) {
 
 
     /* sqrt extraction */
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
         T sqrt_value = static_cast<T>(0);
         T sqrt_answer = static_cast<T>(0);
@@ -142,7 +142,7 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_SOFT * std::abs(sqrt_answer),
             "check sqrt extraction double.");
     }
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
         T sqrt_value = static_cast<T>(0);
         T sqrt_answer = static_cast<T>(0);
@@ -160,7 +160,7 @@ void check_base_math_exponential_logarithmic(void) {
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT * std::abs(sqrt_answer),
             "check sqrt extraction double.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
 
     std::vector<T> test_values_exp({
@@ -181,7 +181,7 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* exp */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp_value = Base::Math::exp(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
@@ -196,7 +196,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_SOFT * std::abs(exp_answer)),
             "check exp.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp_value = Base::Math::exp(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
@@ -211,12 +211,12 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT * std::abs(exp_answer)),
             "check exp.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* exp Maclaurin Expansion with table double */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp_value = Base::Math::exp_maclaurin_expansion_with_table<
             T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
@@ -232,7 +232,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_SOFT * std::abs(exp_answer)),
             "check exp Maclaurin Expansion with table.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp_value = Base::Math::exp_maclaurin_expansion_with_table<
             T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
@@ -248,7 +248,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT * std::abs(exp_answer)),
             "check exp Maclaurin Expansion with table.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
 
@@ -271,7 +271,7 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* exp2 */
     for (std::size_t i = 0; i < test_values_exp2.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp2_value = Base::Math::exp2(test_values_exp2[i]);
         T exp2_answer = static_cast<T>(0);
         if (test_values_exp2[i] > static_cast<T>(Base::Math::EXP2_INPUT_MAX)) {
@@ -286,7 +286,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp2_value, exp2_answer, (NEAR_LIMIT_SOFT * std::abs(exp2_answer)),
             "check exp2.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp2_value = Base::Math::exp2(test_values_exp2[i]);
         T exp2_answer = static_cast<T>(0);
         if (test_values_exp2[i] > static_cast<T>(Base::Math::EXP2_INPUT_MAX)) {
@@ -301,7 +301,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp2_value, exp2_answer, (NEAR_LIMIT_STRICT * std::abs(exp2_answer)),
             "check exp2.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
 
@@ -325,7 +325,7 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* log */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log_value = Base::Math::log(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -338,7 +338,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_SOFT * std::abs(log_answer),
             "check log.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log_value = Base::Math::log(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -350,12 +350,12 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
             "check log.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* log maclaurin expansion with table */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log_value = Base::Math::log_maclaurin_expansion_with_table(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -367,7 +367,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_SOFT * std::abs(log_answer),
             "check log maclaurin expansion with table.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log_value = Base::Math::log_maclaurin_expansion_with_table(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -379,12 +379,12 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
             "check log maclaurin expansion with table.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* log2 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log2_value = Base::Math::log2(test_values_log[i]);
         T log2_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -399,7 +399,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log2_value, log2_answer, NEAR_LIMIT_SOFT * std::abs(log2_answer),
             "check log2.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log2_value = Base::Math::log2(test_values_log[i]);
         T log2_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -412,12 +412,12 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log2_value, log2_answer, NEAR_LIMIT_STRICT * std::abs(log2_answer),
             "check log2.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* log10 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log10_value = Base::Math::log10(test_values_log[i]);
         T log10_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -432,7 +432,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_SOFT * std::abs(log10_answer),
             "check log10.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log10_value = Base::Math::log10(test_values_log[i]);
         T log10_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -445,7 +445,7 @@ void check_base_math_exponential_logarithmic(void) {
 
         tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT * std::abs(log10_answer),
             "check log10.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     std::vector<std::pair<T, T>> test_values_pow({
@@ -485,19 +485,19 @@ void check_base_math_exponential_logarithmic(void) {
 
     /* pow */
     for (std::size_t i = 0; i < test_values_pow.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T pow_value = Base::Math::pow(test_values_pow[i].first, test_values_pow[i].second);
         T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
 
         tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_SOFT * std::abs(pow_answer),
             "check pow.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T pow_value = Base::Math::pow(test_values_pow[i].first, test_values_pow[i].second);
         T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
 
         tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_STRICT * std::abs(pow_answer),
             "check pow.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
 
@@ -510,11 +510,11 @@ void check_base_math_trigonometric(void) {
 
     MCAPTester<T> tester;
 
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     const T NEAR_LIMIT_SOFT = 1.0e-2F;
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
 
     std::vector<T> test_values_sin = {
@@ -540,60 +540,60 @@ void check_base_math_trigonometric(void) {
 
     /* sin */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sin_value = Base::Math::sin(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_SOFT,
             "check sin.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sin_value = Base::Math::sin(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
             "check sin.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* cos */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cos_value = Base::Math::cos(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_SOFT,
             "check cos.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cos_value = Base::Math::cos(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
             "check cos.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* cos maclaurin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cos_value = Base::Math::cos_maclaurin_expansion_with_DoubleAngleFormula<
             T, Base::Math::COS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_SOFT,
             "check cos maclaurin expansion with DoubleAngleFormula.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cos_value = Base::Math::cos_maclaurin_expansion_with_DoubleAngleFormula<
             T, Base::Math::COS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
             "check cos maclaurin expansion with DoubleAngleFormula.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* sin cos Maclaurin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sin_value = static_cast<T>(0);
         T cos_value = static_cast<T>(0);
         Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
@@ -607,7 +607,7 @@ void check_base_math_trigonometric(void) {
             "check sin CORDIC for floating point number.");
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_SOFT,
             "check cos CORDIC for floating point number.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sin_value = static_cast<T>(0);
         T cos_value = static_cast<T>(0);
         Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
@@ -621,31 +621,31 @@ void check_base_math_trigonometric(void) {
             "check sin CORDIC for floating point number.");
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
             "check cos CORDIC for floating point number.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* sin maclaurin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sin_value = Base::Math::sin_maclaurin_expansion_with_DoubleAngleFormula<
             T, Base::Math::SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_SOFT,
             "check sin maclaurin expansion with DoubleAngleFormula.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sin_value = Base::Math::sin_maclaurin_expansion_with_DoubleAngleFormula<
             T, Base::Math::SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
             "check sin maclaurin expansion with DoubleAngleFormula.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* tan maclaurin expansion with DoubleAngleFormula */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tan_value = Base::Math::tan_maclaurin_expansion_with_DoubleAngleFormula<
             T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
@@ -658,7 +658,7 @@ void check_base_math_trigonometric(void) {
             tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_SOFT,
                 "check tan maclaurin expansion with DoubleAngleFormula.");
         }
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tan_value = Base::Math::tan_maclaurin_expansion_with_DoubleAngleFormula<
             T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
@@ -671,12 +671,12 @@ void check_base_math_trigonometric(void) {
             tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_STRICT,
                 "check tan maclaurin expansion with DoubleAngleFormula.");
         }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* tan */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tan_value = Base::Math::tan(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
 
@@ -688,7 +688,7 @@ void check_base_math_trigonometric(void) {
             tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_SOFT,
                 "check tan.");
         }
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tan_value = Base::Math::tan(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
 
@@ -700,7 +700,7 @@ void check_base_math_trigonometric(void) {
             tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_STRICT,
                 "check tan.");
         }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
 
@@ -722,19 +722,19 @@ void check_base_math_trigonometric(void) {
 
     /* atan */
     for (std::size_t i = 0; i < test_values_atan.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T atan_value = Base::Math::atan(test_values_atan[i]);
         T atan_answer = std::atan(test_values_atan[i]);
 
         tester.expect_near(atan_value, atan_answer, NEAR_LIMIT_SOFT,
             "check atan.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T atan_value = Base::Math::atan(test_values_atan[i]);
         T atan_answer = std::atan(test_values_atan[i]);
 
         tester.expect_near(atan_value, atan_answer, NEAR_LIMIT_STRICT,
             "check atan.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     std::vector<std::pair<T, T>> test_values_atan2({
@@ -762,19 +762,19 @@ void check_base_math_trigonometric(void) {
 
     /* atan2 */
     for (std::size_t i = 0; i < test_values_atan2.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T atan2_value = Base::Math::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
         T atan2_answer = std::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
 
         tester.expect_near(atan2_value, atan2_answer, NEAR_LIMIT_SOFT,
             "check atan2.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T atan2_value = Base::Math::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
         T atan2_answer = std::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
 
         tester.expect_near(atan2_value, atan2_answer, NEAR_LIMIT_STRICT,
             "check atan2.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     std::vector<T> test_values_asin_acos = {
@@ -795,7 +795,7 @@ void check_base_math_trigonometric(void) {
 
     /* asin */
     for (std::size_t i = 0; i < test_values_asin_acos.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T asin_value = Base::Math::asin(test_values_asin_acos[i]);
 
         T asin_answer = static_cast<T>(0);
@@ -812,7 +812,7 @@ void check_base_math_trigonometric(void) {
 
         tester.expect_near(asin_value, asin_answer, NEAR_LIMIT_SOFT,
             "check asin.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T asin_value = Base::Math::asin(test_values_asin_acos[i]);
 
         T asin_answer = static_cast<T>(0);
@@ -829,12 +829,12 @@ void check_base_math_trigonometric(void) {
 
         tester.expect_near(asin_value, asin_answer, NEAR_LIMIT_STRICT,
             "check asin.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* acos */
     for (std::size_t i = 0; i < test_values_asin_acos.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T acos_value = Base::Math::acos(test_values_asin_acos[i]);
 
         T acos_answer = static_cast<T>(0);
@@ -851,7 +851,7 @@ void check_base_math_trigonometric(void) {
 
         tester.expect_near(acos_value, acos_answer, NEAR_LIMIT_SOFT,
             "check acos.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T acos_value = Base::Math::acos(test_values_asin_acos[i]);
 
         T acos_answer = static_cast<T>(0);
@@ -868,7 +868,7 @@ void check_base_math_trigonometric(void) {
 
         tester.expect_near(acos_value, acos_answer, NEAR_LIMIT_STRICT,
             "check acos.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     std::vector<T> test_values_hyperbolic({
@@ -887,167 +887,167 @@ void check_base_math_trigonometric(void) {
 
     /* sinh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sinh_value = Base::Math::sinh(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_SOFT * std::abs(sinh_answer),
             "check sinh.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sinh_value = Base::Math::sinh(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
             "check sinh.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* sinh maclaurin expansion */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sinh_value = Base::Math::sinh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_SOFT * std::abs(sinh_answer),
             "check sinh maclaurin expansion.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sinh_value = Base::Math::sinh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
             "check sinh maclaurin expansion.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* sinh maclaurin expansion with table */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sinh_value = Base::Math::sinh_maclaurin_expansion_with_table<
             T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_SOFT * std::abs(sinh_answer),
             "check sinh maclaurin expansion with table.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sinh_value = Base::Math::sinh_maclaurin_expansion_with_table<
             T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
             "check sinh maclaurin expansion with table.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* cosh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cosh_value = Base::Math::cosh(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_SOFT * std::abs(cosh_answer),
             "check cosh.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cosh_value = Base::Math::cosh(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
             "check cosh.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* cosh maclaurin expansion */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cosh_value = Base::Math::cosh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_SOFT * std::abs(cosh_answer),
             "check cosh maclaurin expansion.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cosh_value = Base::Math::cosh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
             "check cosh maclaurin expansion.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* cosh maclaurin expansion with table */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cosh_value = Base::Math::cosh_maclaurin_expansion_with_table<
             T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_SOFT * std::abs(cosh_answer),
             "check cosh maclaurin expansion with table.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cosh_value = Base::Math::cosh_maclaurin_expansion_with_table<
             T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
             "check cosh maclaurin expansion with table.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* tanh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tanh_value = Base::Math::tanh(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_SOFT,
             "check tanh.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tanh_value = Base::Math::tanh(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT,
             "check tanh.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* tanh maclaurin expansion */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tanh_value = Base::Math::tanh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_SOFT * std::abs(tanh_answer),
             "check tanh maclaurin expansion.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tanh_value = Base::Math::tanh_maclaurin_expansion<
             T, Base::Math::EXP_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT * std::abs(tanh_answer),
             "check tanh maclaurin expansion.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* tanh maclaurin expansion with table */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tanh_value = Base::Math::tanh_maclaurin_expansion_with_table<
             T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_SOFT * std::abs(tanh_answer),
             "check tanh maclaurin expansion with table.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tanh_value = Base::Math::tanh_maclaurin_expansion_with_table<
             T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT * std::abs(tanh_answer),
             "check tanh maclaurin expansion with table.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
 
@@ -1187,11 +1187,11 @@ void check_python_math_exponential_logarithmic(void) {
 
     MCAPTester<T> tester;
 
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     const T NEAR_LIMIT_SOFT = 1.0e-2F;
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
 
     std::vector<T> test_values_sqrt({
@@ -1210,7 +1210,7 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* sqrt */
     for (std::size_t i = 0; i < test_values_sqrt.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sqrt_value = PythonMath::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
@@ -1222,7 +1222,7 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_SOFT * std::abs(sqrt_answer),
             "check sqrt.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sqrt_value = PythonMath::sqrt(test_values_sqrt[i]);
         T sqrt_answer = static_cast<T>(0);
         if (test_values_sqrt[i] < static_cast<T>(Base::Math::EXPONENTIAL_LOGARITHMIC_DIVISION_MIN)) {
@@ -1234,10 +1234,10 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(sqrt_value, sqrt_answer, NEAR_LIMIT_STRICT,
             "check sqrt.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
-#ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifndef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     std::vector<T> test_vector_sqrt({
         static_cast<T>(0.25),
         static_cast<T>(2),
@@ -1265,7 +1265,7 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(sqrt_value_array[i], sqrt_answer, NEAR_LIMIT_STRICT,
             "check sqrt array.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
     std::vector<T> test_values_exp({
         static_cast<T>(-100),
@@ -1283,7 +1283,7 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* exp */
     for (std::size_t i = 0; i < test_values_exp.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp_value = PythonMath::exp(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
@@ -1298,7 +1298,7 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_SOFT * std::abs(exp_answer)),
             "check exp.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp_value = PythonMath::exp(test_values_exp[i]);
         T exp_answer = static_cast<T>(0);
         if (test_values_exp[i] > static_cast<T>(Base::Math::EXP_INPUT_MAX)) {
@@ -1313,10 +1313,10 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp_value, exp_answer, (NEAR_LIMIT_STRICT * std::abs(exp_answer)),
             "check exp.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
-#ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifndef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     std::vector<T> test_vector_exp({
         static_cast<T>(0),
         static_cast<T>(0.333),
@@ -1344,7 +1344,7 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(exp_value_array[i], exp_answer, NEAR_LIMIT_STRICT,
             "check exp array.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
 
     std::vector<T> test_values_exp2({
@@ -1366,7 +1366,7 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* exp2 */
     for (std::size_t i = 0; i < test_values_exp2.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp2_value = PythonMath::exp2(test_values_exp2[i]);
         T exp2_answer = static_cast<T>(0);
         if (test_values_exp2[i] > static_cast<T>(Base::Math::EXP2_INPUT_MAX)) {
@@ -1381,7 +1381,7 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp2_value, exp2_answer, (NEAR_LIMIT_SOFT * std::abs(exp2_answer)),
             "check exp2.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T exp2_value = PythonMath::exp2(test_values_exp2[i]);
         T exp2_answer = static_cast<T>(0);
         if (test_values_exp2[i] > static_cast<T>(Base::Math::EXP2_INPUT_MAX)) {
@@ -1396,10 +1396,10 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(exp2_value, exp2_answer, (NEAR_LIMIT_STRICT* std::abs(exp2_answer)),
             "check exp2.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
-#ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifndef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     std::vector<T> test_vector_exp2({
         static_cast<T>(0),
         static_cast<T>(0.333),
@@ -1427,7 +1427,7 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(exp2_value_array[i], exp2_answer, NEAR_LIMIT_STRICT,
             "check exp2 array.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
     std::vector<T> test_values_log({
         static_cast<T>(-1),
@@ -1449,7 +1449,7 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* log */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log_value = PythonMath::log(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -1462,7 +1462,7 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_SOFT * std::abs(log_answer),
             "check log.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log_value = PythonMath::log(test_values_log[i]);
         T log_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -1474,10 +1474,10 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(log_value, log_answer, NEAR_LIMIT_STRICT * std::abs(log_answer),
             "check log.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
-#ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifndef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     std::vector<T> test_vector_log({
         static_cast<T>(0.33),
         static_cast<T>(1.5),
@@ -1505,11 +1505,11 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(log_value_array[i], log_answer, NEAR_LIMIT_STRICT,
             "check log array.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
     /* log2 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log2_value = PythonMath::log2(test_values_log[i]);
         T log2_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -1524,7 +1524,7 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(log2_value, log2_answer, NEAR_LIMIT_SOFT * std::abs(log2_answer),
             "check log2.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log2_value = PythonMath::log2(test_values_log[i]);
         T log2_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -1537,10 +1537,10 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(log2_value, log2_answer, NEAR_LIMIT_STRICT * std::abs(log2_answer),
             "check log2.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
-#ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifndef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     std::vector<T> test_vector_log2({
         static_cast<T>(0.33),
         static_cast<T>(1.5),
@@ -1568,11 +1568,11 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(log2_value_array[i], log2_answer, NEAR_LIMIT_STRICT,
             "check log2 array.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
     /* log10 */
     for (std::size_t i = 0; i < test_values_log.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log10_value = PythonMath::log10(test_values_log[i]);
         T log10_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -1587,7 +1587,7 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_SOFT * std::abs(log10_answer),
             "check log10.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T log10_value = PythonMath::log10(test_values_log[i]);
         T log10_answer = static_cast<T>(0);
         if (test_values_log[i] <= static_cast<T>(0)) {
@@ -1600,10 +1600,10 @@ void check_python_math_exponential_logarithmic(void) {
 
         tester.expect_near(log10_value, log10_answer, NEAR_LIMIT_STRICT * std::abs(log10_answer),
             "check log10.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
-#ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifndef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     std::vector<T> test_vector_log10({
         static_cast<T>(0.33),
         static_cast<T>(1.5),
@@ -1631,7 +1631,7 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(log10_value_array[i], log10_answer, NEAR_LIMIT_STRICT,
             "check log10 array.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
     std::vector<std::pair<T, T>> test_values_pow({
         {static_cast<T>(0.1), static_cast<T>(0.1)},
@@ -1670,22 +1670,22 @@ void check_python_math_exponential_logarithmic(void) {
 
     /* pow */
     for (std::size_t i = 0; i < test_values_pow.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T pow_value = PythonMath::pow(test_values_pow[i].first, test_values_pow[i].second);
         T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
 
         tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_SOFT * std::abs(pow_answer),
             "check pow.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T pow_value = PythonMath::pow(test_values_pow[i].first, test_values_pow[i].second);
         T pow_answer = std::pow(test_values_pow[i].first, test_values_pow[i].second);
 
         tester.expect_near(pow_value, pow_answer, NEAR_LIMIT_STRICT * std::abs(pow_answer),
             "check pow.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
-#ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifndef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     std::vector<T> test_vector_pow_x({
         static_cast<T>(0.5),
         static_cast<T>(0.5),
@@ -1755,7 +1755,7 @@ void check_python_math_exponential_logarithmic(void) {
         tester.expect_near(pow_value_array[i], pow_answer, NEAR_LIMIT_STRICT,
             "check pow array and array.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
 
     tester.throw_error_if_test_failed();
@@ -1766,11 +1766,11 @@ void check_python_math_trigonometric(void) {
 
     MCAPTester<T> tester;
 
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     const T NEAR_LIMIT_SOFT = 1.0e-2F;
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
 
     std::vector<T> test_values_sin = {
@@ -1795,41 +1795,41 @@ void check_python_math_trigonometric(void) {
 
     /* sin */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sin_value = PythonMath::sin(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_SOFT,
             "check sin.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sin_value = PythonMath::sin(test_values_sin[i]);
         T sin_answer = std::sin(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
             "check sin.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* cos */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cos_value = PythonMath::cos(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_SOFT,
             "check cos.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cos_value = PythonMath::cos(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
             "check cos.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* tan */
     for (std::size_t i = 0; i < test_values_sin.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tan_value = PythonMath::tan(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
 
@@ -1841,7 +1841,7 @@ void check_python_math_trigonometric(void) {
             tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_SOFT,
                 "check tan.");
         }
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tan_value = PythonMath::tan(test_values_sin[i]);
         T tan_answer = std::tan(test_values_sin[i]);
 
@@ -1853,7 +1853,7 @@ void check_python_math_trigonometric(void) {
             tester.expect_near(tan_value, tan_answer, NEAR_LIMIT_STRICT,
                 "check tan.");
         }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
 
@@ -1875,19 +1875,19 @@ void check_python_math_trigonometric(void) {
 
     /* atan */
     for (std::size_t i = 0; i < test_values_atan.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T atan_value = PythonMath::atan(test_values_atan[i]);
         T atan_answer = std::atan(test_values_atan[i]);
 
         tester.expect_near(atan_value, atan_answer, NEAR_LIMIT_SOFT,
             "check atan.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T atan_value = PythonMath::atan(test_values_atan[i]);
         T atan_answer = std::atan(test_values_atan[i]);
 
         tester.expect_near(atan_value, atan_answer, NEAR_LIMIT_STRICT,
             "check atan.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     std::vector<std::pair<T, T>> test_values_atan2({
@@ -1915,22 +1915,22 @@ void check_python_math_trigonometric(void) {
 
     /* atan2 */
     for (std::size_t i = 0; i < test_values_atan2.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T atan2_value = PythonMath::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
         T atan2_answer = std::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
 
         tester.expect_near(atan2_value, atan2_answer, NEAR_LIMIT_SOFT,
             "check atan2.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T atan2_value = PythonMath::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
         T atan2_answer = std::atan2(test_values_atan2[i].second, test_values_atan2[i].first);
 
         tester.expect_near(atan2_value, atan2_answer, NEAR_LIMIT_STRICT,
             "check atan2.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
-#ifndef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifndef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
     std::vector<T> test_values_atan2_y({
         static_cast<T>(-3),
@@ -2001,7 +2001,7 @@ void check_python_math_trigonometric(void) {
         tester.expect_near(atan2_value_array[i], atan2_answer, NEAR_LIMIT_STRICT,
             "check atan2 array and array.");
     }
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
     std::vector<T> test_values_asin_acos = {
         static_cast<T>(-2),
@@ -2021,7 +2021,7 @@ void check_python_math_trigonometric(void) {
 
     /* asin */
     for (std::size_t i = 0; i < test_values_asin_acos.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T asin_value = PythonMath::asin(test_values_asin_acos[i]);
 
         T asin_answer = static_cast<T>(0);
@@ -2038,7 +2038,7 @@ void check_python_math_trigonometric(void) {
 
         tester.expect_near(asin_value, asin_answer, NEAR_LIMIT_SOFT,
             "check asin.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T asin_value = PythonMath::asin(test_values_asin_acos[i]);
 
         T asin_answer = static_cast<T>(0);
@@ -2055,12 +2055,12 @@ void check_python_math_trigonometric(void) {
 
         tester.expect_near(asin_value, asin_answer, NEAR_LIMIT_STRICT,
             "check asin.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* acos */
     for (std::size_t i = 0; i < test_values_asin_acos.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T acos_value = PythonMath::acos(test_values_asin_acos[i]);
 
         T acos_answer = static_cast<T>(0);
@@ -2077,7 +2077,7 @@ void check_python_math_trigonometric(void) {
 
         tester.expect_near(acos_value, acos_answer, NEAR_LIMIT_SOFT,
             "check acos.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T acos_value = PythonMath::acos(test_values_asin_acos[i]);
 
         T acos_answer = static_cast<T>(0);
@@ -2094,7 +2094,7 @@ void check_python_math_trigonometric(void) {
 
         tester.expect_near(acos_value, acos_answer, NEAR_LIMIT_STRICT,
             "check acos.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     std::vector<T> test_values_hyperbolic({
@@ -2113,53 +2113,53 @@ void check_python_math_trigonometric(void) {
 
     /* sinh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sinh_value = PythonMath::sinh(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_SOFT * std::abs(sinh_answer),
             "check sinh.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T sinh_value = PythonMath::sinh(test_values_hyperbolic[i]);
         T sinh_answer = std::sinh(test_values_hyperbolic[i]);
 
         tester.expect_near(sinh_value, sinh_answer, NEAR_LIMIT_STRICT * std::abs(sinh_answer),
             "check sinh.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* cosh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cosh_value = PythonMath::cosh(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_SOFT * std::abs(cosh_answer),
             "check cosh.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T cosh_value = PythonMath::cosh(test_values_hyperbolic[i]);
         T cosh_answer = std::cosh(test_values_hyperbolic[i]);
 
         tester.expect_near(cosh_value, cosh_answer, NEAR_LIMIT_STRICT * std::abs(cosh_answer),
             "check cosh.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
     /* tanh */
     for (std::size_t i = 0; i < test_values_hyperbolic.size(); i++) {
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tanh_value = PythonMath::tanh(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_SOFT,
             "check tanh.");
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
         T tanh_value = PythonMath::tanh(test_values_hyperbolic[i]);
         T tanh_answer = std::tanh(test_values_hyperbolic[i]);
 
         tester.expect_near(tanh_value, tanh_answer, NEAR_LIMIT_STRICT,
             "check tanh.");
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
 

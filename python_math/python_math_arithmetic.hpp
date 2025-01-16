@@ -1,5 +1,5 @@
-#ifndef PYTHON_MATH_ARITHMETIC_HPP
-#define PYTHON_MATH_ARITHMETIC_HPP
+#ifndef __PYTHON_MATH_ARITHMETIC_HPP__
+#define __PYTHON_MATH_ARITHMETIC_HPP__
 
 #include "base_math.hpp"
 
@@ -55,4 +55,4 @@ inline std::array<T, N> fmod(const std::array<T, N> &array, const T &y) {
 
 } // namespace PythonMath
 
-#endif // PYTHON_MATH_ARITHMETIC_HPP
+#endif // __PYTHON_MATH_ARITHMETIC_HPP__

@@ -1,5 +1,5 @@
-#ifndef BASE_MATH_TRIGONOMETRIC_HPP
-#define BASE_MATH_TRIGONOMETRIC_HPP
+#ifndef __BASE_MATH_TRIGONOMETRIC_HPP__
+#define __BASE_MATH_TRIGONOMETRIC_HPP__
 
 #include "base_math_macros.hpp"
 
@@ -10,15 +10,15 @@
 
 #include <cstddef>
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
 #include <cmath>
-#else  // BASE_MATH_USE_STD_MATH
-#endif // BASE_MATH_USE_STD_MATH
+#else  // __BASE_MATH_USE_STD_MATH__
+#endif // __BASE_MATH_USE_STD_MATH__
 
 namespace Base {
 namespace Math {
 
-#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 constexpr std::size_t SIN_REPEAT_NUMBER = 5;
 constexpr std::size_t COS_REPEAT_NUMBER = 6;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 3;
@@ -29,7 +29,7 @@ constexpr std::size_t SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER =
 
 constexpr std::size_t SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER = 2;
 
-#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 constexpr std::size_t SIN_REPEAT_NUMBER = 8;
 constexpr std::size_t COS_REPEAT_NUMBER = 9;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 8;
@@ -40,7 +40,7 @@ constexpr std::size_t SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER =
 
 constexpr std::size_t SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
 
-#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS
+#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
 
 constexpr std::size_t COS_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
 
@@ -294,14 +294,14 @@ inline T sin_maclaurin_expansion(const T &x) {
 /* sin */
 template <typename T> inline T sin(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::sin(x);
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::sin_maclaurin_expansion_with_DoubleAngleFormula<
       T, Base::Math::SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* cos maclaurin expansion */
@@ -346,14 +346,14 @@ inline T cos_maclaurin_expansion(const T &x) {
 /* cos */
 template <typename T> inline T cos(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::cos(x);
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::cos_maclaurin_expansion_with_DoubleAngleFormula<
       T, Base::Math::COS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* tan maclaurin expansion */
@@ -369,14 +369,14 @@ inline T tan_maclaurin_expansion(const T &x) {
 /* tan */
 template <typename T> inline T tan(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::tan(x);
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::tan_maclaurin_expansion_with_DoubleAngleFormula<
       T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* atan maclaurin expansion */
@@ -489,13 +489,13 @@ inline T atan_chebyshev(const T &x) {
 /* atan */
 template <typename T> inline T atan(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::atan(x);
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::atan_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER>(x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* atan2 Chebyshev */
@@ -543,13 +543,13 @@ inline T atan2_chebyshev(const T &y, const T &x) {
 /* atan2 */
 template <typename T> inline T atan2(const T &y, const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::atan2(y, x);
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::atan2_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER>(y, x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* asin Chebyshev */
@@ -582,7 +582,7 @@ inline T asin_chebyshev(const T &x) {
 /* asin */
 template <typename T> inline T asin(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
 
   if (x >= static_cast<T>(1)) {
 
@@ -596,12 +596,12 @@ template <typename T> inline T asin(const T &x) {
 
     return std::asin(x);
   }
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::asin_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
                                     Base::Math::SQRT_REPEAT_NUMBER>(x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* acos Chebyshev */
@@ -616,7 +616,7 @@ inline T acos_chebyshev(const T &x) {
 /* acos */
 template <typename T> inline T acos(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
 
   if (x > static_cast<T>(1)) {
 
@@ -630,12 +630,12 @@ template <typename T> inline T acos(const T &x) {
 
     return std::acos(x);
   }
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::acos_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
                                     Base::Math::SQRT_REPEAT_NUMBER>(x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* sinh Maclaurin Expansion with table */
@@ -657,14 +657,14 @@ inline T sinh_maclaurin_expansion(const T &x) {
 /* sinh */
 template <typename T> inline T sinh(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::sinh(x);
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::sinh_maclaurin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* cosh Maclaurin Expansion with table */
@@ -686,14 +686,14 @@ inline T cosh_maclaurin_expansion(const T &x) {
 /* cosh */
 template <typename T> inline T cosh(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::cosh(x);
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::cosh_maclaurin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* tanh maclaurin expansion with table */
@@ -721,17 +721,17 @@ inline T tanh_maclaurin_expansion(const T &x) {
 /* tanh */
 template <typename T> inline T tanh(const T &x) {
 
-#ifdef BASE_MATH_USE_STD_MATH
+#ifdef __BASE_MATH_USE_STD_MATH__
   return std::tanh(x);
-#else // BASE_MATH_USE_STD_MATH
+#else // __BASE_MATH_USE_STD_MATH__
 
   return Base::Math::tanh_maclaurin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 
-#endif // BASE_MATH_USE_STD_MATH
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 } // namespace Math
 } // namespace Base
 
-#endif // BASE_MATH_TRIGONOMETRIC_HPP
+#endif // __BASE_MATH_TRIGONOMETRIC_HPP__
