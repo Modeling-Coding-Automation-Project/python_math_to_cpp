@@ -32,4 +32,4 @@ jobs:
 
     - name: Build and Run C++ application
       run: |
-        g++ -std=c++11 -Wall ${{ matrix.define }} -I ./base_math -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp && ./test_vs/app
+        g++ -std=c++11 -Wall -Werror ${{ matrix.define }} -I ./base_math -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp && ./test_vs/app
