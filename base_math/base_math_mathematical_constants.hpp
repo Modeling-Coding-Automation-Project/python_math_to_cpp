@@ -1,5 +1,5 @@
-#ifndef BASE_MATH_MATHEMATICAL_CONSTANTS_HPP
-#define BASE_MATH_MATHEMATICAL_CONSTANTS_HPP
+#ifndef __BASE_MATH_MATHEMATICAL_CONSTANTS_HPP__
+#define __BASE_MATH_MATHEMATICAL_CONSTANTS_HPP__
 
 #include "base_math_macros.hpp"
 
@@ -21,4 +21,4 @@ constexpr double LN_10 = 2.302585092994046;
 } // namespace Math
 } // namespace Base
 
-#endif // BASE_MATH_MATHEMATICAL_CONSTANTS_HPP
+#endif // __BASE_MATH_MATHEMATICAL_CONSTANTS_HPP__

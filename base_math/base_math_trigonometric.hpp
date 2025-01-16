@@ -1,5 +1,5 @@
-#ifndef BASE_MATH_TRIGONOMETRIC_HPP
-#define BASE_MATH_TRIGONOMETRIC_HPP
+#ifndef __BASE_MATH_TRIGONOMETRIC_HPP__
+#define __BASE_MATH_TRIGONOMETRIC_HPP__
 
 #include "base_math_macros.hpp"
 
@@ -734,4 +734,4 @@ template <typename T> inline T tanh(const T &x) {
 } // namespace Math
 } // namespace Base
 
-#endif // BASE_MATH_TRIGONOMETRIC_HPP
+#endif // __BASE_MATH_TRIGONOMETRIC_HPP__

@@ -1,5 +1,5 @@
-#ifndef BASE_MATH_ARITHMETIC_HPP
-#define BASE_MATH_ARITHMETIC_HPP
+#ifndef __BASE_MATH_ARITHMETIC_HPP__
+#define __BASE_MATH_ARITHMETIC_HPP__
 
 #include "base_math_macros.hpp"
 
@@ -61,4 +61,4 @@ template <typename T> inline T mod(const T &x, const T &y) {
 } // namespace Math
 } // namespace Base
 
-#endif // BASE_MATH_ARITHMETIC_HPP
+#endif // __BASE_MATH_ARITHMETIC_HPP__

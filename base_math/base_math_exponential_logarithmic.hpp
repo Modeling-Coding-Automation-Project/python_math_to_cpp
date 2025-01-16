@@ -1,5 +1,5 @@
-#ifndef BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP
-#define BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP
+#ifndef __BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP__
+#define __BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP__
 
 #include "base_math_macros.hpp"
 
@@ -1321,4 +1321,4 @@ template <typename T> inline T pow(const T &x, const T &y) {
 } // namespace Math
 } // namespace Base
 
-#endif // BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP
+#endif // __BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP__

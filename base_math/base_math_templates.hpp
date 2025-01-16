@@ -1,5 +1,5 @@
-#ifndef BASE_MATH_TEMPLATES_HPP
-#define BASE_MATH_TEMPLATES_HPP
+#ifndef __BASE_MATH_TEMPLATES_HPP__
+#define __BASE_MATH_TEMPLATES_HPP__
 
 #include "base_math_macros.hpp"
 
@@ -109,4 +109,4 @@ to_sin_maclaurin_factor_array(ValueArgumentIntList<Values...>) {
 } // namespace Math
 } // namespace Base
 
-#endif // BASE_MATH_TEMPLATES_HPP
+#endif // __BASE_MATH_TEMPLATES_HPP__
