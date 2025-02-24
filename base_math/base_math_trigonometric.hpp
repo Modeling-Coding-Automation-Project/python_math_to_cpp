@@ -262,8 +262,8 @@ template <typename T>
 inline void sincos(const T &x, T &sin_value, T &cos_value) {
 
 #ifdef __BASE_MATH_USE_STD_MATH__
-  sin_value std::sin(x);
-  cos_value std::cos(x);
+  sin_value = std::sin(x);
+  cos_value = std::cos(x);
 #else // __BASE_MATH_USE_STD_MATH__
 
   Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
