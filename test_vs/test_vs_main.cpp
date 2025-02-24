@@ -598,7 +598,7 @@ void check_base_math_trigonometric(void) {
         T cos_value = static_cast<T>(0);
         Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
             T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(
-            test_values_sin[i], cos_value, sin_value);
+            test_values_sin[i], sin_value, cos_value);
     
         T sin_answer = std::sin(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
