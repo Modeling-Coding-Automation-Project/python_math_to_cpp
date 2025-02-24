@@ -346,8 +346,9 @@ inline double sqrt_extraction_double(const double &value) {
 }
 
 /* sqrt extraction float */
-template <int Loop_Limit, int I, int I_Limit>
-struct SqrtExtractionFloatFirstLoop {
+namespace SqrtExtractionFloat {
+
+template <int Loop_Limit, int I, int I_Limit> struct FirstLoop {
   static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
                       unsigned long &a) {
     c = static_cast<unsigned long>(
@@ -357,13 +358,12 @@ struct SqrtExtractionFloatFirstLoop {
     m -= (c * y) << I;
     y += c;
 
-    SqrtExtractionFloatFirstLoop<Loop_Limit, (I - 2),
-                                 (I - 2 - Loop_Limit)>::execute(c, m, y, a);
+    FirstLoop<Loop_Limit, (I - 2), (I - 2 - Loop_Limit)>::execute(c, m, y, a);
   }
 };
 
 template <int Loop_Limit, int I_Limit>
-struct SqrtExtractionFloatFirstLoop<Loop_Limit, -1, I_Limit> {
+struct FirstLoop<Loop_Limit, -1, I_Limit> {
   static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
                       unsigned long &a) {
     static_cast<void>(c);
@@ -374,8 +374,7 @@ struct SqrtExtractionFloatFirstLoop<Loop_Limit, -1, I_Limit> {
   }
 };
 
-template <int Loop_Limit, int I>
-struct SqrtExtractionFloatFirstLoop<Loop_Limit, I, -1> {
+template <int Loop_Limit, int I> struct FirstLoop<Loop_Limit, I, -1> {
   static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
                       unsigned long &a) {
     static_cast<void>(c);
@@ -386,8 +385,7 @@ struct SqrtExtractionFloatFirstLoop<Loop_Limit, I, -1> {
   }
 };
 
-template <int Loop_Limit>
-struct SqrtExtractionFloatFirstLoop<Loop_Limit, -1, -1> {
+template <int Loop_Limit> struct FirstLoop<Loop_Limit, -1, -1> {
   static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
                       unsigned long &a) {
     static_cast<void>(c);
@@ -398,7 +396,7 @@ struct SqrtExtractionFloatFirstLoop<Loop_Limit, -1, -1> {
   }
 };
 
-template <int I> struct SqrtExtractionFloatSecondLoop {
+template <int I> struct SecondLoop {
   static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
                       unsigned long &a) {
     m <<= static_cast<int>(2);
@@ -408,11 +406,11 @@ template <int I> struct SqrtExtractionFloatSecondLoop {
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y);
     y += c;
-    SqrtExtractionFloatSecondLoop<I - 1>::execute(c, m, y, a);
+    SecondLoop<I - 1>::execute(c, m, y, a);
   }
 };
 
-template <> struct SqrtExtractionFloatSecondLoop<0> {
+template <> struct SecondLoop<0> {
   static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
                       unsigned long &a) {
     m <<= static_cast<int>(2);
@@ -425,7 +423,7 @@ template <> struct SqrtExtractionFloatSecondLoop<0> {
   }
 };
 
-template <> struct SqrtExtractionFloatSecondLoop<-1> {
+template <> struct SecondLoop<-1> {
   static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
                       unsigned long &a) {
     static_cast<void>(c);
@@ -435,6 +433,8 @@ template <> struct SqrtExtractionFloatSecondLoop<-1> {
     // Base case: do nothing
   }
 };
+
+} // namespace SqrtExtractionFloat
 
 /*************************************************
  *  Function: sqrt_extraction_float
@@ -481,7 +481,7 @@ inline float sqrt_extraction_float(const float &value) {
   // Use the square root calculation to calculate the square root of m, which
   // has been updated above. The resulting square root has the number of digits
   // for the number of iterations.
-  SqrtExtractionFloatFirstLoop<
+  SqrtExtractionFloat::FirstLoop<
       ((static_cast<int>(-2) * EXTRACTION_FLOAT_REPEAT_NUMBER -
         static_cast<int>(2)) *
        (EXTRACTION_FLOAT_REPEAT_NUMBER < static_cast<int>(-1))),
@@ -493,7 +493,7 @@ inline float sqrt_extraction_float(const float &value) {
 
   y <<= static_cast<int>(1);
 
-  SqrtExtractionFloatSecondLoop<(
+  SqrtExtractionFloat::SecondLoop<(
       (EXTRACTION_FLOAT_REPEAT_NUMBER *
        static_cast<int>(
            (EXTRACTION_FLOAT_REPEAT_NUMBER >= static_cast<int>(0)))) +
@@ -540,26 +540,30 @@ inline T sqrt_extraction(const T &x) {
 }
 
 /* rsqrt newton method loop */
-template <typename T, int N> struct RsqrtNewtonLoop {
+namespace RsqrtNewton {
+
+template <typename T, int N> struct Loop {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
-    RsqrtNewtonLoop<T, N - 1>::compute(x_T, result);
+    Loop<T, N - 1>::compute(x_T, result);
   }
 };
 
-template <typename T> struct RsqrtNewtonLoop<T, 1> {
+template <typename T> struct Loop<T, 1> {
   static void compute(T x_T, T &result) {
     result *= static_cast<T>(1.5) - x_T * result * result;
   }
 };
 
-template <typename T> struct RsqrtNewtonLoop<T, 0> {
+template <typename T> struct Loop<T, 0> {
   static void compute(T x_T, T &result) {
     /* Do Nothing. */
     static_cast<void>(x_T);
     static_cast<void>(result);
   }
 };
+
+} // namespace RsqrtNewton
 
 /* rsqrt newton method */
 template <typename T, std::size_t LOOP_NUMBER>
@@ -586,8 +590,8 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
   result *= static_cast<T>(1.875) -
             h * (static_cast<T>(1.25) - h * static_cast<T>(0.375));
 
-  RsqrtNewtonLoop<T, LOOP_NUMBER>::compute(x_wrapped * static_cast<T>(0.5),
-                                           result);
+  RsqrtNewton::Loop<T, LOOP_NUMBER>::compute(x_wrapped * static_cast<T>(0.5),
+                                             result);
 
   return result;
 }
@@ -726,19 +730,18 @@ template <typename T> inline T sqrt(const T &x) {
 }
 
 /* exp Maclaurin Expansion */
-template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct ExpMaclaurinIterationLoop {
+namespace ExpMaclaurinIteration {
+
+template <typename T, std::size_t LOOP_MAX, std::size_t N> struct Loop {
   static void compute(T &result, T &term, const T &remainder) {
     term *= remainder / static_cast<T>(LOOP_MAX - N);
     result += term;
 
-    ExpMaclaurinIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term,
-                                                           remainder);
+    Loop<T, LOOP_MAX, N - 1>::compute(result, term, remainder);
   }
 };
 
-template <typename T, std::size_t LOOP_MAX>
-struct ExpMaclaurinIterationLoop<T, LOOP_MAX, 0> {
+template <typename T, std::size_t LOOP_MAX> struct Loop<T, LOOP_MAX, 0> {
   static void compute(T &result, T &term, const T &remainder) {
     /* Do Nothing. */
     static_cast<void>(result);
@@ -746,6 +749,8 @@ struct ExpMaclaurinIterationLoop<T, LOOP_MAX, 0> {
     static_cast<void>(remainder);
   }
 };
+
+} // namespace ExpMaclaurinIteration
 
 template <typename T, std::size_t LOOP_NUMBER>
 inline T exp_maclaurin_expansion(const T &x) {
@@ -762,7 +767,7 @@ inline T exp_maclaurin_expansion(const T &x) {
     T remainder = x - n * static_cast<T>(Base::Math::LN_2);
     T term = static_cast<T>(1);
 
-    ExpMaclaurinIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
+    ExpMaclaurinIteration::Loop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
         result, term, remainder);
 
     result = ldexp(result, n);
@@ -772,20 +777,24 @@ inline T exp_maclaurin_expansion(const T &x) {
 }
 
 /* exp Maclaurin Expansion with table */
-template <typename T, std::size_t N> struct ExpMcLoughlinExpansionLoop {
+namespace ExpMcLoughlinExpansion {
+
+template <typename T, std::size_t N> struct Loop {
   static void compute(T &y, T &r) {
     y = y * r + static_cast<T>(Base::Math::EXP_MACLAURIN_FACTOR[N - 1]);
-    ExpMcLoughlinExpansionLoop<T, N - 1>::compute(y, r);
+    Loop<T, N - 1>::compute(y, r);
   }
 };
 
-template <typename T> struct ExpMcLoughlinExpansionLoop<T, 0> {
+template <typename T> struct Loop<T, 0> {
   static void compute(T &y, T &r) {
     static_cast<void>(y);
     static_cast<void>(r);
     // Do nothing
   }
 };
+
+} // namespace ExpMcLoughlinExpansion
 
 /*************************************************
  *  Function: exp_double_maclaurin_expansion_with_table
@@ -827,9 +836,9 @@ inline double exp_double_maclaurin_expansion_with_table(const double &x) {
 
     std::memcpy(&z, &w, static_cast<int>(8));
 
-    ExpMcLoughlinExpansionLoop<double,
-                               MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y,
-                                                                           r);
+    ExpMcLoughlinExpansion::Loop<double,
+                                 MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                             r);
 
     result = y * z;
   }
@@ -877,9 +886,9 @@ inline float exp_float_maclaurin_expansion_with_table(const float &x) {
 
     std::memcpy(&z, &w, static_cast<std::size_t>(4));
 
-    ExpMcLoughlinExpansionLoop<float,
-                               MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y,
-                                                                           r);
+    ExpMcLoughlinExpansion::Loop<float,
+                                 MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                             r);
 
     result = y * z;
   }
@@ -942,20 +951,19 @@ template <typename T> inline T exp(const T &x) {
 }
 
 /* exp2 */
-template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct Exp2NewtonIterationLoop {
+namespace Exp2NewtonIteration {
+
+template <typename T, std::size_t LOOP_MAX, std::size_t N> struct Loop {
   static void compute(T &result, T &term, const T &remainder) {
     term *= static_cast<T>(Base::Math::LN_2) * remainder /
             static_cast<T>(LOOP_MAX - N);
     result += term;
 
-    Exp2NewtonIterationLoop<T, LOOP_MAX, N - 1>::compute(result, term,
-                                                         remainder);
+    Loop<T, LOOP_MAX, N - 1>::compute(result, term, remainder);
   }
 };
 
-template <typename T, std::size_t LOOP_MAX>
-struct Exp2NewtonIterationLoop<T, LOOP_MAX, 0> {
+template <typename T, std::size_t LOOP_MAX> struct Loop<T, LOOP_MAX, 0> {
   static void compute(T &result, T &term, const T &remainder) {
     /* Do Nothing. */
     static_cast<void>(result);
@@ -963,6 +971,8 @@ struct Exp2NewtonIterationLoop<T, LOOP_MAX, 0> {
     static_cast<void>(remainder);
   }
 };
+
+} // namespace Exp2NewtonIteration
 
 template <typename T, std::size_t LOOP_NUMBER>
 inline T exp2_maclaurin_expansion(const T &x) {
@@ -980,7 +990,7 @@ inline T exp2_maclaurin_expansion(const T &x) {
 
     T term = static_cast<T>(1);
 
-    Exp2NewtonIterationLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
+    Exp2NewtonIteration::Loop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
         result, term, remainder);
 
     result = ldexp(result, n);
