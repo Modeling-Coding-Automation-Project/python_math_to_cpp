@@ -201,8 +201,8 @@ template <typename T> struct SecondLoop<T, 0> {
 
 template <typename T, std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
 inline void sincos_maclaurin_expansion_with_DoubleAngleFormula(const T &theta,
-                                                               T &cos_value,
-                                                               T &sin_value) {
+                                                               T &sin_value,
+                                                               T &cos_value) {
   static_assert(MACLAURIN_EXPANSION_REPEAT_NUMBER <
                     COS_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE,
                 "MACLAURIN_EXPANSION_REPEAT_NUMBER is too large.");
@@ -250,11 +250,27 @@ inline T tan_maclaurin_expansion_with_DoubleAngleFormula(const T &x) {
   T sin_value = static_cast<T>(0);
 
   Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
-      T, MACLAURIN_EXPANSION_REPEAT_NUMBER>(x, cos_value, sin_value);
+      T, MACLAURIN_EXPANSION_REPEAT_NUMBER>(x, sin_value, cos_value);
 
   return sin_value /
          Base::Utility::avoid_zero_divide(
              cos_value, static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN));
+}
+
+/* sincos */
+template <typename T>
+inline void sincos(const T &x, T &sin_value, T &cos_value) {
+
+#ifdef __BASE_MATH_USE_STD_MATH__
+  sin_value std::sin(x);
+  cos_value std::cos(x);
+#else // __BASE_MATH_USE_STD_MATH__
+
+  Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
+      T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x, sin_value,
+                                                                 cos_value);
+
+#endif // __BASE_MATH_USE_STD_MATH__
 }
 
 /* sin maclaurin expansion */

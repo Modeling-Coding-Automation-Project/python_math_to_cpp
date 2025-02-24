@@ -612,15 +612,24 @@ void check_base_math_trigonometric(void) {
         T cos_value = static_cast<T>(0);
         Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
             T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(
-                test_values_sin[i], cos_value, sin_value);
+                test_values_sin[i], sin_value, cos_value);
 
         T sin_answer = std::sin(test_values_sin[i]);
         T cos_answer = std::cos(test_values_sin[i]);
 
         tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
-            "check sin CORDIC for floating point number.");
+            "check sincos maclaurin expansion with DoubleAngleFormula.");
         tester.expect_near(cos_value, cos_answer, NEAR_LIMIT_STRICT,
-            "check cos CORDIC for floating point number.");
+            "check sincos maclaurin expansion with DoubleAngleFormula.");
+
+        sin_value = static_cast<T>(0);
+        cos_value = static_cast<T>(0);
+
+        Base::Math::sincos(test_values_sin[i], sin_value, cos_value);
+
+        tester.expect_near(sin_value, sin_answer, NEAR_LIMIT_STRICT,
+            "check sincos.");
+
 #endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
     }
 
