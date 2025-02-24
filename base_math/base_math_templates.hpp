@@ -44,67 +44,77 @@ template <> struct Factorial_2<0> {
 };
 
 /* exp Maclaurin factor */
-template <std::size_t N> struct MakeExpMaclaurinFactorList {
-  using type = typename AppendSize<
-      Factorial<(N - 1)>::value,
-      typename MakeExpMaclaurinFactorList<N - 1>::type>::type;
+namespace ExpMaclaurinFactor {
+
+template <std::size_t N> struct MakeList {
+  using type = typename AppendSize<Factorial<(N - 1)>::value,
+                                   typename MakeList<N - 1>::type>::type;
 };
 
-template <> struct MakeExpMaclaurinFactorList<1> {
+template <> struct MakeList<1> {
   using type = ValueArgumentSizeList<Factorial<1>::value>;
 };
 
 template <std::size_t... Values>
 constexpr std::array<double, sizeof...(Values)>
-to_exp_maclaurin_factor_array(ValueArgumentSizeList<Values...>) {
+to_array(ValueArgumentSizeList<Values...>) {
   return {static_cast<double>(static_cast<double>(1) /
                               static_cast<double>(Values))...};
 }
 
-/* cos Maclaurin factor */
+} // namespace ExpMaclaurinFactor
+
 template <int N> struct EvenOddSign {
   static constexpr int value = (N % static_cast<int>(2) == static_cast<int>(0))
                                    ? static_cast<int>(1)
                                    : static_cast<int>(-1);
 };
 
-template <int N> struct MakeCosMaclaurinFactorList {
-  using type = typename AppendInt<
-      (static_cast<int>(Factorial<(2 * N)>::value) *
-       EvenOddSign<(N + 1)>::value),
-      typename MakeCosMaclaurinFactorList<N - 1>::type>::type;
+/* cos Maclaurin factor */
+namespace CosMaclaurinFactor {
+
+template <int N> struct MakeList {
+  using type = typename AppendInt<(static_cast<int>(Factorial<(2 * N)>::value) *
+                                   EvenOddSign<(N + 1)>::value),
+                                  typename MakeList<N - 1>::type>::type;
 };
 
-template <> struct MakeCosMaclaurinFactorList<1> {
+template <> struct MakeList<1> {
   using type =
       ValueArgumentIntList<(static_cast<int>(2) * Factorial<1>::value)>;
 };
 
 template <int... Values>
 constexpr std::array<double, sizeof...(Values)>
-to_cos_maclaurin_factor_array(ValueArgumentIntList<Values...>) {
+to_array(ValueArgumentIntList<Values...>) {
   return {static_cast<double>(static_cast<double>(2) /
                               static_cast<double>(Values))...};
 }
 
+} // namespace CosMaclaurinFactor
+
 /* sin Maclaurin factor */
-template <int N> struct MakeSinMaclaurinFactorList {
-  using type = typename AppendInt<
-      (static_cast<int>(Factorial<(2 * N - 1)>::value) *
-       EvenOddSign<(N + 1)>::value),
-      typename MakeSinMaclaurinFactorList<N - 1>::type>::type;
+namespace SinMaclaurinFactor {
+
+template <int N> struct MakeList {
+  using type =
+      typename AppendInt<(static_cast<int>(Factorial<(2 * N - 1)>::value) *
+                          EvenOddSign<(N + 1)>::value),
+                         typename MakeList<N - 1>::type>::type;
 };
 
-template <> struct MakeSinMaclaurinFactorList<1> {
+template <> struct MakeList<1> {
   using type = ValueArgumentIntList<(Factorial<1>::value)>;
 };
 
 template <int... Values>
 constexpr std::array<double, sizeof...(Values)>
-to_sin_maclaurin_factor_array(ValueArgumentIntList<Values...>) {
+to_array(ValueArgumentIntList<Values...>) {
   return {static_cast<double>(static_cast<double>(1) /
                               static_cast<double>(Values))...};
 }
+
+} // namespace SinMaclaurinFactor
 
 } // namespace Math
 } // namespace Base

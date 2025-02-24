@@ -44,19 +44,19 @@ constexpr std::size_t SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
 
 constexpr std::size_t COS_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
 
-using COS_MACLAURIN_FACTOR_LIST = typename MakeCosMaclaurinFactorList<
+using COS_MACLAURIN_FACTOR_LIST = typename CosMaclaurinFactor::MakeList<
     COS_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE>::type;
 
 constexpr auto COS_MACLAURIN_DOUBLEANGLE_FACTOR =
-    Base::Math::to_cos_maclaurin_factor_array(COS_MACLAURIN_FACTOR_LIST{});
+    CosMaclaurinFactor::to_array(COS_MACLAURIN_FACTOR_LIST{});
 
 constexpr std::size_t SIN_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
 
-using SIN_MACLAURIN_FACTOR_LIST = typename MakeSinMaclaurinFactorList<
+using SIN_MACLAURIN_FACTOR_LIST = typename SinMaclaurinFactor::MakeList<
     SIN_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE>::type;
 
 constexpr auto SIN_MACLAURIN_DOUBLEANGLE_FACTOR =
-    Base::Math::to_sin_maclaurin_factor_array(SIN_MACLAURIN_FACTOR_LIST{});
+    SinMaclaurinFactor::to_array(SIN_MACLAURIN_FACTOR_LIST{});
 
 constexpr std::size_t CHEBYSHEV_COEFFICIENT_FOR_ATAN_SIZE = 11;
 static constexpr double
@@ -93,12 +93,14 @@ template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
 }
 
 /* cos maclaurin expansion with DoubleAngleFormula */
+namespace CosMaclaurinExpansion {
+
 template <typename T, std::size_t N,
           std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
-struct CosMaclaurinExpansionFirstLoop {
+struct FirstLoop {
   static void compute(T &y, T &x_wrapped) {
-    CosMaclaurinExpansionFirstLoop<
-        T, N - 1, MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y, x_wrapped);
+    FirstLoop<T, N - 1, MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y,
+                                                                    x_wrapped);
     y = y * x_wrapped +
         static_cast<T>(
             COS_MACLAURIN_DOUBLEANGLE_FACTOR[MACLAURIN_EXPANSION_REPEAT_NUMBER -
@@ -107,7 +109,7 @@ struct CosMaclaurinExpansionFirstLoop {
 };
 
 template <typename T, std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
-struct CosMaclaurinExpansionFirstLoop<T, 0, MACLAURIN_EXPANSION_REPEAT_NUMBER> {
+struct FirstLoop<T, 0, MACLAURIN_EXPANSION_REPEAT_NUMBER> {
   static void compute(T &y, T &x_wrapped) {
     y = y * x_wrapped +
         static_cast<T>(
@@ -116,19 +118,21 @@ struct CosMaclaurinExpansionFirstLoop<T, 0, MACLAURIN_EXPANSION_REPEAT_NUMBER> {
   }
 };
 
-template <typename T, std::size_t N> struct CosMaclaurinExpansionSecondLoop {
+template <typename T, std::size_t N> struct SecondLoop {
   static void compute(T &y) {
     y = y * (static_cast<T>(4) - y);
-    CosMaclaurinExpansionSecondLoop<T, N - 1>::compute(y);
+    SecondLoop<T, N - 1>::compute(y);
   }
 };
 
-template <typename T> struct CosMaclaurinExpansionSecondLoop<T, 0> {
+template <typename T> struct SecondLoop<T, 0> {
   static void compute(T &y) {
     static_cast<void>(y);
     /* Do Nothing. */
   }
 };
+
+} // namespace CosMaclaurinExpansion
 
 template <typename T, std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
 inline T cos_maclaurin_expansion_with_DoubleAngleFormula(const T &x) {
@@ -147,46 +151,45 @@ inline T cos_maclaurin_expansion_with_DoubleAngleFormula(const T &x) {
   y = static_cast<T>(
       COS_MACLAURIN_DOUBLEANGLE_FACTOR[MACLAURIN_EXPANSION_REPEAT_NUMBER]);
 
-  CosMaclaurinExpansionFirstLoop<
+  CosMaclaurinExpansion::FirstLoop<
       T, (MACLAURIN_EXPANSION_REPEAT_NUMBER - 1),
       MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y, x_wrapped);
 
   y = y * x_wrapped;
 
-  CosMaclaurinExpansionSecondLoop<
+  CosMaclaurinExpansion::SecondLoop<
       T, MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(y);
 
   return static_cast<T>(1) - y * static_cast<T>(0.5);
 }
 
 /* sin cos Maclaurin expansion with DoubleAngleFormula */
-template <typename T, std::size_t N, std::size_t I>
-struct SinCosMcLoughlinExpansionFirstLoop {
+namespace SinCosMcLoughlinExpansion {
+
+template <typename T, std::size_t N, std::size_t I> struct FirstLoop {
   static void compute(T &c, T &s, const T &z) {
-    SinCosMcLoughlinExpansionFirstLoop<T, N, I - 1>::compute(c, s, z);
+    FirstLoop<T, N, I - 1>::compute(c, s, z);
     c = c * z + static_cast<T>(COS_MACLAURIN_DOUBLEANGLE_FACTOR[N - 1 - I]);
     s = s * z + static_cast<T>(SIN_MACLAURIN_DOUBLEANGLE_FACTOR[N - 1 - I]);
   }
 };
 
-template <typename T, std::size_t N>
-struct SinCosMcLoughlinExpansionFirstLoop<T, N, 0> {
+template <typename T, std::size_t N> struct FirstLoop<T, N, 0> {
   static void compute(T &c, T &s, const T &z) {
     c = c * z + static_cast<T>(COS_MACLAURIN_DOUBLEANGLE_FACTOR[N - 1]);
     s = s * z + static_cast<T>(SIN_MACLAURIN_DOUBLEANGLE_FACTOR[N - 1]);
   }
 };
 
-template <typename T, std::size_t N>
-struct SinCosMcLoughlinExpansionSecondLoop {
+template <typename T, std::size_t N> struct SecondLoop {
   static void compute(T &s, T &c) {
     s = s * (static_cast<T>(2) - c);
     c = c * (static_cast<T>(4) - c);
-    SinCosMcLoughlinExpansionSecondLoop<T, N - 1>::compute(s, c);
+    SecondLoop<T, N - 1>::compute(s, c);
   }
 };
 
-template <typename T> struct SinCosMcLoughlinExpansionSecondLoop<T, 0> {
+template <typename T> struct SecondLoop<T, 0> {
   static void compute(T &s, T &c) {
     static_cast<void>(s);
     static_cast<void>(c);
@@ -194,10 +197,12 @@ template <typename T> struct SinCosMcLoughlinExpansionSecondLoop<T, 0> {
   }
 };
 
+} // namespace SinCosMcLoughlinExpansion
+
 template <typename T, std::size_t MACLAURIN_EXPANSION_REPEAT_NUMBER>
 inline void sincos_maclaurin_expansion_with_DoubleAngleFormula(const T &theta,
-                                                               T &cos_value,
-                                                               T &sin_value) {
+                                                               T &sin_value,
+                                                               T &cos_value) {
   static_assert(MACLAURIN_EXPANSION_REPEAT_NUMBER <
                     COS_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE,
                 "MACLAURIN_EXPANSION_REPEAT_NUMBER is too large.");
@@ -215,14 +220,14 @@ inline void sincos_maclaurin_expansion_with_DoubleAngleFormula(const T &theta,
       static_cast<T>(Factorial_2<MACLAURIN_EXPANSION_REPEAT_NUMBER>::value);
   z = theta_wrapped * theta_wrapped;
 
-  SinCosMcLoughlinExpansionFirstLoop<T, MACLAURIN_EXPANSION_REPEAT_NUMBER,
-                                     (MACLAURIN_EXPANSION_REPEAT_NUMBER -
-                                      1)>::compute(c, s, z);
+  SinCosMcLoughlinExpansion::FirstLoop<T, MACLAURIN_EXPANSION_REPEAT_NUMBER,
+                                       (MACLAURIN_EXPANSION_REPEAT_NUMBER -
+                                        1)>::compute(c, s, z);
 
   c = c * z;
   s = s * theta_wrapped;
 
-  SinCosMcLoughlinExpansionSecondLoop<
+  SinCosMcLoughlinExpansion::SecondLoop<
       T, MACLAURIN_EXPANSION_REPEAT_NUMBER>::compute(s, c);
 
   cos_value = static_cast<T>(1) - c * static_cast<T>(0.5);
@@ -245,16 +250,33 @@ inline T tan_maclaurin_expansion_with_DoubleAngleFormula(const T &x) {
   T sin_value = static_cast<T>(0);
 
   Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
-      T, MACLAURIN_EXPANSION_REPEAT_NUMBER>(x, cos_value, sin_value);
+      T, MACLAURIN_EXPANSION_REPEAT_NUMBER>(x, sin_value, cos_value);
 
   return sin_value /
          Base::Utility::avoid_zero_divide(
              cos_value, static_cast<T>(Base::Math::TRIGONOMETRIC_DIVISION_MIN));
 }
 
+/* sincos */
+template <typename T>
+inline void sincos(const T &x, T &sin_value, T &cos_value) {
+
+#ifdef __BASE_MATH_USE_STD_MATH__
+  sin_value = std::sin(x);
+  cos_value = std::cos(x);
+#else // __BASE_MATH_USE_STD_MATH__
+
+  Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
+      T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x, sin_value,
+                                                                 cos_value);
+
+#endif // __BASE_MATH_USE_STD_MATH__
+}
+
 /* sin maclaurin expansion */
-template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct SinMaclaurinLoop {
+namespace SinMaclaurin {
+
+template <typename T, std::size_t LOOP_MAX, std::size_t N> struct Loop {
   static void compute(const T &x_squared, T &term, T &result) {
     term *=
         -x_squared * static_cast<T>(static_cast<T>(1) /
@@ -262,12 +284,11 @@ struct SinMaclaurinLoop {
                                                    (2 * (LOOP_MAX - N) + 1)));
     result += term;
 
-    SinMaclaurinLoop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
+    Loop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
   }
 };
 
-template <typename T, std::size_t LOOP_MAX>
-struct SinMaclaurinLoop<T, LOOP_MAX, 0> {
+template <typename T, std::size_t LOOP_MAX> struct Loop<T, LOOP_MAX, 0> {
   static void compute(const T &x_squared, T &term, T &result) {
     /* Do Nothing. */
     static_cast<void>(x_squared);
@@ -275,6 +296,8 @@ struct SinMaclaurinLoop<T, LOOP_MAX, 0> {
     static_cast<void>(result);
   }
 };
+
+} // namespace SinMaclaurin
 
 template <typename T, std::size_t LOOP_NUMBER>
 inline T sin_maclaurin_expansion(const T &x) {
@@ -285,8 +308,8 @@ inline T sin_maclaurin_expansion(const T &x) {
   T result = x_wrapped;
   T x_squared = x_wrapped * x_wrapped;
 
-  SinMaclaurinLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
-                                                             result);
+  SinMaclaurin::Loop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
+                                                               result);
 
   return result;
 }
@@ -305,8 +328,9 @@ template <typename T> inline T sin(const T &x) {
 }
 
 /* cos maclaurin expansion */
-template <typename T, std::size_t LOOP_MAX, std::size_t N>
-struct CosMaclaurinLoop {
+namespace CosMaclaurin {
+
+template <typename T, std::size_t LOOP_MAX, std::size_t N> struct Loop {
   static void compute(const T &x_squared, T &term, T &result) {
     term *=
         -x_squared * static_cast<T>(static_cast<T>(1) /
@@ -314,12 +338,11 @@ struct CosMaclaurinLoop {
                                                    (2 * (LOOP_MAX - N))));
     result += term;
 
-    CosMaclaurinLoop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
+    Loop<T, LOOP_MAX, N - 1>::compute(x_squared, term, result);
   }
 };
 
-template <typename T, std::size_t LOOP_MAX>
-struct CosMaclaurinLoop<T, LOOP_MAX, 0> {
+template <typename T, std::size_t LOOP_MAX> struct Loop<T, LOOP_MAX, 0> {
   static void compute(const T &x_squared, T &term, T &result) {
     /* Do Nothing. */
     static_cast<void>(x_squared);
@@ -327,6 +350,8 @@ struct CosMaclaurinLoop<T, LOOP_MAX, 0> {
     static_cast<void>(result);
   }
 };
+
+} // namespace CosMaclaurin
 
 template <typename T, std::size_t LOOP_NUMBER>
 inline T cos_maclaurin_expansion(const T &x) {
@@ -337,8 +362,8 @@ inline T cos_maclaurin_expansion(const T &x) {
   T result = static_cast<T>(1);
   T x_squared = x_wrapped * x_wrapped;
 
-  CosMaclaurinLoop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
-                                                             result);
+  CosMaclaurin::Loop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(x_squared, term,
+                                                               result);
 
   return result;
 }
@@ -418,21 +443,25 @@ inline T atan_maclaurin_expansion(const T &x) {
 }
 
 /* atan Chebyshev */
-template <typename T, int N> struct AtanChebyshevLoop {
+namespace AtanChebyshev {
+
+template <typename T, int N> struct Loop {
   static T compute(const T &x_squared, const T &y) {
-    return AtanChebyshevLoop<T, N - 1>::compute(
+    return Loop<T, N - 1>::compute(
         x_squared,
         y * x_squared +
             static_cast<T>(Base::Math::CHEBYSHEV_COEFFICIENT_FOR_ATAN[N]));
   }
 };
 
-template <typename T> struct AtanChebyshevLoop<T, 0> {
+template <typename T> struct Loop<T, 0> {
   static T compute(const T &x_squared, const T &y) {
     return y * x_squared +
            static_cast<T>(Base::Math::CHEBYSHEV_COEFFICIENT_FOR_ATAN[0]);
   }
 };
+
+} // namespace AtanChebyshev
 
 template <typename T, std::size_t LOOP_NUMBER>
 inline T atan_chebyshev_core(const T &x) {
@@ -440,7 +469,7 @@ inline T atan_chebyshev_core(const T &x) {
   T x_squared = x * x;
   T y = static_cast<T>(0);
 
-  y = AtanChebyshevLoop<T, LOOP_NUMBER - 1>::compute(x_squared, y);
+  y = AtanChebyshev::Loop<T, LOOP_NUMBER - 1>::compute(x_squared, y);
 
   return y * x;
 }
