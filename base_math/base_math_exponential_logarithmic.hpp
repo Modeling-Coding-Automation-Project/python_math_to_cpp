@@ -170,8 +170,9 @@ inline T fast_inverse_square_root(const T &input, const T &division_min) {
 }
 
 /* sqrt extraction double */
-template <int Loop_Limit, int I, int I_Limit>
-struct SqrtExtractionDoubleFirstLoop {
+namespace SqrtExtractionDouble {
+
+template <int Loop_Limit, int I, int I_Limit> struct FirstLoop {
   static void execute(unsigned long long &c, unsigned long long &m,
                       unsigned long long &y, unsigned long long &a) {
     c = static_cast<unsigned long>(
@@ -181,13 +182,12 @@ struct SqrtExtractionDoubleFirstLoop {
     m -= (c * y) << I;
     y += c;
 
-    SqrtExtractionDoubleFirstLoop<Loop_Limit, (I - 2),
-                                  (I - 2 - Loop_Limit)>::execute(c, m, y, a);
+    FirstLoop<Loop_Limit, (I - 2), (I - 2 - Loop_Limit)>::execute(c, m, y, a);
   }
 };
 
 template <int Loop_Limit, int I_Limit>
-struct SqrtExtractionDoubleFirstLoop<Loop_Limit, -2, I_Limit> {
+struct FirstLoop<Loop_Limit, -2, I_Limit> {
   static void execute(unsigned long long &c, unsigned long long &m,
                       unsigned long long &y, unsigned long long &a) {
     static_cast<void>(c);
@@ -198,8 +198,7 @@ struct SqrtExtractionDoubleFirstLoop<Loop_Limit, -2, I_Limit> {
   }
 };
 
-template <int Loop_Limit, int I>
-struct SqrtExtractionDoubleFirstLoop<Loop_Limit, I, -2> {
+template <int Loop_Limit, int I> struct FirstLoop<Loop_Limit, I, -2> {
   static void execute(unsigned long long &c, unsigned long long &m,
                       unsigned long long &y, unsigned long long &a) {
     static_cast<void>(c);
@@ -210,8 +209,7 @@ struct SqrtExtractionDoubleFirstLoop<Loop_Limit, I, -2> {
   }
 };
 
-template <int Loop_Limit>
-struct SqrtExtractionDoubleFirstLoop<Loop_Limit, -2, -2> {
+template <int Loop_Limit> struct FirstLoop<Loop_Limit, -2, -2> {
   static void execute(unsigned long long &c, unsigned long long &m,
                       unsigned long long &y, unsigned long long &a) {
     static_cast<void>(c);
@@ -222,7 +220,7 @@ struct SqrtExtractionDoubleFirstLoop<Loop_Limit, -2, -2> {
   }
 };
 
-template <int I> struct SqrtExtractionDoubleSecondLoop {
+template <int I> struct SecondLoop {
   static void execute(unsigned long long &c, unsigned long long &m,
                       unsigned long long &y, unsigned long long &a) {
     m <<= static_cast<int>(2);
@@ -232,11 +230,11 @@ template <int I> struct SqrtExtractionDoubleSecondLoop {
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y);
     y += c;
-    SqrtExtractionDoubleSecondLoop<I - 1>::execute(c, m, y, a);
+    SecondLoop<I - 1>::execute(c, m, y, a);
   }
 };
 
-template <> struct SqrtExtractionDoubleSecondLoop<0> {
+template <> struct SecondLoop<0> {
   static void execute(unsigned long long &c, unsigned long long &m,
                       unsigned long long &y, unsigned long long &a) {
     m <<= static_cast<int>(2);
@@ -249,7 +247,7 @@ template <> struct SqrtExtractionDoubleSecondLoop<0> {
   }
 };
 
-template <> struct SqrtExtractionDoubleSecondLoop<-1> {
+template <> struct SecondLoop<-1> {
   static void execute(unsigned long long &c, unsigned long long &m,
                       unsigned long long &y, unsigned long long &a) {
     static_cast<void>(c);
@@ -259,6 +257,8 @@ template <> struct SqrtExtractionDoubleSecondLoop<-1> {
     // Base case: do nothing
   }
 };
+
+} // namespace SqrtExtractionDouble
 
 /*************************************************
  *  Function: sqrt_extraction_double
@@ -315,7 +315,7 @@ inline double sqrt_extraction_double(const double &value) {
               static_cast<unsigned short>(510)))
          << static_cast<int>(52);
 
-  SqrtExtractionDoubleFirstLoop<
+  SqrtExtractionDouble::FirstLoop<
       ((static_cast<int>(-2) * EXTRACTION_DOUBLE_REPEAT_NUMBER -
         static_cast<int>(2)) *
        (EXTRACTION_DOUBLE_REPEAT_NUMBER < static_cast<int>(-1))),
@@ -325,7 +325,7 @@ inline double sqrt_extraction_double(const double &value) {
              (EXTRACTION_DOUBLE_REPEAT_NUMBER <
               static_cast<int>(-1))))>::execute(c, m, y, a);
 
-  SqrtExtractionDoubleSecondLoop<(
+  SqrtExtractionDouble::SecondLoop<(
       (EXTRACTION_DOUBLE_REPEAT_NUMBER *
        static_cast<int>(
            (EXTRACTION_DOUBLE_REPEAT_NUMBER >= static_cast<int>(0)))) +
