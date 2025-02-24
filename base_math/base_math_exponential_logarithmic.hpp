@@ -92,10 +92,10 @@ constexpr unsigned long TABLE_FOR_EXP_FLOAT[16] = {
 constexpr std::size_t EXP_MACLAURIN_FACTOR_MAX_SIZE = 7;
 
 using EXP_MACLAURIN_FACTOR_LIST =
-    typename MakeExpMaclaurinFactorList<EXP_MACLAURIN_FACTOR_MAX_SIZE>::type;
+    typename ExpMaclaurinFactor::MakeList<EXP_MACLAURIN_FACTOR_MAX_SIZE>::type;
 
 constexpr auto EXP_MACLAURIN_FACTOR =
-    Base::Math::to_exp_maclaurin_factor_array(EXP_MACLAURIN_FACTOR_LIST{});
+    ExpMaclaurinFactor::to_array(EXP_MACLAURIN_FACTOR_LIST{});
 
 constexpr double TABLE_FOR_LOG_DOUBLE[17] = {
     0.0,                      // log( 16 /16)

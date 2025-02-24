@@ -44,19 +44,19 @@ constexpr std::size_t SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
 
 constexpr std::size_t COS_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
 
-using COS_MACLAURIN_FACTOR_LIST = typename MakeCosMaclaurinFactorList<
+using COS_MACLAURIN_FACTOR_LIST = typename CosMaclaurinFactor::MakeList<
     COS_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE>::type;
 
 constexpr auto COS_MACLAURIN_DOUBLEANGLE_FACTOR =
-    Base::Math::to_cos_maclaurin_factor_array(COS_MACLAURIN_FACTOR_LIST{});
+    CosMaclaurinFactor::to_array(COS_MACLAURIN_FACTOR_LIST{});
 
 constexpr std::size_t SIN_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
 
-using SIN_MACLAURIN_FACTOR_LIST = typename MakeSinMaclaurinFactorList<
+using SIN_MACLAURIN_FACTOR_LIST = typename SinMaclaurinFactor::MakeList<
     SIN_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE>::type;
 
 constexpr auto SIN_MACLAURIN_DOUBLEANGLE_FACTOR =
-    Base::Math::to_sin_maclaurin_factor_array(SIN_MACLAURIN_FACTOR_LIST{});
+    SinMaclaurinFactor::to_array(SIN_MACLAURIN_FACTOR_LIST{});
 
 constexpr std::size_t CHEBYSHEV_COEFFICIENT_FOR_ATAN_SIZE = 11;
 static constexpr double
