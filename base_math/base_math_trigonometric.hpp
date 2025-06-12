@@ -1,3 +1,39 @@
+/**
+ * @file base_math_trigonometric.hpp
+ * @brief Trigonometric and Hyperbolic Math Functions and Approximations
+ *
+ * This header provides a comprehensive set of mathematical functions for
+ * trigonometric (sin, cos, tan, atan, asin, acos, atan2) and hyperbolic (sinh,
+ * cosh, tanh) operations, along with their various polynomial and Chebyshev
+ * approximations. The implementations are designed to be highly configurable,
+ * supporting both standard library and custom approximation methods for
+ * performance and precision tuning.
+ *
+ * The code is organized under the `Base::Math` namespace and includes:
+ *   - Maclaurin series expansions for sine, cosine, tangent, and their
+ * hyperbolic counterparts.
+ *   - Double angle formula optimizations for improved convergence.
+ *   - Chebyshev polynomial approximations for arctangent and related functions.
+ *   - Utility functions for angle wrapping and safe division.
+ *   - Compile-time configuration for approximation accuracy and speed.
+ *
+ * Main Classes and Namespaces:
+ *   - `Base::Math`: Main namespace containing all trigonometric and hyperbolic
+ * functions.
+ *   - `CosMaclaurinExpansion`: Internal namespace for cosine Maclaurin
+ * expansion with double angle formula.
+ *   - `SinCosMcLoughlinExpansion`: Internal namespace for simultaneous sine and
+ * cosine Maclaurin expansion.
+ *   - `SinMaclaurin`, `CosMaclaurin`: Internal namespaces for Maclaurin series
+ * loop implementations.
+ *   - `AtanChebyshev`: Internal namespace for Chebyshev polynomial evaluation
+ * of arctangent.
+ *
+ * The code is highly templated to support various numeric types and
+ * compile-time loop unrolling. It is intended for use in performance-critical
+ * or numerically sensitive applications where standard library math functions
+ * may not be suitable.
+ */
 #ifndef __BASE_MATH_TRIGONOMETRIC_HPP__
 #define __BASE_MATH_TRIGONOMETRIC_HPP__
 
@@ -76,6 +112,18 @@ static constexpr double
 constexpr double TRIGONOMETRIC_DIVISION_MIN = 1e-10;
 
 /* wrap */
+/**
+ * @brief Wraps an angle value to the range [-π, π).
+ *
+ * This function takes an input angle `x` (in radians) and returns an equivalent
+ * angle within the interval [-π, π). It uses modular arithmetic to ensure the
+ * result is always within this range, which is useful for trigonometric
+ * calculations and angle normalization.
+ *
+ * @tparam T Numeric type of the input and output (e.g., float, double).
+ * @param x The angle value to be wrapped (in radians).
+ * @return The wrapped angle value in the range [-π, π).
+ */
 template <typename T> inline T wrap_value_in_minus_pi_and_pi(const T &x) {
   T result = static_cast<T>(0);
 
