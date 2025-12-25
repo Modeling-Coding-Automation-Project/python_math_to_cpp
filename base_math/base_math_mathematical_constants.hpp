@@ -3,8 +3,6 @@
 
 #include "base_math_macros.hpp"
 
-#include <cmath>
-
 namespace Base {
 namespace Math {
 
