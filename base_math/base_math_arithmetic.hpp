@@ -356,44 +356,77 @@ inline float fast_ldexp_float(float x, int exp) {
   return bitcast_f32(sign | (static_cast<uint32_t>(final_e) << 23) | mant);
 }
 
-inline uint64_t bitcast_u64(double x) {
+/**
+ * @brief Computes the ldexp (load exponent) for double precision floating-point
+ * numbers.
+ *
+ * This function multiplies a double-precision floating-point number `x` by
+ * 2 raised to the power of `exp`. It handles special cases such as NaN,
+ * infinity, zero, normalized, and subnormal numbers.
+ *
+ * @param x The double-precision floating-point number.
+ * @param exp The exponent to which 2 is raised.
+ * @return The result of `x * (2 ^ exp)`.
+ */
+inline uint64_t bitcast_u64(const double &x) {
   uint64_t u;
   std::memcpy(&u, &x, sizeof(u));
   return u;
 }
-inline double bitcast_f64(uint64_t u) {
+
+/**
+ * @brief Bitwise cast between uint64_t and double.
+ *
+ * These functions perform a bitwise cast between a `uint64_t` and a `double`
+ * without changing the bit representation. They use `std::memcpy` to safely
+ * copy the bits from one type to another.
+ *
+ * @param u The uint64_t value to be cast to double.
+ * @return The double representation of the uint64_t's bit pattern.
+ */
+inline double bitcast_f64(const uint64_t &u) {
   double x;
   std::memcpy(&x, &u, sizeof(x));
   return x;
 }
 
-// count leading zeros (x != 0)
+/**
+ * @brief Count leading zeros in a 64-bit unsigned integer.
+ *
+ * This function counts the number of leading zeros in the binary
+ * representation of a 64-bit unsigned integer `x`. The input `x` must be
+ * non-zero, as the behavior for `clz(0)` is undefined.
+ *
+ * @param x The 64-bit unsigned integer to count leading zeros for (must be
+ * non-zero).
+ * @return The number of leading zeros in `x`.
+ */
 inline int clz64(uint64_t x) {
 #if defined(__GNUC__) || defined(__clang__)
   return __builtin_clzll(x);
 #else
   int n = 0;
-  if ((x & 0xFFFFFFFF00000000ull) == 0) {
+  if ((x & static_cast<uint64_t>(0xFFFFFFFF00000000)) == 0) {
     n += 32;
     x <<= 32;
   }
-  if ((x & 0xFFFF000000000000ull) == 0) {
+  if ((x & static_cast<uint64_t>(0xFFFF000000000000)) == 0) {
     n += 16;
     x <<= 16;
   }
-  if ((x & 0xFF00000000000000ull) == 0) {
+  if ((x & static_cast<uint64_t>(0xFF00000000000000)) == 0) {
     n += 8;
     x <<= 8;
   }
-  if ((x & 0xF000000000000000ull) == 0) {
+  if ((x & static_cast<uint64_t>(0xF000000000000000)) == 0) {
     n += 4;
     x <<= 4;
   }
-  if ((x & 0xC000000000000000ull) == 0) {
+  if ((x & static_cast<uint64_t>(0xC000000000000000)) == 0) {
     n += 2;
     x <<= 2;
   }
-  if ((x & 0x8000000000000000ull) == 0) {
+  if ((x & static_cast<uint64_t>(0x8000000000000000)) == 0) {
     n += 1;
   }
   return n;
@@ -403,22 +436,22 @@ inline int clz64(uint64_t x) {
 inline double fast_ldexp_double(double x, int exp) {
   uint64_t ux = bitcast_u64(x);
 
-  const uint64_t sign = ux & 0x8000000000000000ull;
-  uint64_t e = (ux >> 52) & 0x7FFull;
-  uint64_t mant = ux & 0xFFFFFFFFFFFFFull;
+  const uint64_t sign = ux & static_cast<uint64_t>(0x8000000000000000);
+  uint64_t e = (ux >> 52) & static_cast<uint64_t>(0x7FF);
+  uint64_t mant = ux & static_cast<uint64_t>(0xFFFFFFFFFFFFF);
 
   // NaN / Inf
-  if (e == 0x7FFull) {
+  if (e == static_cast<uint64_t>(0x7FF)) {
     return x;
   }
 
   // Zero
-  if (e == 0 && mant == 0) {
+  if (e == static_cast<uint64_t>(0) && mant == static_cast<uint64_t>(0)) {
     return x;
   }
 
   // ---- Normalized number --
-  if (e != 0) {
+  if (e != static_cast<uint64_t>(0)) {
     int new_e = (int)e + exp;
 
     // Normal range
@@ -428,12 +461,12 @@ inline double fast_ldexp_double(double x, int exp) {
 
     // Overflow
     if (new_e >= 2047) {
-      return bitcast_f64(sign | 0x7FF0000000000000ull);
+      return bitcast_f64(sign | static_cast<uint64_t>(0x7FF0000000000000));
     }
 
     // Underflow -> subnormal / zero
-    mant |= (1ull << 52);  // hidden bit
-    int shift = 1 - new_e; // right shift count
+    mant |= (static_cast<uint64_t>(1) << 52); // hidden bit
+    int shift = 1 - new_e;                    // right shift count
 
     if (shift >= 53) {
       return bitcast_f64(sign); // ±0
@@ -454,17 +487,17 @@ inline double fast_ldexp_double(double x, int exp) {
   int new_exp = exp - shift - 1022;
   int final_e = new_exp + 1023;
 
-  mant &= 0xFFFFFFFFFFFFFull;
+  mant &= static_cast<uint64_t>(0xFFFFFFFFFFFFF);
 
   if (final_e >= 2047) {
-    return bitcast_f64(sign | 0x7FF0000000000000ull);
+    return bitcast_f64(sign | static_cast<uint64_t>(0x7FF0000000000000));
   }
 
   if (final_e <= 0) {
     if (final_e <= -52) {
       return bitcast_f64(sign);
     }
-    mant |= (1ull << 52);
+    mant |= (static_cast<uint64_t>(1) << 52);
     mant >>= (1 - final_e);
     return bitcast_f64(sign | mant);
   }
@@ -472,6 +505,19 @@ inline double fast_ldexp_double(double x, int exp) {
   return bitcast_f64(sign | ((uint64_t)final_e << 52) | mant);
 }
 
+/**
+ * @brief Computes the ldexp (load exponent) for floating-point numbers.
+ *
+ * This function multiplies a floating-point number `x` by 2 raised to the
+ * power of `exp`. It handles special cases such as NaN, infinity, zero,
+ * normalized, and subnormal numbers. The implementation varies based on the
+ * type of `x` (float or double) and compile-time flags.
+ *
+ * @tparam T The type of the floating-point number (float or double).
+ * @param x The floating-point number.
+ * @param exp The exponent to which 2 is raised.
+ * @return The result of `x * (2 ^ exp)`.
+ */
 template <typename T>
 typename std::enable_if<std::is_same<T, double>::value, T>::type
 ldexp(T x, int exp) {
@@ -482,6 +528,18 @@ ldexp(T x, int exp) {
 #endif // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
 }
 
+/**
+ * @brief Computes the ldexp (load exponent) for single-precision floating-point
+ * numbers.
+ *
+ * This function multiplies a single-precision floating-point number `x` by
+ * 2 raised to the power of `exp`. It handles special cases such as NaN,
+ * infinity, zero, normalized, and subnormal numbers.
+ *
+ * @param x The single-precision floating-point number.
+ * @param exp The exponent to which 2 is raised.
+ * @return The result of `x * (2 ^ exp)`.
+ */
 template <typename T>
 typename std::enable_if<std::is_same<T, float>::value, T>::type ldexp(T x,
                                                                       int exp) {
