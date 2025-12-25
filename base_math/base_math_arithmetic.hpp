@@ -137,19 +137,19 @@ template <typename T> inline T mod(const T &x, const T &y) {
 }
 
 /* frexpf */
-inline uint32_t bitcast_u32(float x) {
-  uint32_t u;
+inline unsigned long bitcast_u32(float x) {
+  unsigned long u;
   std::memcpy(&u, &x, sizeof(u));
   return u;
 }
-inline float bitcast_f32(uint32_t u) {
+inline float bitcast_f32(unsigned long u) {
   float x;
   std::memcpy(&x, &u, sizeof(x));
   return x;
 }
 
 // clz(0) is undefined, so do not pass 0
-inline int clz32(uint32_t x) {
+inline int clz32(unsigned long x) {
 #if defined(__GNUC__) || defined(__clang__)
   return __builtin_clz(x);
 #else
@@ -179,11 +179,11 @@ inline int clz32(uint32_t x) {
 }
 
 inline float fast_frexpf(float x, int *out_exp) {
-  uint32_t ux = bitcast_u32(x);
+  unsigned long ux = bitcast_u32(x);
 
-  const uint32_t sign = ux & 0x80000000u;
-  const uint32_t exp = (ux >> 23) & 0xFFu;
-  const uint32_t mant = ux & 0x7FFFFFu;
+  const unsigned long sign = ux & 0x80000000u;
+  const unsigned long exp = (ux >> 23) & 0xFFu;
+  const unsigned long mant = ux & 0x7FFFFFu;
 
   // NaN/Inf
   if (exp == 0xFFu) {
@@ -207,7 +207,7 @@ inline float fast_frexpf(float x, int *out_exp) {
     // p = 31 - clz(mant)
     const int p = 31 - clz32(mant); // mant != 0 なのでOK
     const int shift = 22 - p;       // 0..22
-    const uint32_t norm_mant = (mant << shift) & 0x7FFFFFu;
+    const unsigned long norm_mant = (mant << shift) & 0x7FFFFFu;
 
     // Derivation of exp_out:
     // Subnormal numbers effectively have exp = -126 (when exponent bits are 0)
@@ -220,14 +220,14 @@ inline float fast_frexpf(float x, int *out_exp) {
       *out_exp = -125 - shift;
 
     // Normalized numbers have exponent bits set to 126 (biased)
-    const uint32_t frac_bits = sign | (126u << 23) | norm_mant;
+    const unsigned long frac_bits = sign | (126u << 23) | norm_mant;
     return bitcast_f32(frac_bits);
   }
 
   // Normal: 1..254
   if (out_exp)
     *out_exp = (int)exp - 126; // e - 127 + 1
-  const uint32_t frac_bits = sign | (126u << 23) | mant;
+  const unsigned long frac_bits = sign | (126u << 23) | mant;
   return bitcast_f32(frac_bits);
 }
 
@@ -240,11 +240,11 @@ inline float frexpf(float x, int *exp) {
 }
 
 inline float fast_ldexp_float(float x, int exp) {
-  uint32_t ux = bitcast_u32(x);
+  unsigned long ux = bitcast_u32(x);
 
-  const uint32_t sign = ux & 0x80000000u;
-  uint32_t e = (ux >> 23) & 0xFFu;
-  uint32_t mant = ux & 0x7FFFFFu;
+  const unsigned long sign = ux & 0x80000000u;
+  unsigned long e = (ux >> 23) & 0xFFu;
+  unsigned long mant = ux & 0x7FFFFFu;
 
   // NaN / Inf
   if (e == 0xFFu) {
@@ -261,7 +261,7 @@ inline float fast_ldexp_float(float x, int exp) {
     int new_e = (int)e + exp;
 
     if ((unsigned)new_e >= 1u && new_e <= 254) {
-      return bitcast_f32(sign | ((uint32_t)new_e << 23) | mant);
+      return bitcast_f32(sign | ((unsigned long)new_e << 23) | mant);
     }
 
     if (new_e >= 255) {
@@ -307,22 +307,22 @@ inline float fast_ldexp_float(float x, int exp) {
     return bitcast_f32(sign | mant);
   }
 
-  return bitcast_f32(sign | ((uint32_t)final_e << 23) | mant);
+  return bitcast_f32(sign | ((unsigned long)final_e << 23) | mant);
 }
 
-inline uint64_t bitcast_u64(double x) {
-  uint64_t u;
+inline unsigned long long bitcast_u64(double x) {
+  unsigned long long u;
   std::memcpy(&u, &x, sizeof(u));
   return u;
 }
-inline double bitcast_f64(uint64_t u) {
+inline double bitcast_f64(unsigned long long u) {
   double x;
   std::memcpy(&x, &u, sizeof(x));
   return x;
 }
 
 // count leading zeros (x != 0)
-inline int clz64(uint64_t x) {
+inline int clz64(unsigned long long x) {
 #if defined(__GNUC__) || defined(__clang__)
   return __builtin_clzll(x);
 #else
@@ -355,11 +355,11 @@ inline int clz64(uint64_t x) {
 }
 
 inline double fast_ldexp_double(double x, int exp) {
-  uint64_t ux = bitcast_u64(x);
+  unsigned long long ux = bitcast_u64(x);
 
-  const uint64_t sign = ux & 0x8000000000000000ull;
-  uint64_t e = (ux >> 52) & 0x7FFull;
-  uint64_t mant = ux & 0xFFFFFFFFFFFFFull;
+  const unsigned long long sign = ux & 0x8000000000000000ull;
+  unsigned long long e = (ux >> 52) & 0x7FFull;
+  unsigned long long mant = ux & 0xFFFFFFFFFFFFFull;
 
   // NaN / Inf
   if (e == 0x7FFull) {
@@ -377,7 +377,7 @@ inline double fast_ldexp_double(double x, int exp) {
 
     // Normal range
     if ((unsigned)new_e >= 1u && new_e <= 2046) {
-      return bitcast_f64(sign | ((uint64_t)new_e << 52) | mant);
+      return bitcast_f64(sign | ((unsigned long long)new_e << 52) | mant);
     }
 
     // Overflow
@@ -423,7 +423,7 @@ inline double fast_ldexp_double(double x, int exp) {
     return bitcast_f64(sign | mant);
   }
 
-  return bitcast_f64(sign | ((uint64_t)final_e << 52) | mant);
+  return bitcast_f64(sign | ((unsigned long long)final_e << 52) | mant);
 }
 
 template <typename T>
