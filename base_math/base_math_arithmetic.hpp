@@ -225,6 +225,205 @@ inline float fast_frexpf(float x, int *out_exp) {
   return bitcast_f32(frac_bits);
 }
 
+inline float fast_ldexp_float(float x, int exp) {
+  uint32_t ux = bitcast_u32(x);
+
+  const uint32_t sign = ux & 0x80000000u;
+  uint32_t e = (ux >> 23) & 0xFFu;
+  uint32_t mant = ux & 0x7FFFFFu;
+
+  // NaN / Inf
+  if (e == 0xFFu) {
+    return x;
+  }
+
+  // Zero
+  if (e == 0u && mant == 0u) {
+    return x;
+  }
+
+  // ---- Normalized number ----
+  if (e != 0u) {
+    int new_e = (int)e + exp;
+
+    if ((unsigned)new_e >= 1u && new_e <= 254) {
+      return bitcast_f32(sign | ((uint32_t)new_e << 23) | mant);
+    }
+
+    if (new_e >= 255) {
+      return bitcast_f32(sign | 0x7F800000u); // Inf
+    }
+
+    // Underflow -> Subnormal or 0
+    // Add hidden 1 to mantissa
+    mant |= 0x800000u;
+    int shift = 1 - new_e; // right shift count
+
+    if (shift >= 24) {
+      return bitcast_f32(sign);
+    }
+
+    mant >>= shift;
+    return bitcast_f32(sign | mant);
+  }
+
+  // ---- Subnormal ----
+  // Normalize and then process recursively
+  // mant != 0
+  int p = 31 - clz32(mant);
+  int shift = 22 - p;
+  mant <<= shift;
+
+  // Normalized exponent after normalization is -126 - shift
+  int new_exp = exp - shift - 126;
+
+  // Reconstruct
+  int final_e = new_exp + 127;
+  mant &= 0x7FFFFFu;
+
+  if (final_e >= 255) {
+    return bitcast_f32(sign | 0x7F800000u);
+  }
+  if (final_e <= 0) {
+    if (final_e <= -23) {
+      return bitcast_f32(sign);
+    }
+    mant |= 0x800000u;
+    mant >>= (1 - final_e);
+    return bitcast_f32(sign | mant);
+  }
+
+  return bitcast_f32(sign | ((uint32_t)final_e << 23) | mant);
+}
+
+inline uint64_t bitcast_u64(double x) {
+  uint64_t u;
+  std::memcpy(&u, &x, sizeof(u));
+  return u;
+}
+inline double bitcast_f64(uint64_t u) {
+  double x;
+  std::memcpy(&x, &u, sizeof(x));
+  return x;
+}
+
+// count leading zeros (x != 0)
+inline int clz64(uint64_t x) {
+#if defined(__GNUC__) || defined(__clang__)
+  return __builtin_clzll(x);
+#else
+  int n = 0;
+  if ((x & 0xFFFFFFFF00000000ull) == 0) {
+    n += 32;
+    x <<= 32;
+  }
+  if ((x & 0xFFFF000000000000ull) == 0) {
+    n += 16;
+    x <<= 16;
+  }
+  if ((x & 0xFF00000000000000ull) == 0) {
+    n += 8;
+    x <<= 8;
+  }
+  if ((x & 0xF000000000000000ull) == 0) {
+    n += 4;
+    x <<= 4;
+  }
+  if ((x & 0xC000000000000000ull) == 0) {
+    n += 2;
+    x <<= 2;
+  }
+  if ((x & 0x8000000000000000ull) == 0) {
+    n += 1;
+  }
+  return n;
+#endif
+}
+
+inline double fast_ldexp_double(double x, int exp) {
+  uint64_t ux = bitcast_u64(x);
+
+  const uint64_t sign = ux & 0x8000000000000000ull;
+  uint64_t e = (ux >> 52) & 0x7FFull;
+  uint64_t mant = ux & 0xFFFFFFFFFFFFFull;
+
+  // NaN / Inf
+  if (e == 0x7FFull) {
+    return x;
+  }
+
+  // Zero
+  if (e == 0 && mant == 0) {
+    return x;
+  }
+
+  // ---- Normalized number --
+  if (e != 0) {
+    int new_e = (int)e + exp;
+
+    // Normal range
+    if ((unsigned)new_e >= 1u && new_e <= 2046) {
+      return bitcast_f64(sign | ((uint64_t)new_e << 52) | mant);
+    }
+
+    // Overflow
+    if (new_e >= 2047) {
+      return bitcast_f64(sign | 0x7FF0000000000000ull);
+    }
+
+    // Underflow -> subnormal / zero
+    mant |= (1ull << 52);  // hidden bit
+    int shift = 1 - new_e; // right shift count
+
+    if (shift >= 53) {
+      return bitcast_f64(sign); // ±0
+    }
+
+    mant >>= shift;
+    return bitcast_f64(sign | mant);
+  }
+
+  // ---- Subnormal ----
+  // mant != 0
+  int p = 63 - clz64(mant); // highest set bit
+  int shift = 52 - p;
+
+  mant <<= shift;
+
+  // Normalized exponent after normalization is -1022 - shift
+  int new_exp = exp - shift - 1022;
+  int final_e = new_exp + 1023;
+
+  mant &= 0xFFFFFFFFFFFFFull;
+
+  if (final_e >= 2047) {
+    return bitcast_f64(sign | 0x7FF0000000000000ull);
+  }
+
+  if (final_e <= 0) {
+    if (final_e <= -52) {
+      return bitcast_f64(sign);
+    }
+    mant |= (1ull << 52);
+    mant >>= (1 - final_e);
+    return bitcast_f64(sign | mant);
+  }
+
+  return bitcast_f64(sign | ((uint64_t)final_e << 52) | mant);
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, double>::value, T>::type
+fast_ldexp(T x, int exp) {
+  return fast_ldexp_double(x, exp);
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, float>::value, T>::type
+fast_ldexp(T x, int exp) {
+  return fast_ldexp_float(x, exp);
+}
+
 } // namespace Math
 } // namespace Base
 

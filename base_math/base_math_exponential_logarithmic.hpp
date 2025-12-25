@@ -980,8 +980,9 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
   T h = static_cast<T>(0);
   float r = 1.8284271F - 0.82842712F * fast_frexpf(x_float, &e);
 
-  r = ldexp(r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
-            -e >> 1);
+  r = fast_ldexp(
+      r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
+      -e >> 1);
 
   result = static_cast<T>(r);
 
@@ -1329,7 +1330,7 @@ inline T exp_maclaurin_expansion(const T &x) {
     ExpMaclaurinIteration::Loop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
         result, term, remainder);
 
-    result = ldexp(result, n);
+    result = fast_ldexp(result, n);
   }
 
   return result;
@@ -1727,7 +1728,7 @@ inline T exp2_maclaurin_expansion(const T &x) {
     Exp2NewtonIteration::Loop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
         result, term, remainder);
 
-    result = ldexp(result, n);
+    result = fast_ldexp(result, n);
   }
 
   return result;
