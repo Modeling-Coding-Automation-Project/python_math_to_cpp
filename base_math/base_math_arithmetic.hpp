@@ -139,65 +139,106 @@ template <typename T> inline T mod(const T &x, const T &y) {
 #endif // __BASE_MATH_USE_STD_MATH__
 }
 
-/* frexpf */
-inline uint32_t bitcast_u32(float x) {
+/**
+ * @brief Bitwise cast between float and uint32_t.
+ *
+ * These functions perform a bitwise cast between a `float` and a `uint32_t`
+ * without changing the bit representation. They use `std::memcpy` to safely
+ * copy the bits from one type to another.
+ *
+ * @param x The float value to be cast to uint32_t.
+ * @return The uint32_t representation of the float's bit pattern.
+ */
+inline uint32_t bitcast_u32(const float &x) {
   uint32_t u;
   std::memcpy(&u, &x, sizeof(u));
   return u;
 }
-inline float bitcast_f32(uint32_t u) {
+
+/**
+ * @brief Bitwise cast between uint32_t and float.
+ *
+ * These functions perform a bitwise cast between a `uint32_t` and a `float`
+ * without changing the bit representation. They use `std::memcpy` to safely
+ * copy the bits from one type to another.
+ *
+ * @param u The uint32_t value to be cast to float.
+ * @return The float representation of the uint32_t's bit pattern.
+ */
+inline float bitcast_f32(const uint32_t &u) {
   float x;
   std::memcpy(&x, &u, sizeof(x));
   return x;
 }
 
-// clz(0) is undefined, so do not pass 0
+/**
+ * @brief Count leading zeros in a 32-bit unsigned integer.
+ *
+ * This function counts the number of leading zeros in the binary
+ * representation of a 32-bit unsigned integer `x`. The input `x` must be
+ * non-zero, as the behavior for `clz(0)` is undefined.
+ *
+ * @param x The 32-bit unsigned integer to count leading zeros for (must be
+ * non-zero).
+ * @return The number of leading zeros in `x`.
+ */
 inline int clz32(uint32_t x) {
 #if defined(__GNUC__) || defined(__clang__)
   return __builtin_clz(x);
 #else
   // fallback (slow but correct)
   int n = 0;
-  if ((x & 0xFFFF0000u) == 0) {
+  if ((x & static_cast<uint32_t>(0xFFFF0000)) == 0) {
     n += 16;
     x <<= 16;
   }
-  if ((x & 0xFF000000u) == 0) {
+  if ((x & static_cast<uint32_t>(0xFF000000)) == 0) {
     n += 8;
     x <<= 8;
   }
-  if ((x & 0xF0000000u) == 0) {
+  if ((x & static_cast<uint32_t>(0xF0000000)) == 0) {
     n += 4;
     x <<= 4;
   }
-  if ((x & 0xC0000000u) == 0) {
+  if ((x & static_cast<uint32_t>(0xC0000000)) == 0) {
     n += 2;
     x <<= 2;
   }
-  if ((x & 0x80000000u) == 0) {
+  if ((x & static_cast<uint32_t>(0x80000000)) == 0) {
     n += 1;
   }
   return n;
 #endif
 }
 
+/**
+ * @brief Fast implementation of frexpf for float.
+ *
+ * This function decomposes a floating-point number `x` into its normalized
+ * fraction and exponent. The fraction is returned, and the exponent is stored
+ * in the location pointed to by `out_exp`. The function handles special cases
+ * such as NaN, infinity, zero, and subnormal numbers.
+ * @param x The floating-point number to decompose.
+ * @param out_exp Pointer to an integer where the exponent will be stored.
+ * @return The normalized fraction of `x`.
+ */
 inline float fast_frexpf(float x, int *out_exp) {
   uint32_t ux = bitcast_u32(x);
 
-  const uint32_t sign = ux & 0x80000000u;
-  const uint32_t exp = (ux >> 23) & 0xFFu;
-  const uint32_t mant = ux & 0x7FFFFFu;
+  const uint32_t sign = ux & static_cast<uint32_t>(0x80000000);
+  const uint32_t exp = (ux >> 23) & static_cast<uint32_t>(0xFF);
+  const uint32_t mant = ux & static_cast<uint32_t>(0x7FFFFF);
 
   // NaN/Inf
-  if (exp == 0xFFu) {
+  if (exp == static_cast<uint32_t>(0xFF)) {
     if (out_exp)
       *out_exp = 0;
     return x;
   }
 
   // Zero or Subnormal
-  if (exp == 0u) {
-    if (mant == 0u) { // ±0
+  if (exp == static_cast<uint32_t>(0)) {
+    if (mant == static_cast<uint32_t>(0)) { // ±0
       if (out_exp)
         *out_exp = 0;
       return x;
@@ -210,7 +251,8 @@ inline float fast_frexpf(float x, int *out_exp) {
     // p = 31 - clz(mant)
     const int p = 31 - clz32(mant); // mant != 0 なのでOK
     const int shift = 22 - p;       // 0..22
-    const uint32_t norm_mant = (mant << shift) & 0x7FFFFFu;
+    const uint32_t norm_mant =
+        (mant << shift) & static_cast<uint32_t>(0x7FFFFF);
 
     // Derivation of exp_out:
     // Subnormal numbers effectively have exp = -126 (when exponent bits are 0)
@@ -223,14 +265,15 @@ inline float fast_frexpf(float x, int *out_exp) {
       *out_exp = -125 - shift;
 
     // Normalized numbers have exponent bits set to 126 (biased)
-    const uint32_t frac_bits = sign | (126u << 23) | norm_mant;
+    const uint32_t frac_bits =
+        sign | (static_cast<uint32_t>(126) << 23) | norm_mant;
     return bitcast_f32(frac_bits);
   }
 
   // Normal: 1..254
   if (out_exp)
     *out_exp = (int)exp - 126; // e - 127 + 1
-  const uint32_t frac_bits = sign | (126u << 23) | mant;
+  const uint32_t frac_bits = sign | (static_cast<uint32_t>(126) << 23) | mant;
   return bitcast_f32(frac_bits);
 }
 
@@ -245,22 +288,22 @@ inline float frexpf(float x, int *exp) {
 inline float fast_ldexp_float(float x, int exp) {
   uint32_t ux = bitcast_u32(x);
 
-  const uint32_t sign = ux & 0x80000000u;
-  uint32_t e = (ux >> 23) & 0xFFu;
-  uint32_t mant = ux & 0x7FFFFFu;
+  const uint32_t sign = ux & static_cast<uint32_t>(0x80000000);
+  uint32_t e = (ux >> 23) & static_cast<uint32_t>(0xFF);
+  uint32_t mant = ux & static_cast<uint32_t>(0x7FFFFF);
 
   // NaN / Inf
-  if (e == 0xFFu) {
+  if (e == static_cast<uint32_t>(0xFF)) {
     return x;
   }
 
   // Zero
-  if (e == 0u && mant == 0u) {
+  if (e == static_cast<uint32_t>(0) && mant == static_cast<uint32_t>(0)) {
     return x;
   }
 
   // ---- Normalized number ----
-  if (e != 0u) {
+  if (e != static_cast<uint32_t>(0)) {
     int new_e = (int)e + exp;
 
     if ((unsigned)new_e >= 1u && new_e <= 254) {
@@ -268,12 +311,12 @@ inline float fast_ldexp_float(float x, int exp) {
     }
 
     if (new_e >= 255) {
-      return bitcast_f32(sign | 0x7F800000u); // Inf
+      return bitcast_f32(sign | static_cast<uint32_t>(0x7F800000)); // Inf
     }
 
     // Underflow -> Subnormal or 0
     // Add hidden 1 to mantissa
-    mant |= 0x800000u;
+    mant |= static_cast<uint32_t>(0x800000);
     int shift = 1 - new_e; // right shift count
 
     if (shift >= 24) {
@@ -296,21 +339,21 @@ inline float fast_ldexp_float(float x, int exp) {
 
   // Reconstruct
   int final_e = new_exp + 127;
-  mant &= 0x7FFFFFu;
+  mant &= static_cast<uint32_t>(0x7FFFFF);
 
   if (final_e >= 255) {
-    return bitcast_f32(sign | 0x7F800000u);
+    return bitcast_f32(sign | static_cast<uint32_t>(0x7F800000));
   }
   if (final_e <= 0) {
     if (final_e <= -23) {
       return bitcast_f32(sign);
     }
-    mant |= 0x800000u;
+    mant |= static_cast<uint32_t>(0x800000);
     mant >>= (1 - final_e);
     return bitcast_f32(sign | mant);
   }
 
-  return bitcast_f32(sign | ((uint32_t)final_e << 23) | mant);
+  return bitcast_f32(sign | (static_cast<uint32_t>(final_e) << 23) | mant);
 }
 
 inline uint64_t bitcast_u64(double x) {
