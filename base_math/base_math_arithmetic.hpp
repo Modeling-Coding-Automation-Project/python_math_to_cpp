@@ -29,10 +29,10 @@
 #include <cmath>
 #else // __BASE_MATH_USE_STD_MATH__
 
-#ifdef __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
-#else // __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
+#else // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
 #include <cmath>
-#endif // __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
 
 #endif // __BASE_MATH_USE_STD_MATH__
 
@@ -232,11 +232,11 @@ inline float fast_frexpf(float x, int *out_exp) {
 }
 
 inline float frexpf(float x, int *exp) {
-#ifdef __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
   return fast_frexpf(x, exp);
-#else  // __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#else  // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
   return std::frexp(x, exp);
-#endif // __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
 }
 
 inline float fast_ldexp_float(float x, int exp) {
@@ -429,21 +429,21 @@ inline double fast_ldexp_double(double x, int exp) {
 template <typename T>
 typename std::enable_if<std::is_same<T, double>::value, T>::type
 ldexp(T x, int exp) {
-#ifdef __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
   return fast_ldexp_double(x, exp);
-#else  // __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#else  // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
   return std::ldexp(x, exp);
-#endif // __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
 }
 
 template <typename T>
 typename std::enable_if<std::is_same<T, float>::value, T>::type ldexp(T x,
                                                                       int exp) {
-#ifdef __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
   return fast_ldexp_float(x, exp);
-#else  // __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#else  // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
   return std::ldexp(x, exp);
-#endif // __NEVER_USE_CMATH_BUT_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
 }
 
 } // namespace Math
