@@ -24,6 +24,7 @@
 #include "base_math_mathematical_constants.hpp"
 
 #include <cstddef>
+#include <cstring>
 
 #ifdef __BASE_MATH_USE_STD_MATH__
 #include <cmath>
