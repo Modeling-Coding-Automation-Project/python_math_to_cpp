@@ -46,7 +46,6 @@
 #include "base_math_mathematical_constants.hpp"
 #include "base_math_templates.hpp"
 
-#include <cmath>
 #include <cstddef>
 #include <cstring>
 
@@ -980,7 +979,7 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
   T h = static_cast<T>(0);
   float r = 1.8284271F - 0.82842712F * fast_frexpf(x_float, &e);
 
-  r = fast_ldexp(
+  r = Base::Math::ldexp(
       r * Base::Math::ONE_AND_SQRT2_VEC[e & static_cast<int>(0x00000001)],
       -e >> 1);
 
@@ -1330,7 +1329,7 @@ inline T exp_maclaurin_expansion(const T &x) {
     ExpMaclaurinIteration::Loop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
         result, term, remainder);
 
-    result = fast_ldexp(result, n);
+    result = Base::Math::ldexp(result, n);
   }
 
   return result;
@@ -1728,7 +1727,7 @@ inline T exp2_maclaurin_expansion(const T &x) {
     Exp2NewtonIteration::Loop<T, LOOP_NUMBER, LOOP_NUMBER - 1>::compute(
         result, term, remainder);
 
-    result = fast_ldexp(result, n);
+    result = Base::Math::ldexp(result, n);
   }
 
   return result;
