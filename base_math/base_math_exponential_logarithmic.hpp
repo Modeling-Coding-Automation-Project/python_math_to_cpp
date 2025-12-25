@@ -47,6 +47,7 @@
 #include "base_math_templates.hpp"
 
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 
 namespace Base {
@@ -89,7 +90,7 @@ constexpr double EXP2_OUTPUT_MAX = 8.507059173023462e+37;
 constexpr double EXP2_INPUT_MIN = -126.0;
 constexpr double EXP2_OUTPUT_MIN = 1.1754943508222875e-38;
 
-constexpr unsigned long long TABLE_FOR_EXP_DOUBLE[16] = {
+constexpr uint64_t TABLE_FOR_EXP_DOUBLE[16] = {
     0x059B0D3158574ull, // 2^( 1 /32)-1
     0x11301D0125B51ull, // 2^( 3 /32)-1
     0x1D4873168B9AAull, // 2^( 5 /32)-1
@@ -108,7 +109,7 @@ constexpr unsigned long long TABLE_FOR_EXP_DOUBLE[16] = {
     0xF50765B6E4540ull, // 2^( 31 /32)-1
 };
 
-constexpr unsigned long TABLE_FOR_EXP_FLOAT[16] = {
+constexpr uint32_t TABLE_FOR_EXP_FLOAT[16] = {
     0x02CD86ul, // 2^( 1 /32)-1
     0x08980Eul, // 2^( 3 /32)-1
     0x0EA439ul, // 2^( 5 /32)-1
@@ -193,13 +194,13 @@ inline T fast_inverse_square_root(const T &input, const T &division_min) {
   if (input <= static_cast<T>(0)) {
     /* Do Nothing. */
   } else {
-    long i = static_cast<long>(0);
+    int32_t i = static_cast<int32_t>(0);
     float x = static_cast<float>(0);
 
     x = static_cast<float>(input_wrapped) * static_cast<float>(0.5);
     y = static_cast<float>(input_wrapped);
     std::memcpy(&i, &y, static_cast<std::size_t>(4));
-    i = static_cast<long>(0x5f3759df) - (i >> 1);
+    i = static_cast<int32_t>(0x5f3759df) - (i >> 1);
     std::memcpy(&y, &i, static_cast<std::size_t>(4));
     y = y * (static_cast<float>(1.5) - (x * y * y));
   }
@@ -216,27 +217,26 @@ template <int Loop_Limit, int I, int I_Limit> struct FirstLoop {
    * involving bitwise operations.
    *
    * This static method performs a sequence of bitwise manipulations and
-   * arithmetic operations on the provided unsigned long long references. It
+   * arithmetic operations on the provided uint64_t references. It
    * updates the values of `c`, `m`, `y`, and `a` based on the current state,
    * and then recursively calls the `FirstLoop` template with updated template
    * parameters.
    *
-   * @param c Reference to an unsigned long long variable, used as a control or
+   * @param c Reference to an uint64_t variable, used as a control or
    * carry flag in the computation.
-   * @param m Reference to an unsigned long long variable, typically
+   * @param m Reference to an uint64_t variable, typically
    * representing the modulus or a working value.
-   * @param y Reference to an unsigned long long variable, used as an
+   * @param y Reference to an uint64_t variable, used as an
    * accumulator or intermediate result.
-   * @param a Reference to an unsigned long long variable, used as an
+   * @param a Reference to an uint64_t variable, used as an
    * accumulator or result.
    *
    * @tparam Loop_Limit The loop limit for the recursive template call.
    * @tparam I The current bit index or iteration count.
    */
-  static void execute(unsigned long long &c, unsigned long long &m,
-                      unsigned long long &y, unsigned long long &a) {
-    c = static_cast<unsigned long>(
-        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >> I));
+  static void execute(uint64_t &c, uint64_t &m, uint64_t &y, uint64_t &a) {
+    c = static_cast<uint32_t>(
+        (y << static_cast<int>(1) | static_cast<uint32_t>(1)) <= (m >> I));
     a = (a << static_cast<int>(1)) | c;
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y) << I;
@@ -256,13 +256,12 @@ struct FirstLoop<Loop_Limit, -2, I_Limit> {
    * operations on the provided parameters. All parameters are marked as unused
    * to avoid compiler warnings.
    *
-   * @param c Reference to an unsigned long long value (unused).
-   * @param m Reference to an unsigned long long value (unused).
-   * @param y Reference to an unsigned long long value (unused).
-   * @param a Reference to an unsigned long long value (unused).
+   * @param c Reference to an uint64_t value (unused).
+   * @param m Reference to an uint64_t value (unused).
+   * @param y Reference to an uint64_t value (unused).
+   * @param a Reference to an uint64_t value (unused).
    */
-  static void execute(unsigned long long &c, unsigned long long &m,
-                      unsigned long long &y, unsigned long long &a) {
+  static void execute(uint64_t &c, uint64_t &m, uint64_t &y, uint64_t &a) {
     static_cast<void>(c);
     static_cast<void>(m);
     static_cast<void>(y);
@@ -276,7 +275,7 @@ struct FirstLoop<Loop_Limit, -2, I_Limit> {
  * template parameter is -2.
  *
  * This specialization provides a static execute function that takes four
- * unsigned long long references as parameters. In this base case, the function
+ * uint64_t references as parameters. In this base case, the function
  * does nothing except explicitly casting each parameter to void to suppress
  * unused variable warnings.
  *
@@ -284,14 +283,13 @@ struct FirstLoop<Loop_Limit, -2, I_Limit> {
  * specialization).
  * @tparam I The current loop index (not used in this specialization).
  *
- * @param c Reference to an unsigned long long variable (not used).
- * @param m Reference to an unsigned long long variable (not used).
- * @param y Reference to an unsigned long long variable (not used).
- * @param a Reference to an unsigned long long variable (not used).
+ * @param c Reference to an uint64_t variable (not used).
+ * @param m Reference to an uint64_t variable (not used).
+ * @param y Reference to an uint64_t variable (not used).
+ * @param a Reference to an uint64_t variable (not used).
  */
 template <int Loop_Limit, int I> struct FirstLoop<Loop_Limit, I, -2> {
-  static void execute(unsigned long long &c, unsigned long long &m,
-                      unsigned long long &y, unsigned long long &a) {
+  static void execute(uint64_t &c, uint64_t &m, uint64_t &y, uint64_t &a) {
     static_cast<void>(c);
     static_cast<void>(m);
     static_cast<void>(y);
@@ -307,18 +305,17 @@ template <int Loop_Limit, int I> struct FirstLoop<Loop_Limit, I, -2> {
  * <Loop_Limit, -2, -2>. It represents the base case for the recursive
  * FirstLoop structure, where no further action is required.
  *
- * The execute function takes four unsigned long long references as parameters,
+ * The execute function takes four uint64_t references as parameters,
  * but does nothing with them, effectively terminating the recursion.
  *
  * @tparam Loop_Limit The loop limit parameter (unused in this specialization).
- * @param c Reference to an unsigned long long variable (unused).
- * @param m Reference to an unsigned long long variable (unused).
- * @param y Reference to an unsigned long long variable (unused).
- * @param a Reference to an unsigned long long variable (unused).
+ * @param c Reference to an uint64_t variable (unused).
+ * @param m Reference to an uint64_t variable (unused).
+ * @param y Reference to an uint64_t variable (unused).
+ * @param a Reference to an uint64_t variable (unused).
  */
 template <int Loop_Limit> struct FirstLoop<Loop_Limit, -2, -2> {
-  static void execute(unsigned long long &c, unsigned long long &m,
-                      unsigned long long &y, unsigned long long &a) {
+  static void execute(uint64_t &c, uint64_t &m, uint64_t &y, uint64_t &a) {
     static_cast<void>(c);
     static_cast<void>(m);
     static_cast<void>(y);
@@ -339,20 +336,19 @@ template <int I> struct SecondLoop {
    * `y`, and `a` in place, and then recursively calls the next iteration via
    * `SecondLoop<I - 1>::execute`.
    *
-   * @param[out] c Reference to an unsigned long long variable, used as a carry
+   * @param[out] c Reference to an uint64_t variable, used as a carry
    * or flag in the computation.
-   * @param[in,out] m Reference to an unsigned long long variable, typically
+   * @param[in,out] m Reference to an uint64_t variable, typically
    * representing a modulus or accumulator.
-   * @param[in,out] y Reference to an unsigned long long variable, often
+   * @param[in,out] y Reference to an uint64_t variable, often
    * representing a partial result or operand.
-   * @param[in,out] a Reference to an unsigned long long variable, often
+   * @param[in,out] a Reference to an uint64_t variable, often
    * representing an accumulating result.
    */
-  static void execute(unsigned long long &c, unsigned long long &m,
-                      unsigned long long &y, unsigned long long &a) {
+  static void execute(uint64_t &c, uint64_t &m, uint64_t &y, uint64_t &a) {
     m <<= static_cast<int>(2);
-    c = static_cast<unsigned long long>(
-        (y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <= m);
+    c = static_cast<uint64_t>(
+        (y << static_cast<int>(1) | static_cast<uint64_t>(1)) <= m);
     a = (a << static_cast<int>(1)) | c;
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y);
@@ -366,25 +362,24 @@ template <> struct SecondLoop<0> {
    * @brief Performs a single iteration of a bitwise algorithm, updating the
    * provided variables.
    *
-   * This static function manipulates four unsigned long long references (`c`,
+   * This static function manipulates four uint64_t references (`c`,
    * `m`, `y`, `a`) using bitwise operations. It is typically used in algorithms
    * involving exponentiation, logarithms, or root extraction in integer
    * arithmetic.
    *
-   * @param c Reference to an unsigned long long used as a temporary or carry
+   * @param c Reference to an uint64_t used as a temporary or carry
    * variable.
-   * @param m Reference to an unsigned long long representing the main operand,
+   * @param m Reference to an uint64_t representing the main operand,
    * shifted and reduced.
-   * @param y Reference to an unsigned long long, updated with the result of the
+   * @param y Reference to an uint64_t, updated with the result of the
    * current iteration.
-   * @param a Reference to an unsigned long long, accumulates the result through
+   * @param a Reference to an uint64_t, accumulates the result through
    * bitwise operations.
    */
-  static void execute(unsigned long long &c, unsigned long long &m,
-                      unsigned long long &y, unsigned long long &a) {
+  static void execute(uint64_t &c, uint64_t &m, uint64_t &y, uint64_t &a) {
     m <<= static_cast<int>(2);
-    c = static_cast<unsigned long long>(
-        (y << static_cast<int>(1) | static_cast<unsigned long long>(1)) <= m);
+    c = static_cast<uint64_t>(
+        (y << static_cast<int>(1) | static_cast<uint64_t>(1)) <= m);
     a = (a << static_cast<int>(1)) | c;
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y);
@@ -398,18 +393,17 @@ template <> struct SecondLoop<-1> {
    * function.
    *
    * This static method serves as a base case in a recursive or templated
-   * mathematical operation. It takes four unsigned long long references as
+   * mathematical operation. It takes four uint64_t references as
    * parameters and performs no operation on them, effectively acting as a
    * no-op. All parameters are explicitly marked as unused to avoid compiler
    * warnings.
    *
-   * @param c Reference to an unsigned long long parameter (unused).
-   * @param m Reference to an unsigned long long parameter (unused).
-   * @param y Reference to an unsigned long long parameter (unused).
-   * @param a Reference to an unsigned long long parameter (unused).
+   * @param c Reference to an uint64_t parameter (unused).
+   * @param m Reference to an uint64_t parameter (unused).
+   * @param y Reference to an uint64_t parameter (unused).
+   * @param a Reference to an uint64_t parameter (unused).
    */
-  static void execute(unsigned long long &c, unsigned long long &m,
-                      unsigned long long &y, unsigned long long &a) {
+  static void execute(uint64_t &c, uint64_t &m, uint64_t &y, uint64_t &a) {
     static_cast<void>(c);
     static_cast<void>(m);
     static_cast<void>(y);
@@ -453,14 +447,13 @@ inline double sqrt_extraction_double(const double &value) {
 
   double result = static_cast<double>(0);
   unsigned short n =
-      static_cast<unsigned short>(0); // n is the exponent of value
-  unsigned long long m =
-      static_cast<unsigned long long>(0); // m is the mantissa of value
-  unsigned long long Temp;
+      static_cast<unsigned short>(0);    // n is the exponent of value
+  uint64_t m = static_cast<uint64_t>(0); // m is the mantissa of value
+  uint64_t Temp;
 
-  unsigned long long a = static_cast<unsigned long long>(0);
-  unsigned long long c = static_cast<unsigned long long>(0);
-  unsigned long long y = static_cast<unsigned long long>(0);
+  uint64_t a = static_cast<uint64_t>(0);
+  uint64_t c = static_cast<uint64_t>(0);
+  uint64_t y = static_cast<uint64_t>(0);
 
   std::memcpy(&Temp, &value, static_cast<std::size_t>(8));
 
@@ -477,20 +470,20 @@ inline double sqrt_extraction_double(const double &value) {
   // However, since 1 is added to the exponent due to the rounding up of the
   // mantissa later, 510 is added here
   n = static_cast<unsigned short>(
-      ((static_cast<unsigned long long>(0x7FFFFFFFFFFFFFFF) & Temp) >>
+      ((static_cast<uint64_t>(0x7FFFFFFFFFFFFFFF) & Temp) >>
        static_cast<int>(52)));
 
-  m = (static_cast<unsigned long long>(0x10000000000000) +
-       (static_cast<unsigned long long>(0xFFFFFFFFFFFFF) & Temp))
+  m = (static_cast<uint64_t>(0x10000000000000) +
+       (static_cast<uint64_t>(0xFFFFFFFFFFFFF) & Temp))
       << (static_cast<unsigned short>(1) & (~n));
 
   // the exponent part to Temp
-  Temp = static_cast<unsigned long long>(
-             (((n + static_cast<unsigned short>(
-                        (static_cast<unsigned short>(1) & n))) >>
-               static_cast<int>(1)) +
-              static_cast<unsigned short>(510)))
-         << static_cast<int>(52);
+  Temp =
+      static_cast<uint64_t>((((n + static_cast<unsigned short>(
+                                       (static_cast<unsigned short>(1) & n))) >>
+                              static_cast<int>(1)) +
+                             static_cast<unsigned short>(510)))
+      << static_cast<int>(52);
 
   SqrtExtractionDouble::FirstLoop<
       ((static_cast<int>(-2) * EXTRACTION_DOUBLE_REPEAT_NUMBER -
@@ -514,7 +507,7 @@ inline double sqrt_extraction_double(const double &value) {
   // Therefore, the above square root calculation is performed one more time.
   // The smaller the number of iterations, the greater the left shift amount.
   // Add the mantissa to Temp.
-  Temp += (((a + (static_cast<unsigned long long>(1) & a)) >> 1)
+  Temp += (((a + (static_cast<uint64_t>(1) & a)) >> 1)
            << (static_cast<int>(26) - EXTRACTION_DOUBLE_REPEAT_NUMBER));
 
   std::memcpy(&result, &Temp, static_cast<std::size_t>(8));
@@ -530,24 +523,23 @@ template <int Loop_Limit, int I, int I_Limit> struct FirstLoop {
    * @brief Executes a single iteration of a specialized bitwise algorithm.
    *
    * This static method performs a sequence of bitwise and arithmetic operations
-   * on the provided unsigned long references. It manipulates the values of `c`,
+   * on the provided uint32_t references. It manipulates the values of `c`,
    * `m`, `y`, and `a` according to a specific algorithm, likely related to
    * exponential or logarithmic computations. The method also recursively
    * invokes the `FirstLoop` template with updated template parameters.
    *
-   * @param c Reference to an unsigned long variable, used as a bitwise flag and
+   * @param c Reference to an uint32_t variable, used as a bitwise flag and
    * updated in-place.
-   * @param m Reference to an unsigned long variable, representing a mutable
+   * @param m Reference to an uint32_t variable, representing a mutable
    * state in the algorithm.
-   * @param y Reference to an unsigned long variable, updated through bitwise
+   * @param y Reference to an uint32_t variable, updated through bitwise
    * operations.
-   * @param a Reference to an unsigned long variable, accumulating results
+   * @param a Reference to an uint32_t variable, accumulating results
    * through bitwise operations.
    */
-  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
-                      unsigned long &a) {
-    c = static_cast<unsigned long>(
-        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= (m >> I));
+  static void execute(uint32_t &c, uint32_t &m, uint32_t &y, uint32_t &a) {
+    c = static_cast<uint32_t>(
+        (y << static_cast<int>(1) | static_cast<uint32_t>(1)) <= (m >> I));
     a = (a << static_cast<int>(1)) | c;
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y) << I;
@@ -561,19 +553,18 @@ template <int Loop_Limit, int I_Limit>
 struct FirstLoop<Loop_Limit, -1, I_Limit> {
 
   /**
-   * @brief Executes an operation on the provided unsigned long references.
+   * @brief Executes an operation on the provided uint32_t references.
    *
    * This is a base case implementation that performs no operation on the input
    * parameters. All parameters are explicitly marked as unused to avoid
    * compiler warnings.
    *
-   * @param c Reference to an unsigned long value (unused).
-   * @param m Reference to an unsigned long value (unused).
-   * @param y Reference to an unsigned long value (unused).
-   * @param a Reference to an unsigned long value (unused).
+   * @param c Reference to an uint32_t value (unused).
+   * @param m Reference to an uint32_t value (unused).
+   * @param y Reference to an uint32_t value (unused).
+   * @param a Reference to an uint32_t value (unused).
    */
-  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
-                      unsigned long &a) {
+  static void execute(uint32_t &c, uint32_t &m, uint32_t &y, uint32_t &a) {
     static_cast<void>(c);
     static_cast<void>(m);
     static_cast<void>(y);
@@ -584,19 +575,18 @@ struct FirstLoop<Loop_Limit, -1, I_Limit> {
 
 template <int Loop_Limit, int I> struct FirstLoop<Loop_Limit, I, -1> {
   /**
-   * @brief Executes an operation on the provided unsigned long references.
+   * @brief Executes an operation on the provided uint32_t references.
    *
    * This is a base case implementation that performs no operation on the input
    * parameters. All parameters are explicitly marked as unused to avoid
    * compiler warnings.
    *
-   * @param c Reference to an unsigned long value (unused).
-   * @param m Reference to an unsigned long value (unused).
-   * @param y Reference to an unsigned long value (unused).
-   * @param a Reference to an unsigned long value (unused).
+   * @param c Reference to an uint32_t value (unused).
+   * @param m Reference to an uint32_t value (unused).
+   * @param y Reference to an uint32_t value (unused).
+   * @param a Reference to an uint32_t value (unused).
    */
-  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
-                      unsigned long &a) {
+  static void execute(uint32_t &c, uint32_t &m, uint32_t &y, uint32_t &a) {
     static_cast<void>(c);
     static_cast<void>(m);
     static_cast<void>(y);
@@ -607,19 +597,18 @@ template <int Loop_Limit, int I> struct FirstLoop<Loop_Limit, I, -1> {
 
 template <int Loop_Limit> struct FirstLoop<Loop_Limit, -1, -1> {
   /**
-   * @brief Executes an operation on the provided unsigned long references.
+   * @brief Executes an operation on the provided uint32_t references.
    *
    * This is a base case implementation that performs no operation on the input
    * parameters. All parameters are explicitly marked as unused to avoid
    * compiler warnings.
    *
-   * @param c Reference to an unsigned long value (unused).
-   * @param m Reference to an unsigned long value (unused).
-   * @param y Reference to an unsigned long value (unused).
-   * @param a Reference to an unsigned long value (unused).
+   * @param c Reference to an uint32_t value (unused).
+   * @param m Reference to an uint32_t value (unused).
+   * @param y Reference to an uint32_t value (unused).
+   * @param a Reference to an uint32_t value (unused).
    */
-  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
-                      unsigned long &a) {
+  static void execute(uint32_t &c, uint32_t &m, uint32_t &y, uint32_t &a) {
     static_cast<void>(c);
     static_cast<void>(m);
     static_cast<void>(y);
@@ -633,23 +622,22 @@ template <int I> struct SecondLoop {
    * @brief Executes a single iteration of the SecondLoop algorithm.
    *
    * This static method performs bitwise and arithmetic operations on the
-   * provided unsigned long references, updating their values according to the
+   * provided uint32_t references, updating their values according to the
    * algorithm's logic. It shifts and manipulates the variables `m`, `c`, `y`,
    * and `a`, and recursively calls the next iteration of SecondLoop.
    *
-   * @param c Reference to an unsigned long used as a control or carry variable.
-   * @param m Reference to an unsigned long, typically representing a modulus or
+   * @param c Reference to an uint32_t used as a control or carry variable.
+   * @param m Reference to an uint32_t, typically representing a modulus or
    * intermediate value.
-   * @param y Reference to an unsigned long, used as an accumulator or
+   * @param y Reference to an uint32_t, used as an accumulator or
    * intermediate result.
-   * @param a Reference to an unsigned long, used as an accumulator or result
+   * @param a Reference to an uint32_t, used as an accumulator or result
    * variable.
    */
-  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
-                      unsigned long &a) {
+  static void execute(uint32_t &c, uint32_t &m, uint32_t &y, uint32_t &a) {
     m <<= static_cast<int>(2);
-    c = static_cast<unsigned long>(
-        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= m);
+    c = static_cast<uint32_t>(
+        (y << static_cast<int>(1) | static_cast<uint32_t>(1)) <= m);
     a = (a << static_cast<int>(1)) | c;
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y);
@@ -668,20 +656,19 @@ template <> struct SecondLoop<0> {
    * exponentiation, logarithms, or similar mathematical computations where
    * bitwise manipulation is required.
    *
-   * @param c Reference to an unsigned long variable, used as a flag or result
+   * @param c Reference to an uint32_t variable, used as a flag or result
    * of a comparison.
-   * @param m Reference to an unsigned long variable, shifted and decremented
+   * @param m Reference to an uint32_t variable, shifted and decremented
    * based on computation.
-   * @param y Reference to an unsigned long variable, updated with bitwise
+   * @param y Reference to an uint32_t variable, updated with bitwise
    * operations and incremented.
-   * @param a Reference to an unsigned long variable, updated with bitwise
+   * @param a Reference to an uint32_t variable, updated with bitwise
    * operations.
    */
-  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
-                      unsigned long &a) {
+  static void execute(uint32_t &c, uint32_t &m, uint32_t &y, uint32_t &a) {
     m <<= static_cast<int>(2);
-    c = static_cast<unsigned long>(
-        (y << static_cast<int>(1) | static_cast<unsigned long>(1)) <= m);
+    c = static_cast<uint32_t>(
+        (y << static_cast<int>(1) | static_cast<uint32_t>(1)) <= m);
     a = (a << static_cast<int>(1)) | c;
     y = (y << static_cast<int>(1)) | c;
     m -= (c * y);
@@ -695,16 +682,15 @@ template <> struct SecondLoop<-1> {
    * function.
    *
    * This static method is intended as a base case and performs no operation on
-   * the provided unsigned long references. All parameters are explicitly marked
+   * the provided uint32_t references. All parameters are explicitly marked
    * as unused to avoid compiler warnings.
    *
-   * @param c Reference to an unsigned long value (unused).
-   * @param m Reference to an unsigned long value (unused).
-   * @param y Reference to an unsigned long value (unused).
-   * @param a Reference to an unsigned long value (unused).
+   * @param c Reference to an uint32_t value (unused).
+   * @param m Reference to an uint32_t value (unused).
+   * @param y Reference to an uint32_t value (unused).
+   * @param a Reference to an uint32_t value (unused).
    */
-  static void execute(unsigned long &c, unsigned long &m, unsigned long &y,
-                      unsigned long &a) {
+  static void execute(uint32_t &c, uint32_t &m, uint32_t &y, uint32_t &a) {
     static_cast<void>(c);
     static_cast<void>(m);
     static_cast<void>(y);
@@ -742,12 +728,12 @@ inline float sqrt_extraction_float(const float &value) {
 
   float result = static_cast<float>(0);
   unsigned short n = static_cast<short>(0); // n is the exponent of value
-  unsigned long m = static_cast<long>(0);   // m is the mantissa of value
-  unsigned long Temp = static_cast<long>(0);
+  uint32_t m = static_cast<int32_t>(0);     // m is the mantissa of value
+  uint32_t Temp = static_cast<int32_t>(0);
 
-  unsigned long a = static_cast<unsigned long>(0);
-  unsigned long c = static_cast<unsigned long>(0);
-  unsigned long y = static_cast<unsigned long>(0);
+  uint32_t a = static_cast<uint32_t>(0);
+  uint32_t c = static_cast<uint32_t>(0);
+  uint32_t y = static_cast<uint32_t>(0);
 
   std::memcpy(&Temp, &value, static_cast<std::size_t>(4));
 
@@ -759,20 +745,20 @@ inline float sqrt_extraction_float(const float &value) {
   // The mantissa is (m + 2^23) * 2, and the exponent is n / 2 + 63
   // However, since 1 is added to the exponent due to the rounding up of the
   // mantissa later, 62 is added here
-  n = static_cast<unsigned short>((
-      (static_cast<unsigned long>(0x7FFFFFFF) & Temp) >> static_cast<int>(23)));
+  n = static_cast<unsigned short>(
+      ((static_cast<uint32_t>(0x7FFFFFFF) & Temp) >> static_cast<int>(23)));
 
-  m = (static_cast<unsigned long long>(0x800000) +
-       (static_cast<unsigned long long>(0x7FFFFF) & Temp))
+  m = (static_cast<uint64_t>(0x800000) +
+       (static_cast<uint64_t>(0x7FFFFF) & Temp))
       << (static_cast<unsigned short>(1) & (~n));
 
   // the exponent part to Temp
-  Temp = static_cast<unsigned long>(
-             (((n + static_cast<unsigned short>(
-                        (static_cast<unsigned short>(1) & n))) >>
-               static_cast<int>(1)) +
-              static_cast<unsigned short>(62)))
-         << static_cast<int>(23);
+  Temp =
+      static_cast<uint32_t>((((n + static_cast<unsigned short>(
+                                       (static_cast<unsigned short>(1) & n))) >>
+                              static_cast<int>(1)) +
+                             static_cast<unsigned short>(62)))
+      << static_cast<int>(23);
 
   // Use the square root calculation to calculate the square root of m, which
   // has been updated above. The resulting square root has the number of digits
@@ -801,7 +787,7 @@ inline float sqrt_extraction_float(const float &value) {
   // Therefore, the above square root calculation is performed one more time.
   // The smaller the number of iterations, the greater the left shift amount.
   // Add the mantissa to Temp.
-  Temp += (((a + (static_cast<unsigned long>(1) & a)) >> 1)
+  Temp += (((a + (static_cast<uint32_t>(1) & a)) >> 1)
            << (static_cast<int>(12) - EXTRACTION_FLOAT_REPEAT_NUMBER));
 
   std::memcpy(&result, &Temp, static_cast<std::size_t>(4));
@@ -1430,17 +1416,17 @@ inline double exp_double_maclaurin_expansion_with_table(const double &x) {
     double z = static_cast<double>(0);
     double r = static_cast<double>(0);
     int q = static_cast<int>(0);
-    unsigned long long w = static_cast<unsigned long long>(0);
+    uint64_t w = static_cast<uint64_t>(0);
 
     z = x * (static_cast<double>(16) / static_cast<double>(Base::Math::LN_2));
     q = static_cast<int>(z) - (x < static_cast<double>(0));
     r = x -
         ((q << static_cast<int>(1)) + static_cast<int>(1)) *
             (static_cast<double>(Base::Math::LN_2) / static_cast<double>(32));
-    w = static_cast<unsigned long long>(
-            static_cast<int>(1023) + static_cast<int>(q >> static_cast<int>(4)))
+    w = static_cast<uint64_t>(static_cast<int>(1023) +
+                              static_cast<int>(q >> static_cast<int>(4)))
             << static_cast<int>(52) ^
-        static_cast<unsigned long long>(
+        static_cast<uint64_t>(
             Base::Math::TABLE_FOR_EXP_DOUBLE[q & static_cast<int>(0xF)]);
 
     std::memcpy(&z, &w, static_cast<int>(8));
@@ -1499,16 +1485,16 @@ inline float exp_float_maclaurin_expansion_with_table(const float &x) {
     float z = static_cast<float>(0);
     float r = static_cast<float>(0);
     int q = static_cast<int>(0);
-    unsigned long w = static_cast<unsigned long>(0);
+    uint32_t w = static_cast<uint32_t>(0);
 
     z = x * (static_cast<float>(16) / static_cast<float>(Base::Math::LN_2));
     q = static_cast<int>(z) - (x < static_cast<float>(0));
     r = x - ((q << static_cast<int>(1)) + static_cast<int>(1)) *
                 (static_cast<float>(Base::Math::LN_2) / static_cast<float>(32));
-    w = static_cast<unsigned long>(static_cast<int>(127) +
-                                   static_cast<int>(q >> static_cast<int>(4)))
+    w = static_cast<uint32_t>(static_cast<int>(127) +
+                              static_cast<int>(q >> static_cast<int>(4)))
             << static_cast<int>(23) ^
-        static_cast<unsigned long>(
+        static_cast<uint32_t>(
             Base::Math::TABLE_FOR_EXP_FLOAT[q & static_cast<int>(0xF)]);
 
     std::memcpy(&z, &w, static_cast<std::size_t>(4));
@@ -1803,8 +1789,8 @@ inline double log_double_maclaurin_expansion_with_table(const double &x) {
     result = static_cast<double>(Base::Math::LOG_OUTPUT_MIN);
   } else {
 
-    unsigned long long w = static_cast<unsigned long long>(0);
-    unsigned long long mantissa16 = static_cast<unsigned long long>(0);
+    uint64_t w = static_cast<uint64_t>(0);
+    uint64_t mantissa16 = static_cast<uint64_t>(0);
     int q = static_cast<int>(0);
     double y = static_cast<double>(0);
     double h = static_cast<double>(0);
@@ -1816,8 +1802,8 @@ inline double log_double_maclaurin_expansion_with_table(const double &x) {
           static_cast<int>(0x1F)) +
          static_cast<int>(1)) >>
         static_cast<int>(1);
-    mantissa16 = (w & static_cast<unsigned long long>(0xFFFFFFFFFFFFF)) ^
-                 static_cast<unsigned long long>(
+    mantissa16 = (w & static_cast<uint64_t>(0xFFFFFFFFFFFFF)) ^
+                 static_cast<uint64_t>(
                      0x4030000000000000); // mantissa*16  16<=mantissa16<32
 
     std::memcpy(&h, &mantissa16, static_cast<std::size_t>(8));
@@ -1872,8 +1858,8 @@ inline float log_float_maclaurin_expansion_with_table(const float &x) {
     result = static_cast<float>(Base::Math::LOG_OUTPUT_MIN);
   } else {
 
-    unsigned long w = static_cast<unsigned long>(0);
-    unsigned long mantissa16 = static_cast<unsigned long>(0);
+    uint32_t w = static_cast<uint32_t>(0);
+    uint32_t mantissa16 = static_cast<uint32_t>(0);
     int q = static_cast<int>(0);
     float y = static_cast<float>(0);
     float h = static_cast<float>(0);
@@ -1886,8 +1872,8 @@ inline float log_float_maclaurin_expansion_with_table(const float &x) {
          static_cast<int>(1)) >>
         static_cast<int>(1);
     mantissa16 =
-        (w & static_cast<unsigned long>(0x7FFFFF)) ^
-        static_cast<unsigned long>(0x41800000); // mantissa*16 16<=mantissa16<32
+        (w & static_cast<uint32_t>(0x7FFFFF)) ^
+        static_cast<uint32_t>(0x41800000); // mantissa*16 16<=mantissa16<32
 
     std::memcpy(&h, &mantissa16, static_cast<std::size_t>(4));
 
