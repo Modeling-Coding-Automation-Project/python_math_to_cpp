@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <type_traits>
 
 #ifdef __BASE_MATH_USE_STD_MATH__
 #include <cmath>
