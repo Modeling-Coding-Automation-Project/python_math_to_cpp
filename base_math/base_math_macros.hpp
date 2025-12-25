@@ -9,6 +9,10 @@ namespace Math {
 
 #ifndef __BASE_MATH_USE_STD_MATH__
 
+/* Comment out if you don't want to use cmath but dependent on IEEE 754
+ * standard. */
+// #define __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
+
 /* Comment out if you want to use the algorithms fast but dependent on IEEE 754
  * standard. */
 // #define __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
