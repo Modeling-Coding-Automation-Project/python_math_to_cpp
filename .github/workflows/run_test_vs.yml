@@ -3,34 +3,35 @@ name: Run test VS
 on:
   push:
     branches:
-      - develop
+    - develop
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         define:
-          - ""
-          - "-D__BASE_MATH_USE_STD_MATH__"
-          - "-D__BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__"
-          - "-D__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__"
-          - "-D__BASE_MATH_USE_STD_MATH -D__BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__"
-          - "-D__BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS -D__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__"
-          - "-D__BASE_MATH_USE_STD_MATH -D__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__"
-          - "-D__BASE_MATH_USE_STD_MATH -D__BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__ -D__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__"
+        - ''
+        - -D__BASE_MATH_USE_STD_MATH__
+        - -D__BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+        - -D__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+        - -D__BASE_MATH_USE_STD_MATH -D__BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+        - -D__BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS -D__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+        - -D__BASE_MATH_USE_STD_MATH -D__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+        - -D__BASE_MATH_USE_STD_MATH -D__BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+          -D__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v6
       with:
         submodules: recursive
-
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y g++
-
     - name: Build and Run C++ application
-      run: |
-        g++ -std=c++11 -Wall -Werror ${{ matrix.define }} -I ./base_math -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp && ./test_vs/app
+      run: 'g++ -std=c++11 -Wall -Werror ${{ matrix.define }} -I ./base_math -I ./python_math
+        -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include
+        -o ./test_vs/app ./test_vs/test_vs_main.cpp && ./test_vs/app
+
+        '
