@@ -34,8 +34,8 @@
  * or numerically sensitive applications where standard library math functions
  * may not be suitable.
  */
-#ifndef __BASE_MATH_TRIGONOMETRIC_HPP__
-#define __BASE_MATH_TRIGONOMETRIC_HPP__
+#ifndef BASE_MATH_TRIGONOMETRIC_HPP_
+#define BASE_MATH_TRIGONOMETRIC_HPP_
 
 #include "base_math_macros.hpp"
 
@@ -46,15 +46,15 @@
 
 #include <cstddef>
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 #include <cmath>
-#else  // __BASE_MATH_USE_STD_MATH__
-#endif // __BASE_MATH_USE_STD_MATH__
+#else  // BASE_MATH_USE_STD_MATH_
+#endif // BASE_MATH_USE_STD_MATH_
 
 namespace Base {
 namespace Math {
 
-#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS_
 constexpr std::size_t SIN_REPEAT_NUMBER = 5;
 constexpr std::size_t COS_REPEAT_NUMBER = 6;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 3;
@@ -65,7 +65,7 @@ constexpr std::size_t SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER =
 
 constexpr std::size_t SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER = 2;
 
-#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS_
 constexpr std::size_t SIN_REPEAT_NUMBER = 8;
 constexpr std::size_t COS_REPEAT_NUMBER = 9;
 constexpr std::size_t ATAN_REPEAT_NUMBER = 8;
@@ -76,7 +76,7 @@ constexpr std::size_t SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER =
 
 constexpr std::size_t SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER = 3;
 
-#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS_
 
 constexpr std::size_t COS_MACLAURIN_DOUBLEANGLE_FACTOR_MAX_SIZE = 6;
 
@@ -516,7 +516,7 @@ inline T tan_maclaurin_expansion_with_DoubleAngleFormula(const T &x) {
  * stores the results in `sin_value` and `cos_value`, respectively. The
  * implementation can use either the standard library functions (`std::sin`,
  * `std::cos`) or a custom Maclaurin expansion with the double angle formula,
- * depending on whether `__BASE_MATH_USE_STD_MATH__` is defined.
+ * depending on whether `BASE_MATH_USE_STD_MATH_` is defined.
  *
  * @tparam T The numeric type of the input and output values.
  * @param x The input value (angle in radians) for which to compute sine and
@@ -529,16 +529,16 @@ inline T tan_maclaurin_expansion_with_DoubleAngleFormula(const T &x) {
 template <typename T>
 inline void sincos(const T &x, T &sin_value, T &cos_value) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   sin_value = std::sin(x);
   cos_value = std::cos(x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   Base::Math::sincos_maclaurin_expansion_with_DoubleAngleFormula<
       T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x, sin_value,
                                                                  cos_value);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* sin maclaurin expansion */
@@ -634,7 +634,7 @@ inline T sin_maclaurin_expansion(const T &x) {
  * @brief Computes the sine of the given value.
  *
  * This function calculates the sine of the input value `x`. If the macro
- * `__BASE_MATH_USE_STD_MATH__` is defined, it uses the standard library's
+ * `BASE_MATH_USE_STD_MATH_` is defined, it uses the standard library's
  * `std::sin` function. Otherwise, it computes the sine using a Maclaurin
  * series expansion with the double angle formula, as implemented in
  * `Base::Math::sin_maclaurin_expansion_with_DoubleAngleFormula`.
@@ -645,14 +645,14 @@ inline T sin_maclaurin_expansion(const T &x) {
  */
 template <typename T> inline T sin(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::sin(x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::sin_maclaurin_expansion_with_DoubleAngleFormula<
       T, Base::Math::SIN_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* cos maclaurin expansion */
@@ -758,14 +758,14 @@ inline T cos_maclaurin_expansion(const T &x) {
  */
 template <typename T> inline T cos(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::cos(x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::cos_maclaurin_expansion_with_DoubleAngleFormula<
       T, Base::Math::COS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* tan maclaurin expansion */
@@ -801,7 +801,7 @@ inline T tan_maclaurin_expansion(const T &x) {
  * @brief Computes the tangent of the given value.
  *
  * This function calculates the tangent of the input value `x` of type `T`.
- * If the macro `__BASE_MATH_USE_STD_MATH__` is defined, it uses the standard
+ * If the macro `BASE_MATH_USE_STD_MATH_` is defined, it uses the standard
  * library's `std::tan` function. Otherwise, it computes the tangent using
  * a Maclaurin series expansion with a double angle formula, as implemented in
  * `Base::Math::tan_maclaurin_expansion_with_DoubleAngleFormula`.
@@ -812,14 +812,14 @@ inline T tan_maclaurin_expansion(const T &x) {
  */
 template <typename T> inline T tan(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::tan(x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::tan_maclaurin_expansion_with_DoubleAngleFormula<
       T, Base::Math::SINCOS_MACLAURIN_DOUBLEANGLE_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* atan maclaurin expansion */
@@ -1045,7 +1045,7 @@ inline T atan_chebyshev(const T &x) {
  * @brief Computes the arctangent (inverse tangent) of the given value.
  *
  * This function returns the arctangent of the input value \p x.
- * Depending on the compilation flag `__BASE_MATH_USE_STD_MATH__`, it either:
+ * Depending on the compilation flag `BASE_MATH_USE_STD_MATH_`, it either:
  * - Uses the standard library implementation (`std::atan`), or
  * - Uses a custom Chebyshev polynomial approximation
  * (`Base::Math::atan_chebyshev`).
@@ -1056,13 +1056,13 @@ inline T atan_chebyshev(const T &x) {
  */
 template <typename T> inline T atan(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::atan(x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::atan_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* atan2 Chebyshev */
@@ -1142,7 +1142,7 @@ inline T atan2_chebyshev(const T &y, const T &x) {
  * a custom Chebyshev approximation.
  *
  * This function calculates the angle (in radians) whose tangent is the quotient
- * of two specified values (y/x). If the macro __BASE_MATH_USE_STD_MATH__ is
+ * of two specified values (y/x). If the macro BASE_MATH_USE_STD_MATH_ is
  * defined, it uses std::atan2 from the standard library. Otherwise, it uses a
  * custom Chebyshev polynomial approximation via Base::Math::atan2_chebyshev.
  *
@@ -1153,13 +1153,13 @@ inline T atan2_chebyshev(const T &y, const T &x) {
  */
 template <typename T> inline T atan2(const T &y, const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::atan2(y, x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::atan2_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER>(y, x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* asin Chebyshev */
@@ -1216,7 +1216,7 @@ inline T asin_chebyshev(const T &x) {
  * @brief Computes the arcsine (inverse sine) of the given value.
  *
  * This function returns the arcsine of the input value \p x.
- * If the macro __BASE_MATH_USE_STD_MATH__ is defined, it uses the standard
+ * If the macro BASE_MATH_USE_STD_MATH_ is defined, it uses the standard
  * library's std::asin function for values in the range (-1, 1), and clamps
  * the result to ±HALF_PI for values outside this range.
  * Otherwise, it uses a Chebyshev polynomial approximation via
@@ -1228,7 +1228,7 @@ inline T asin_chebyshev(const T &x) {
  */
 template <typename T> inline T asin(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   if (x >= static_cast<T>(1)) {
 
@@ -1242,12 +1242,12 @@ template <typename T> inline T asin(const T &x) {
 
     return std::asin(x);
   }
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::asin_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
                                     Base::Math::SQRT_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* acos Chebyshev */
@@ -1286,7 +1286,7 @@ inline T acos_chebyshev(const T &x) {
  * This function returns the principal value of the arc cosine of x, expressed
  * in radians. The implementation uses either the standard library's std::acos
  * or a custom Chebyshev polynomial approximation, depending on the compilation
- * flag __BASE_MATH_USE_STD_MATH__.
+ * flag BASE_MATH_USE_STD_MATH_.
  *
  * Special cases:
  * - If x > 1, returns 0.
@@ -1298,7 +1298,7 @@ inline T acos_chebyshev(const T &x) {
  */
 template <typename T> inline T acos(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   if (x > static_cast<T>(1)) {
 
@@ -1312,12 +1312,12 @@ template <typename T> inline T acos(const T &x) {
 
     return std::acos(x);
   }
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::acos_chebyshev<T, Base::Math::ATAN_REPEAT_NUMBER,
                                     Base::Math::SQRT_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* sinh Maclaurin Expansion with table */
@@ -1373,7 +1373,7 @@ inline T sinh_maclaurin_expansion(const T &x) {
  * @brief Computes the hyperbolic sine of the given value.
  *
  * This function calculates the hyperbolic sine (sinh) of the input value `x`.
- * Depending on the compilation flag `__BASE_MATH_USE_STD_MATH__`, it either
+ * Depending on the compilation flag `BASE_MATH_USE_STD_MATH_`, it either
  * uses the standard library implementation (`std::sinh`) or a custom Maclaurin
  * expansion provided by `Base::Math::sinh_maclaurin_expansion`.
  *
@@ -1383,14 +1383,14 @@ inline T sinh_maclaurin_expansion(const T &x) {
  */
 template <typename T> inline T sinh(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::sinh(x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::sinh_maclaurin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* cosh Maclaurin Expansion with table */
@@ -1450,7 +1450,7 @@ inline T cosh_maclaurin_expansion(const T &x) {
  * @brief Computes the hyperbolic cosine of the given value.
  *
  * This function calculates the hyperbolic cosine (cosh) of the input value `x`.
- * If the macro `__BASE_MATH_USE_STD_MATH__` is defined, it uses the standard
+ * If the macro `BASE_MATH_USE_STD_MATH_` is defined, it uses the standard
  * library's `std::cosh` function. Otherwise, it computes the result using a
  * Maclaurin series expansion implemented in
  * `Base::Math::cosh_maclaurin_expansion`.
@@ -1461,14 +1461,14 @@ inline T cosh_maclaurin_expansion(const T &x) {
  */
 template <typename T> inline T cosh(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::cosh(x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::cosh_maclaurin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* tanh maclaurin expansion with table */
@@ -1533,7 +1533,7 @@ inline T tanh_maclaurin_expansion(const T &x) {
  * @brief Computes the hyperbolic tangent of the given value.
  *
  * This function calculates the hyperbolic tangent (tanh) of the input value
- * `x`. If the macro `__BASE_MATH_USE_STD_MATH__` is defined, it uses the
+ * `x`. If the macro `BASE_MATH_USE_STD_MATH_` is defined, it uses the
  * standard library's `std::tanh` function. Otherwise, it computes the result
  * using a custom Maclaurin series expansion implementation.
  *
@@ -1543,17 +1543,17 @@ inline T tanh_maclaurin_expansion(const T &x) {
  */
 template <typename T> inline T tanh(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::tanh(x);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::tanh_maclaurin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 } // namespace Math
 } // namespace Base
 
-#endif // __BASE_MATH_TRIGONOMETRIC_HPP__
+#endif // BASE_MATH_TRIGONOMETRIC_HPP_

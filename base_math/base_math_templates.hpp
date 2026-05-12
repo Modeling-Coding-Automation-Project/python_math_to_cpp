@@ -8,8 +8,8 @@ Maclaurin series coefficients for exponential, sine, and cosine functions,
 and handling alternating sign logic. These utilities enable efficient and
 type-safe mathematical code generation at compile time.
 ********************************************************************************/
-#ifndef __BASE_MATH_TEMPLATES_HPP__
-#define __BASE_MATH_TEMPLATES_HPP__
+#ifndef BASE_MATH_TEMPLATES_HPP_
+#define BASE_MATH_TEMPLATES_HPP_
 
 #include "base_math_macros.hpp"
 
@@ -319,4 +319,4 @@ to_array(ValueArgumentIntList<Values...>) {
 } // namespace Math
 } // namespace Base
 
-#endif // __BASE_MATH_TEMPLATES_HPP__
+#endif // BASE_MATH_TEMPLATES_HPP_

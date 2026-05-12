@@ -1,5 +1,5 @@
-#ifndef __BASE_MATH_HPP__
-#define __BASE_MATH_HPP__
+#ifndef BASE_MATH_HPP_
+#define BASE_MATH_HPP_
 
 #include "base_math_macros.hpp"
 
@@ -9,4 +9,4 @@
 #include "base_math_templates.hpp"
 #include "base_math_trigonometric.hpp"
 
-#endif // __BASE_MATH_HPP__
+#endif // BASE_MATH_HPP_

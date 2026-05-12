@@ -1,5 +1,5 @@
-#ifndef __PYTHON_MATH_EXPONENTIAL_LOGARITHMIC_HPP__
-#define __PYTHON_MATH_EXPONENTIAL_LOGARITHMIC_HPP__
+#ifndef PYTHON_MATH_EXPONENTIAL_LOGARITHMIC_HPP_
+#define PYTHON_MATH_EXPONENTIAL_LOGARITHMIC_HPP_
 
 #include "base_math.hpp"
 
@@ -513,4 +513,4 @@ inline std::array<T, N> pow(const std::array<T, N> &array_x,
 
 } // namespace PythonMath
 
-#endif // __PYTHON_MATH_EXPONENTIAL_LOGARITHMIC_HPP__
+#endif // PYTHON_MATH_EXPONENTIAL_LOGARITHMIC_HPP_
