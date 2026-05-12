@@ -12,8 +12,8 @@
  * @brief Contains template functions for element-wise arithmetic operations on
  * scalars and containers.
  */
-#ifndef __PYTHON_MATH_ARITHMETIC_HPP__
-#define __PYTHON_MATH_ARITHMETIC_HPP__
+#ifndef PYTHON_MATH_ARITHMETIC_HPP_
+#define PYTHON_MATH_ARITHMETIC_HPP_
 
 #include "base_math.hpp"
 
@@ -149,4 +149,4 @@ inline std::array<T, N> fmod(const std::array<T, N> &array, const T &y) {
 
 } // namespace PythonMath
 
-#endif // __PYTHON_MATH_ARITHMETIC_HPP__
+#endif // PYTHON_MATH_ARITHMETIC_HPP_

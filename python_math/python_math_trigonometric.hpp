@@ -24,8 +24,8 @@
  * For atan2, overloads are provided for all combinations of scalar and
  * container arguments.
  */
-#ifndef __PYTHON_MATH_TRIGONOMETRIC_HPP__
-#define __PYTHON_MATH_TRIGONOMETRIC_HPP__
+#ifndef PYTHON_MATH_TRIGONOMETRIC_HPP_
+#define PYTHON_MATH_TRIGONOMETRIC_HPP_
 
 #include "base_math.hpp"
 
@@ -724,4 +724,4 @@ inline std::array<T, N> tanh(const std::array<T, N> &array) {
 
 } // namespace PythonMath
 
-#endif // __PYTHON_MATH_TRIGONOMETRIC_HPP__
+#endif // PYTHON_MATH_TRIGONOMETRIC_HPP_

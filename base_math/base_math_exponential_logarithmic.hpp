@@ -37,8 +37,8 @@
  * - struct LogNewtonIterationLoop: Template for Newton's method in logarithm
  * calculation.
  */
-#ifndef __BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP__
-#define __BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP__
+#ifndef BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP_
+#define BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP_
 
 #include "base_math_macros.hpp"
 
@@ -55,7 +55,7 @@ namespace Math {
 
 constexpr double EXPONENTIAL_LOGARITHMIC_DIVISION_MIN = 1.0e-10;
 
-#ifdef __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+#ifdef BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS_
 constexpr std::size_t SQRT_REPEAT_NUMBER = 0;
 constexpr std::size_t EXP_REPEAT_NUMBER = 5;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 4;
@@ -64,7 +64,7 @@ constexpr std::size_t LOG_REPEAT_NUMBER = 6;
 constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 6;
 constexpr std::size_t EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER = 1;
 
-#else // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+#else // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS_
 constexpr std::size_t SQRT_REPEAT_NUMBER = 1;
 constexpr std::size_t EXP_REPEAT_NUMBER = 9;
 constexpr std::size_t EXP2_REPEAT_NUMBER = 8;
@@ -74,7 +74,7 @@ constexpr int SQRT_EXTRACTION_REPEAT_NUMBER = 19;
 
 constexpr std::size_t EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER = 4;
 
-#endif // __BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS__
+#endif // BASE_MATH_USE_ROUGH_BUT_FAST_APPROXIMATIONS_
 
 constexpr std::size_t SQRT_REPEAT_NUMBER_MOSTLY_ACCURATE = 2;
 
@@ -988,9 +988,9 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
  *
  * This function calculates 1 / sqrt(x) for the given input value `x`, using
  * different algorithms depending on compile-time configuration macros:
- * - If `__BASE_MATH_USE_STD_MATH__` is defined, it uses the standard library's
+ * - If `BASE_MATH_USE_STD_MATH_` is defined, it uses the standard library's
  * `std::sqrt`.
- * - If `__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__` is defined,
+ * - If `BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_` is defined,
  * it uses a custom square root extraction algorithm.
  * - Otherwise, it uses the Newton-Raphson method for reciprocal square root
  * calculation.
@@ -1007,7 +1007,7 @@ inline T rsqrt_newton_method(const T &x, const T &division_min) {
  */
 template <typename T> inline T rsqrt(const T &x, const T &division_min) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   T x_wrapped = x;
 
@@ -1017,9 +1017,9 @@ template <typename T> inline T rsqrt(const T &x, const T &division_min) {
 
   return static_cast<T>(1) / std::sqrt(x_wrapped);
 
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
-#ifdef __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   T x_wrapped = x;
 
@@ -1032,14 +1032,14 @@ template <typename T> inline T rsqrt(const T &x, const T &division_min) {
                                      Base::Math::SQRT_EXTRACTION_REPEAT_NUMBER>(
              x_wrapped);
 
-#else // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return Base::Math::rsqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
       x, division_min);
 
-#endif // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /**
@@ -1150,9 +1150,9 @@ template <typename T> inline T fast_square_root(const T &input) {
  *
  * This function calculates the square root of the input value `x` using
  * different algorithms depending on compile-time macros:
- * - If `__BASE_MATH_USE_STD_MATH__` is defined, it uses `std::sqrt` from the
+ * - If `BASE_MATH_USE_STD_MATH_` is defined, it uses `std::sqrt` from the
  * standard library.
- * - If `__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__` is defined,
+ * - If `BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_` is defined,
  * it uses a custom IEEE 754-dependent algorithm
  * (`Base::Math::sqrt_extraction`).
  * - Otherwise, it uses the Newton-Raphson method
@@ -1170,7 +1170,7 @@ template <typename T> inline T fast_square_root(const T &input) {
  */
 template <typename T> inline T sqrt(const T &x, const T &division_min) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   T x_wrapped = x;
 
@@ -1180,9 +1180,9 @@ template <typename T> inline T sqrt(const T &x, const T &division_min) {
 
   return std::sqrt(x_wrapped);
 
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
-#ifdef __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   T x_wrapped = x;
 
@@ -1194,14 +1194,14 @@ template <typename T> inline T sqrt(const T &x, const T &division_min) {
                                      Base::Math::SQRT_EXTRACTION_REPEAT_NUMBER>(
       x_wrapped);
 
-#else // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return Base::Math::sqrt_newton_method<T, Base::Math::SQRT_REPEAT_NUMBER>(
       x, division_min);
 
-#endif // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /**
@@ -1583,9 +1583,9 @@ inline T exp_maclaurin_expansion_with_table(const T &x) {
  *
  * This function provides multiple implementations of the exponential function,
  * depending on compile-time configuration macros:
- * - If `__BASE_MATH_USE_STD_MATH__` is defined, it uses the standard library's
+ * - If `BASE_MATH_USE_STD_MATH_` is defined, it uses the standard library's
  *   `std::exp` function, with input clamping to avoid overflow/underflow.
- * - If `__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__` is defined,
+ * - If `BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_` is defined,
  *   it uses a Maclaurin series expansion with a lookup table for improved
  * accuracy.
  * - Otherwise, it uses a basic Maclaurin series expansion.
@@ -1599,7 +1599,7 @@ inline T exp_maclaurin_expansion_with_table(const T &x) {
  */
 template <typename T> inline T exp(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   if (x > static_cast<float>(Base::Math::EXP_INPUT_MAX)) {
     return static_cast<float>(Base::Math::EXP_OUTPUT_MAX);
@@ -1610,21 +1610,21 @@ template <typename T> inline T exp(const T &x) {
     return std::exp(x);
   }
 
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
-#ifdef __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return exp_maclaurin_expansion_with_table<
       T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(x);
 
-#else // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return Base::Math::exp_maclaurin_expansion<T, Base::Math::EXP_REPEAT_NUMBER>(
       x);
 
-#endif // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* exp2 */
@@ -1723,7 +1723,7 @@ inline T exp2_maclaurin_expansion(const T &x) {
  * @brief Computes the base-2 exponential of the input value.
  *
  * This function calculates 2 raised to the power of x (i.e., 2^x) for the given
- * input. Depending on the compilation flag `__BASE_MATH_USE_STD_MATH__`, it
+ * input. Depending on the compilation flag `BASE_MATH_USE_STD_MATH_`, it
  * either uses the standard library's `std::exp2` function or a custom Maclaurin
  * series expansion.
  *
@@ -1739,7 +1739,7 @@ inline T exp2_maclaurin_expansion(const T &x) {
  */
 template <typename T> inline T exp2(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   if (x > static_cast<T>(Base::Math::EXP2_INPUT_MAX)) {
     return static_cast<T>(Base::Math::EXP2_OUTPUT_MAX);
@@ -1749,7 +1749,7 @@ template <typename T> inline T exp2(const T &x) {
 
     return std::exp2(x);
   }
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
   return Base::Math::exp2_maclaurin_expansion<T,
                                               Base::Math::EXP2_REPEAT_NUMBER>(
       x);
@@ -2069,11 +2069,11 @@ inline T log_newton_method(const T &x) {
  *
  * This function provides multiple implementations for calculating the natural
  * logarithm, depending on compile-time configuration macros:
- * - If `__BASE_MATH_USE_STD_MATH__` is defined, it uses the standard library's
+ * - If `BASE_MATH_USE_STD_MATH_` is defined, it uses the standard library's
  * `std::log` function, with a check to ensure the input is positive. If the
  * input is less than or equal to zero, it returns a predefined minimum output
  * value (`Base::Math::LOG_OUTPUT_MIN`).
- * - If `__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__` is defined
+ * - If `BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_` is defined
  * (and standard math is not used), it uses a Maclaurin expansion with a lookup
  * table.
  * - Otherwise, it uses Newton's method for logarithm calculation, with a
@@ -2086,7 +2086,7 @@ inline T log_newton_method(const T &x) {
  */
 template <typename T> inline T log(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   if (x <= static_cast<T>(0)) {
     return static_cast<T>(Base::Math::LOG_OUTPUT_MIN);
@@ -2094,19 +2094,19 @@ template <typename T> inline T log(const T &x) {
 
     return std::log(x);
   }
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
-#ifdef __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return log_maclaurin_expansion_with_table<T>(x);
 
-#else // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return Base::Math::log_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* log2 newton method */
@@ -2145,11 +2145,11 @@ template <typename T> inline T log2_maclaurin_expansion_with_table(const T &x) {
  *
  * This function calculates log2(x) using different algorithms depending on
  * compile-time macros:
- * - If `__BASE_MATH_USE_STD_MATH__` is defined, it uses the standard library's
+ * - If `BASE_MATH_USE_STD_MATH_` is defined, it uses the standard library's
  * `std::log2` function. If the input `x` is less than or equal to zero, it
  * returns a minimum output value defined by `Base::Math::LOG_OUTPUT_MIN`
  * divided by `Base::Math::LN_2`.
- * - If `__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__` is defined
+ * - If `BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_` is defined
  * (and standard math is not used), it uses a Maclaurin expansion with a lookup
  * table.
  * - Otherwise, it uses Newton's method with a repeat count defined by
@@ -2161,7 +2161,7 @@ template <typename T> inline T log2_maclaurin_expansion_with_table(const T &x) {
  */
 template <typename T> inline T log2(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   if (x <= static_cast<T>(0)) {
     return static_cast<T>(Base::Math::LOG_OUTPUT_MIN) /
@@ -2170,19 +2170,19 @@ template <typename T> inline T log2(const T &x) {
 
     return std::log2(x);
   }
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
-#ifdef __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return Base::Math::log2_maclaurin_expansion_with_table<T>(x);
 
-#else // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return Base::Math::log2_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* log10 newton method  */
@@ -2236,11 +2236,11 @@ inline T log10_maclaurin_expansion_with_table(const T &x) {
  * This function calculates the logarithm to base 10 for the given input `x`.
  * The implementation can use different algorithms depending on compile-time
  * macros:
- * - If `__BASE_MATH_USE_STD_MATH__` is defined, it uses the standard library's
+ * - If `BASE_MATH_USE_STD_MATH_` is defined, it uses the standard library's
  *   `std::log10` function. For non-positive values of `x`, it returns a minimum
  *   output value defined by `Base::Math::LOG_OUTPUT_MIN` divided by
  *   `Base::Math::LN_10`.
- * - If `__BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__` is defined,
+ * - If `BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_` is defined,
  *   it uses a Maclaurin expansion with a lookup table.
  * - Otherwise, it uses Newton's method with a specified number of iterations.
  *
@@ -2250,7 +2250,7 @@ inline T log10_maclaurin_expansion_with_table(const T &x) {
  */
 template <typename T> inline T log10(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 
   if (x <= static_cast<T>(0)) {
     return static_cast<T>(Base::Math::LOG_OUTPUT_MIN) /
@@ -2259,19 +2259,19 @@ template <typename T> inline T log10(const T &x) {
 
     return std::log10(x);
   }
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
-#ifdef __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#ifdef BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return Base::Math::log10_maclaurin_expansion_with_table<T>(x);
 
-#else // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#else // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
   return Base::Math::log10_newton_method<T, Base::Math::LOG_REPEAT_NUMBER>(x);
 
-#endif // __BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD__
+#endif // BASE_MATH_USE_ALGORITHM_DEPENDENT_ON_IEEE_754_STANDARD_
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* pow maclaurin expansion */
@@ -2335,7 +2335,7 @@ inline T pow_maclaurin_expansion_with_table(const T &x, const T &y) {
  * @brief Computes the power of a number (x raised to the power y).
  *
  * This function calculates x^y for the given values of x and y.
- * Depending on the compilation flag __BASE_MATH_USE_STD_MATH__, it either:
+ * Depending on the compilation flag BASE_MATH_USE_STD_MATH_, it either:
  * - Uses the standard library's std::pow function, or
  * - Uses a custom implementation based on the Maclaurin expansion with a lookup
  * table.
@@ -2347,17 +2347,17 @@ inline T pow_maclaurin_expansion_with_table(const T &x, const T &y) {
  */
 template <typename T> inline T pow(const T &x, const T &y) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::pow(x, y);
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
   return Base::Math::pow_maclaurin_expansion_with_table<
       T, Base::Math::EXP_MACLAURIN_WITH_TABLE_REPEAT_NUMBER>(x, y);
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 } // namespace Math
 } // namespace Base
 
-#endif // __BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP__
+#endif // BASE_MATH_EXPONENTIAL_LOGARITHMIC_HPP_

@@ -16,8 +16,8 @@
  *     Contains mathematical utility functions and constants for arithmetic
  * operations.
  */
-#ifndef __BASE_MATH_ARITHMETIC_HPP__
-#define __BASE_MATH_ARITHMETIC_HPP__
+#ifndef BASE_MATH_ARITHMETIC_HPP_
+#define BASE_MATH_ARITHMETIC_HPP_
 
 #include "base_math_macros.hpp"
 
@@ -28,16 +28,16 @@
 #include <cstring>
 #include <type_traits>
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
 #include <cmath>
-#else // __BASE_MATH_USE_STD_MATH__
+#else // BASE_MATH_USE_STD_MATH_
 
-#ifdef __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
-#else // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
+#ifdef NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD_
+#else // NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD_
 #include <cmath>
-#endif // __NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD__
+#endif // NEVER_USE_CMATH_BUT_REQUIRES_IEEE_754_STANDARD_
 
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 
 namespace Base {
 namespace Math {
@@ -65,7 +65,7 @@ template <typename T> inline T abs_base_math(const T &x) {
  * @brief Computes the absolute value of the given input.
  *
  * This function returns the absolute value of the input parameter `x`.
- * If the macro `__BASE_MATH_USE_STD_MATH__` is defined, it uses `std::abs`.
+ * If the macro `BASE_MATH_USE_STD_MATH_` is defined, it uses `std::abs`.
  * Otherwise, it uses the custom implementation `Base::Math::abs_base_math`.
  *
  * @tparam T The type of the input value.
@@ -74,11 +74,11 @@ template <typename T> inline T abs_base_math(const T &x) {
  */
 template <typename T> inline T abs(const T &x) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::abs(x);
-#else  // __BASE_MATH_USE_STD_MATH__
+#else  // BASE_MATH_USE_STD_MATH_
   return Base::Math::abs_base_math(x);
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /* mod */
@@ -120,7 +120,7 @@ inline T mod_with_casting_integer(const T &x, const T &y,
  * @brief Computes the modulus (remainder) of two values.
  *
  * This function returns the result of the modulus operation between `x` and
- * `y`. If the macro `__BASE_MATH_USE_STD_MATH__` is defined, it uses
+ * `y`. If the macro `BASE_MATH_USE_STD_MATH_` is defined, it uses
  * `std::fmod` for floating-point types. Otherwise, it uses a custom
  * implementation via `Base::Math::mod_with_casting_integer`.
  *
@@ -131,12 +131,12 @@ inline T mod_with_casting_integer(const T &x, const T &y,
  */
 template <typename T> inline T mod(const T &x, const T &y) {
 
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::fmod(x, y);
-#else  // __BASE_MATH_USE_STD_MATH__
+#else  // BASE_MATH_USE_STD_MATH_
   return Base::Math::mod_with_casting_integer(
       x, y, static_cast<T>(Base::Math::ARITHMETIC_DIVISION_MIN));
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /**
@@ -183,7 +183,7 @@ inline float bitcast_f32(const uint32_t &u) {
  * @return The number of leading zeros in `x`.
  */
 inline int clz32(uint32_t x) {
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(GNUC_) || defined(clang_)
   return __builtin_clz(x);
 #else
   // fallback (slow but correct)
@@ -278,11 +278,11 @@ inline float fast_frexpf(float x, int *out_exp) {
 }
 
 inline float frexpf(float x, int *exp) {
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::frexp(x, exp);
-#else  // __BASE_MATH_USE_STD_MATH__
+#else  // BASE_MATH_USE_STD_MATH_
   return fast_frexpf(x, exp);
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 inline float fast_ldexp_float(float x, int exp) {
@@ -402,7 +402,7 @@ inline double bitcast_f64(const uint64_t &u) {
  * @return The number of leading zeros in `x`.
  */
 inline int clz64(uint64_t x) {
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(GNUC_) || defined(clang_)
   return __builtin_clzll(x);
 #else
   int n = 0;
@@ -521,11 +521,11 @@ inline double fast_ldexp_double(double x, int exp) {
 template <typename T>
 typename std::enable_if<std::is_same<T, double>::value, T>::type
 ldexp(T x, int exp) {
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::ldexp(x, exp);
-#else  // __BASE_MATH_USE_STD_MATH__
+#else  // BASE_MATH_USE_STD_MATH_
   return fast_ldexp_double(x, exp);
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 /**
@@ -543,14 +543,14 @@ ldexp(T x, int exp) {
 template <typename T>
 typename std::enable_if<std::is_same<T, float>::value, T>::type ldexp(T x,
                                                                       int exp) {
-#ifdef __BASE_MATH_USE_STD_MATH__
+#ifdef BASE_MATH_USE_STD_MATH_
   return std::ldexp(x, exp);
-#else  // __BASE_MATH_USE_STD_MATH__
+#else  // BASE_MATH_USE_STD_MATH_
   return fast_ldexp_float(x, exp);
-#endif // __BASE_MATH_USE_STD_MATH__
+#endif // BASE_MATH_USE_STD_MATH_
 }
 
 } // namespace Math
 } // namespace Base
 
-#endif // __BASE_MATH_ARITHMETIC_HPP__
+#endif // BASE_MATH_ARITHMETIC_HPP_
