@@ -24,6 +24,9 @@ namespace PythonMath {
 
 /* abs */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> abs(const std::array<T, N> &array);
+
 /**
  * @brief Returns the absolute value of the given input.
  *
