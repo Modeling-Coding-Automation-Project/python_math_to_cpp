@@ -37,6 +37,11 @@ namespace PythonMath {
 
 /* sin */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> sin(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> sin(const std::vector<T> &vector);
+
 /**
  * @brief Computes the sine of the given value.
  *
@@ -137,6 +142,11 @@ inline std::array<T, N> sin(const std::array<T, N> &array) {
 }
 
 /* cos */
+
+template <typename T, std::size_t N>
+inline std::array<T, N> cos(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> cos(const std::vector<T> &vector);
 
 /**
  * @brief Computes the cosine of the given value.
@@ -239,6 +249,11 @@ inline std::array<T, N> cos(const std::array<T, N> &array) {
 
 /* tan */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> tan(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> tan(const std::vector<T> &vector);
+
 /**
  * @brief Computes the tangent of the given value.
  *
@@ -340,6 +355,11 @@ inline std::array<T, N> tan(const std::array<T, N> &array) {
 
 /* atan */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> atan(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> atan(const std::vector<T> &vector);
+
 /**
  * @brief Computes the arc tangent (inverse tangent) of the given value.
  *
@@ -374,7 +394,6 @@ template <typename T> inline std::vector<T> atan(const std::vector<T> &vector) {
 }
 
 namespace AtanAction {
-
 template <typename T, std::size_t N, std::size_t Index> struct AtanCore {
   /**
    * @brief Recursively computes the element-wise arctangent of a std::array.
@@ -406,8 +425,8 @@ template <typename T, std::size_t N> struct AtanCore<T, N, 0> {
  * @brief Computes the element-wise arctangent of a std::array.
  *
  * This function serves as an entry point for computing the arctangents of
- * elements in a std::array. It initializes the recursive computation by calling
- * AtanCore with the appropriate parameters.
+ * elements in a std::array. It initializes the recursive computation by
+ * calling AtanCore with the appropriate parameters.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
@@ -442,6 +461,26 @@ inline std::array<T, N> atan(const std::array<T, N> &array) {
 }
 
 /* atan2 */
+
+template <typename T, std::size_t N>
+inline std::array<T, N> atan2(const std::array<T, N> &vector_y, const T &x);
+
+template <typename T, std::size_t N>
+inline std::array<T, N> atan2(const T &y, const std::array<T, N> &vector_x);
+
+template <typename T, std::size_t N>
+inline std::array<T, N> atan2(const std::array<T, N> &vector_y,
+                              const std::array<T, N> &vector_x);
+
+template <typename T>
+inline std::vector<T> atan2(const std::vector<T> &vector_y, const T &x);
+
+template <typename T>
+inline std::vector<T> atan2(const T &y, const std::vector<T> &vector_x);
+
+template <typename T>
+inline std::vector<T> atan2(const std::vector<T> &vector_y,
+                            const std::vector<T> &vector_x);
 
 /**
  * @brief Computes the arc tangent of y/x using the signs of both arguments to
@@ -539,7 +578,6 @@ inline std::vector<T> atan2(const std::vector<T> &vector_y,
 }
 
 namespace Atan2Action1 {
-
 template <typename T, std::size_t N, std::size_t Index> struct Atan2Core1 {
   /**
    * @brief Recursively computes element-wise atan2(array_y, scalar x).
@@ -588,7 +626,6 @@ inline void compute(std::array<T, N> &result, const std::array<T, N> &array_y,
 } // namespace Atan2Action1
 
 namespace Atan2Action2 {
-
 template <typename T, std::size_t N, std::size_t Index> struct Atan2Core2 {
   /**
    * @brief Recursively computes element-wise atan2(scalar y, array_x).
@@ -637,7 +674,6 @@ inline void compute(std::array<T, N> &result, const T &y,
 } // namespace Atan2Action2
 
 namespace Atan2Action3 {
-
 template <typename T, std::size_t N, std::size_t Index> struct Atan2Core3 {
   /**
    * @brief Recursively computes element-wise atan2(array_y, array_x).
@@ -755,6 +791,11 @@ inline std::array<T, N> atan2(const std::array<T, N> &array_y,
 
 /* asin */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> asin(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> asin(const std::vector<T> &vector);
+
 /**
  * @brief Computes the arc sine (inverse sine) of the given value.
  *
@@ -794,7 +835,6 @@ template <typename T> inline std::vector<T> asin(const std::vector<T> &vector) {
 }
 
 namespace AsinAction {
-
 template <typename T, std::size_t N, std::size_t Index> struct AsinCore {
   /**
    * @brief Recursively computes the element-wise arcsine of a std::array.
@@ -811,7 +851,8 @@ template <typename T, std::size_t N, std::size_t Index> struct AsinCore {
 // Specialization to end the recursion
 template <typename T, std::size_t N> struct AsinCore<T, N, 0> {
   /**
-   * @brief Base case for the recursive computation of arcsines in a std::array.
+   * @brief Base case for the recursive computation of arcsines in a
+   * std::array.
    *
    * @param result The array to store the results.
    * @param array The input array whose elements will be processed.
@@ -824,9 +865,9 @@ template <typename T, std::size_t N> struct AsinCore<T, N, 0> {
 /**
  * @brief Computes the element-wise arcsine of a std::array.
  *
- * This function serves as an entry point for computing the arcsines of elements
- * in a std::array. It initializes the recursive computation by calling AsinCore
- * with the appropriate parameters.
+ * This function serves as an entry point for computing the arcsines of
+ * elements in a std::array. It initializes the recursive computation by
+ * calling AsinCore with the appropriate parameters.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
@@ -861,6 +902,11 @@ inline std::array<T, N> asin(const std::array<T, N> &array) {
 }
 
 /* acos */
+
+template <typename T, std::size_t N>
+inline std::array<T, N> acos(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> acos(const std::vector<T> &vector);
 
 /**
  * @brief Computes the arc cosine (inverse cosine) of the given value.
@@ -899,7 +945,6 @@ template <typename T> inline std::vector<T> acos(const std::vector<T> &vector) {
 }
 
 namespace AcosAction {
-
 template <typename T, std::size_t N, std::size_t Index> struct AcosCore {
   /**
    * @brief Recursively computes the element-wise arccosine of a std::array.
@@ -931,8 +976,8 @@ template <typename T, std::size_t N> struct AcosCore<T, N, 0> {
  * @brief Computes the element-wise arccosine of a std::array.
  *
  * This function serves as an entry point for computing the arccosines of
- * elements in a std::array. It initializes the recursive computation by calling
- * AcosCore with the appropriate parameters.
+ * elements in a std::array. It initializes the recursive computation by
+ * calling AcosCore with the appropriate parameters.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
@@ -968,6 +1013,11 @@ inline std::array<T, N> acos(const std::array<T, N> &array) {
 
 /* sinh */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> sinh(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> sinh(const std::vector<T> &vector);
+
 /**
  * @brief Computes the hyperbolic sine of the given value.
  *
@@ -1002,7 +1052,6 @@ template <typename T> inline std::vector<T> sinh(const std::vector<T> &vector) {
 }
 
 namespace SinhAction {
-
 template <typename T, std::size_t N, std::size_t Index> struct SinhCore {
   /**
    * @brief Recursively computes the element-wise hyperbolic sine of a
@@ -1034,9 +1083,9 @@ template <typename T, std::size_t N> struct SinhCore<T, N, 0> {
 /**
  * @brief Computes the element-wise hyperbolic sine of a std::array.
  *
- * This function serves as an entry point for computing the hyperbolic sines of
- * elements in a std::array. It initializes the recursive computation by calling
- * SinhCore with the appropriate parameters.
+ * This function serves as an entry point for computing the hyperbolic sines
+ * of elements in a std::array. It initializes the recursive computation by
+ * calling SinhCore with the appropriate parameters.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
@@ -1072,6 +1121,11 @@ inline std::array<T, N> sinh(const std::array<T, N> &array) {
 
 /* cosh */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> cosh(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> cosh(const std::vector<T> &vector);
+
 /**
  * @brief Computes the hyperbolic cosine of the given value.
  *
@@ -1105,7 +1159,6 @@ template <typename T> inline std::vector<T> cosh(const std::vector<T> &vector) {
 }
 
 namespace CoshAction {
-
 template <typename T, std::size_t N, std::size_t Index> struct CoshCore {
   /**
    * @brief Recursively computes the element-wise hyperbolic cosine of a
@@ -1175,6 +1228,11 @@ inline std::array<T, N> cosh(const std::array<T, N> &array) {
 
 /* tanh */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> tanh(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> tanh(const std::vector<T> &vector);
+
 /**
  * @brief Computes the hyperbolic tangent of the given value.
  *
@@ -1208,7 +1266,6 @@ template <typename T> inline std::vector<T> tanh(const std::vector<T> &vector) {
 }
 
 namespace TanhAction {
-
 template <typename T, std::size_t N, std::size_t Index> struct TanhCore {
   /**
    * @brief Recursively computes the element-wise hyperbolic tangent of a
@@ -1226,8 +1283,8 @@ template <typename T, std::size_t N, std::size_t Index> struct TanhCore {
 // Specialization to end the recursion
 template <typename T, std::size_t N> struct TanhCore<T, N, 0> {
   /**
-   * @brief Base case for the recursive computation of hyperbolic tangents in a
-   * std::array.
+   * @brief Base case for the recursive computation of hyperbolic tangents in
+   * a std::array.
    *
    * @param result The array to store the results.
    * @param array The input array whose elements will be transformed.
@@ -1240,9 +1297,9 @@ template <typename T, std::size_t N> struct TanhCore<T, N, 0> {
 /**
  * @brief Computes the element-wise hyperbolic tangent of a std::array.
  *
- * This function serves as an entry point for computing the hyperbolic tangents
- * of elements in a std::array. It initializes the recursive computation by
- * calling TanhCore with the appropriate parameters.
+ * This function serves as an entry point for computing the hyperbolic
+ * tangents of elements in a std::array. It initializes the recursive
+ * computation by calling TanhCore with the appropriate parameters.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
