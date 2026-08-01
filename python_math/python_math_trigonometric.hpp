@@ -53,7 +53,7 @@ template <typename T> inline T sin(const T &x) { return Base::Math::sin(x); }
  * @brief Computes the sine of each element in the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::sin to the corresponding
+ * element is the result of applying PythonMath::sin to the corresponding
  * element of the input vector.
  *
  * @tparam T The numeric type of the vector elements.
@@ -64,7 +64,7 @@ template <typename T> inline std::vector<T> sin(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::sin(element));
+    result.push_back(PythonMath::sin(element));
   }
   return result;
 }
@@ -74,7 +74,7 @@ template <typename T> inline std::vector<T> sin(const std::vector<T> &vector) {
  *
  * This function takes a std::array of type T and size N, and returns a new
  * array where each element is the sine of the corresponding element in the
- * input array. The sine computation is performed using Base::Math::sin for each
+ * input array. The sine computation is performed using PythonMath::sin for each
  * element.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
@@ -86,7 +86,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> sin(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::sin(array[i]);
+    result[i] = PythonMath::sin(array[i]);
   }
   return result;
 }
@@ -109,7 +109,7 @@ template <typename T> inline T cos(const T &x) { return Base::Math::cos(x); }
  * @brief Computes the cosine of each element in the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying the cosine function (Base::Math::cos) to
+ * element is the result of applying the cosine function (PythonMath::cos) to
  * the corresponding element of the input vector.
  *
  * @tparam T The numeric type of the elements in the vector.
@@ -120,7 +120,7 @@ template <typename T> inline std::vector<T> cos(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::cos(element));
+    result.push_back(PythonMath::cos(element));
   }
   return result;
 }
@@ -130,7 +130,7 @@ template <typename T> inline std::vector<T> cos(const std::vector<T> &vector) {
  *
  * This function takes a std::array of type T and size N, and returns a new
  * array where each element is the cosine of the corresponding element in the
- * input array. The cosine computation is performed using Base::Math::cos.
+ * input array. The cosine computation is performed using PythonMath::cos.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
  * @tparam N The size of the array.
@@ -142,7 +142,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> cos(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::cos(array[i]);
+    result[i] = PythonMath::cos(array[i]);
   }
   return result;
 }
@@ -165,7 +165,7 @@ template <typename T> inline T tan(const T &x) { return Base::Math::tan(x); }
  * @brief Applies the tangent function to each element of the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::tan to the corresponding
+ * element is the result of applying PythonMath::tan to the corresponding
  * element of the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -176,7 +176,7 @@ template <typename T> inline std::vector<T> tan(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::tan(element));
+    result.push_back(PythonMath::tan(element));
   }
   return result;
 }
@@ -185,7 +185,7 @@ template <typename T> inline std::vector<T> tan(const std::vector<T> &vector) {
  * @brief Applies the tangent function element-wise to a std::array.
  *
  * This function takes a std::array of type T and size N, computes the tangent
- * of each element using Base::Math::tan, and returns a new std::array
+ * of each element using PythonMath::tan, and returns a new std::array
  * containing the results.
  *
  * @tparam T The type of the elements in the array.
@@ -198,7 +198,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> tan(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::tan(array[i]);
+    result[i] = PythonMath::tan(array[i]);
   }
   return result;
 }
@@ -221,7 +221,7 @@ template <typename T> inline T atan(const T &x) { return Base::Math::atan(x); }
  * @brief Computes the element-wise arctangent (inverse tangent) of a vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::atan to the corresponding
+ * element is the result of applying PythonMath::atan to the corresponding
  * element of the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -233,7 +233,7 @@ template <typename T> inline std::vector<T> atan(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::atan(element));
+    result.push_back(PythonMath::atan(element));
   }
   return result;
 }
@@ -242,7 +242,7 @@ template <typename T> inline std::vector<T> atan(const std::vector<T> &vector) {
  * @brief Applies the arctangent (atan) function element-wise to a std::array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * array where each element is the result of applying Base::Math::atan to the
+ * array where each element is the result of applying PythonMath::atan to the
  * corresponding element in the input array.
  *
  * @tparam T The type of the elements in the array.
@@ -255,7 +255,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> atan(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::atan(array[i]);
+    result[i] = PythonMath::atan(array[i]);
   }
   return result;
 }
@@ -287,7 +287,7 @@ template <typename T> inline T atan2(const T &y, const T &x) {
  * This function applies the two-argument arctangent (atan2) operation to each
  * element of the input vector `vector_y` with respect to the scalar `x`,
  * returning a vector of results. The operation is equivalent to calling
- * `Base::Math::atan2(y_i, x)` for each element `y_i` in `vector_y`.
+ * `PythonMath::atan2(y_i, x)` for each element `y_i` in `vector_y`.
  *
  * @tparam T Numeric type of the vector elements and the scalar.
  * @param vector_y A vector of values representing the numerator in the atan2
@@ -301,7 +301,7 @@ inline std::vector<T> atan2(const std::vector<T> &vector_y, const T &x) {
   std::vector<T> result;
   result.reserve(vector_y.size());
   for (const auto &element : vector_y) {
-    result.push_back(Base::Math::atan2(element, x));
+    result.push_back(PythonMath::atan2(element, x));
   }
   return result;
 }
@@ -311,7 +311,7 @@ inline std::vector<T> atan2(const std::vector<T> &vector_y, const T &x) {
  * scalar y and a vector x.
  *
  * This function takes a scalar value `y` and a vector of values `vector_x`, and
- * computes the arc tangent of each pair (y, x_i) using `Base::Math::atan2`. The
+ * computes the arc tangent of each pair (y, x_i) using `PythonMath::atan2`. The
  * result is a vector containing the computed values.
  *
  * @tparam T The numeric type of the input and output values.
@@ -326,7 +326,7 @@ inline std::vector<T> atan2(const T &y, const std::vector<T> &vector_x) {
   std::vector<T> result;
   result.reserve(vector_x.size());
   for (const auto &element : vector_x) {
-    result.push_back(Base::Math::atan2(y, element));
+    result.push_back(PythonMath::atan2(y, element));
   }
   return result;
 }
@@ -336,7 +336,7 @@ inline std::vector<T> atan2(const T &y, const std::vector<T> &vector_x) {
  *
  * This function takes two vectors of the same size, `vector_y` and `vector_x`,
  * and computes the arc tangent of the quotient of their corresponding elements
- * using `Base::Math::atan2`. The result is a vector containing the computed
+ * using `PythonMath::atan2`. The result is a vector containing the computed
  * values for each pair of elements.
  *
  * @tparam T The numeric type of the input vectors (e.g., float, double).
@@ -352,7 +352,7 @@ inline std::vector<T> atan2(const std::vector<T> &vector_y,
   std::vector<T> result;
   result.reserve(vector_y.size());
   for (std::size_t i = 0; i < vector_y.size(); ++i) {
-    result.push_back(Base::Math::atan2(vector_y[i], vector_x[i]));
+    result.push_back(PythonMath::atan2(vector_y[i], vector_x[i]));
   }
   return result;
 }
@@ -376,7 +376,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> atan2(const std::array<T, N> &array_y, const T &x) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::atan2(array_y[i], x);
+    result[i] = PythonMath::atan2(array_y[i], x);
   }
   return result;
 }
@@ -386,7 +386,7 @@ inline std::array<T, N> atan2(const std::array<T, N> &array_y, const T &x) {
  * input array x.
  *
  * This function takes a scalar value y and an array of values array_x, and
- * returns a new array where each element is the result of Base::Math::atan2(y,
+ * returns a new array where each element is the result of PythonMath::atan2(y,
  * array_x[i]). The atan2 function computes the angle (in radians) whose tangent
  * is the quotient of its arguments, handling the correct quadrant.
  *
@@ -402,7 +402,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> atan2(const T &y, const std::array<T, N> &array_x) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::atan2(y, array_x[i]);
+    result[i] = PythonMath::atan2(y, array_x[i]);
   }
   return result;
 }
@@ -413,7 +413,7 @@ inline std::array<T, N> atan2(const T &y, const std::array<T, N> &array_x) {
  * This function takes two input arrays, `array_y` and `array_x`, each of size
  * `N`, and computes the arc tangent of the quotient of their corresponding
  * elements, storing the result in a new array. The computation is performed
- * using `Base::Math::atan2` for each element.
+ * using `PythonMath::atan2` for each element.
  *
  * @tparam T The type of the elements in the arrays (e.g., float, double).
  * @tparam N The size of the input arrays.
@@ -426,7 +426,7 @@ inline std::array<T, N> atan2(const std::array<T, N> &array_y,
                               const std::array<T, N> &array_x) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::atan2(array_y[i], array_x[i]);
+    result[i] = PythonMath::atan2(array_y[i], array_x[i]);
   }
   return result;
 }
@@ -453,7 +453,7 @@ template <typename T> inline T asin(const T &x) { return Base::Math::asin(x); }
  * vector.
  *
  * This function takes a vector of elements and returns a new vector where each
- * element is the result of applying Base::Math::asin to the corresponding
+ * element is the result of applying PythonMath::asin to the corresponding
  * element of the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -466,7 +466,7 @@ template <typename T> inline std::vector<T> asin(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::asin(element));
+    result.push_back(PythonMath::asin(element));
   }
   return result;
 }
@@ -475,7 +475,7 @@ template <typename T> inline std::vector<T> asin(const std::vector<T> &vector) {
  * @brief Computes the element-wise arcsine (inverse sine) of the input array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * array where each element is the result of applying Base::Math::asin to the
+ * array where each element is the result of applying PythonMath::asin to the
  * corresponding element of the input array.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
@@ -488,7 +488,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> asin(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::asin(array[i]);
+    result[i] = PythonMath::asin(array[i]);
   }
   return result;
 }
@@ -513,7 +513,7 @@ template <typename T> inline T acos(const T &x) { return Base::Math::acos(x); }
  * vector.
  *
  * This function takes a vector of elements and applies the arc cosine function
- * (acos) to each element using Base::Math::acos, returning a new vector with
+ * (acos) to each element using PythonMath::acos, returning a new vector with
  * the results.
  *
  * @tparam T The type of the elements in the input vector.
@@ -526,7 +526,7 @@ template <typename T> inline std::vector<T> acos(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::acos(element));
+    result.push_back(PythonMath::acos(element));
   }
   return result;
 }
@@ -535,7 +535,7 @@ template <typename T> inline std::vector<T> acos(const std::vector<T> &vector) {
  * @brief Computes the arc cosine (inverse cosine) of each element in the input
  * array.
  *
- * This function applies the Base::Math::acos function to each element of the
+ * This function applies the PythonMath::acos function to each element of the
  * input std::array and returns a new std::array containing the results.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
@@ -548,7 +548,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> acos(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::acos(array[i]);
+    result[i] = PythonMath::acos(array[i]);
   }
   return result;
 }
@@ -571,7 +571,7 @@ template <typename T> inline T sinh(const T &x) { return Base::Math::sinh(x); }
  * @brief Computes the hyperbolic sine (sinh) of each element in the input
  * vector.
  *
- * This function applies the Base::Math::sinh operation to every element of the
+ * This function applies the PythonMath::sinh operation to every element of the
  * input vector and returns a new vector containing the results.
  *
  * @tparam T The type of the elements in the input vector.
@@ -583,7 +583,7 @@ template <typename T> inline std::vector<T> sinh(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::sinh(element));
+    result.push_back(PythonMath::sinh(element));
   }
   return result;
 }
@@ -592,7 +592,7 @@ template <typename T> inline std::vector<T> sinh(const std::vector<T> &vector) {
  * @brief Computes the hyperbolic sine (sinh) of each element in the input
  * array.
  *
- * This function applies the Base::Math::sinh operation to each element of the
+ * This function applies the PythonMath::sinh operation to each element of the
  * input std::array and returns a new array containing the results.
  *
  * @tparam T The type of the elements in the array.
@@ -605,7 +605,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> sinh(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::sinh(array[i]);
+    result[i] = PythonMath::sinh(array[i]);
   }
   return result;
 }
@@ -627,7 +627,7 @@ template <typename T> inline T cosh(const T &x) { return Base::Math::cosh(x); }
  * @brief Computes the hyperbolic cosine (cosh) of each element in the input
  * vector.
  *
- * This function applies the Base::Math::cosh function to each element of the
+ * This function applies the PythonMath::cosh function to each element of the
  * input std::vector<T> and returns a new vector containing the results.
  *
  * @tparam T The type of the elements in the input vector.
@@ -639,7 +639,7 @@ template <typename T> inline std::vector<T> cosh(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::cosh(element));
+    result.push_back(PythonMath::cosh(element));
   }
   return result;
 }
@@ -648,7 +648,7 @@ template <typename T> inline std::vector<T> cosh(const std::vector<T> &vector) {
  * @brief Computes the hyperbolic cosine (cosh) of each element in the input
  * array.
  *
- * This function applies the Base::Math::cosh function to each element of the
+ * This function applies the PythonMath::cosh function to each element of the
  * input std::array, returning a new std::array containing the results.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
@@ -661,7 +661,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> cosh(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::cosh(array[i]);
+    result[i] = PythonMath::cosh(array[i]);
   }
   return result;
 }
@@ -695,7 +695,7 @@ template <typename T> inline std::vector<T> tanh(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::tanh(element));
+    result.push_back(PythonMath::tanh(element));
   }
   return result;
 }
@@ -704,7 +704,7 @@ template <typename T> inline std::vector<T> tanh(const std::vector<T> &vector) {
  * @brief Applies the hyperbolic tangent function element-wise to a std::array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * std::array where each element is the result of applying Base::Math::tanh to
+ * std::array where each element is the result of applying PythonMath::tanh to
  * the corresponding element in the input array.
  *
  * @tparam T The type of the elements in the array.
@@ -717,7 +717,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> tanh(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::tanh(array[i]);
+    result[i] = PythonMath::tanh(array[i]);
   }
   return result;
 }

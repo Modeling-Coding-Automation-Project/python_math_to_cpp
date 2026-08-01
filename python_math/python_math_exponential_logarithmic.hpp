@@ -17,7 +17,7 @@ template <typename T> inline T sqrt(const T &x) { return Base::Math::sqrt(x); }
  * @brief Computes the square root of each element in the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::sqrt to the corresponding
+ * element is the result of applying PythonMath::sqrt to the corresponding
  * element of the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -30,7 +30,7 @@ template <typename T> inline std::vector<T> sqrt(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::sqrt(element));
+    result.push_back(PythonMath::sqrt(element));
   }
   return result;
 }
@@ -41,7 +41,7 @@ template <typename T> inline std::vector<T> sqrt(const std::vector<T> &vector) {
  * This function takes a std::array of type T and size N, and returns a new
  * array where each element is the square root of the corresponding element in
  * the input array. The square root operation is performed using
- * Base::Math::sqrt.
+ * PythonMath::sqrt.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
@@ -53,7 +53,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> sqrt(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::sqrt(array[i]);
+    result[i] = PythonMath::sqrt(array[i]);
   }
   return result;
 }
@@ -76,7 +76,7 @@ template <typename T> inline T exp(const T &x) { return Base::Math::exp(x); }
  * @brief Applies the exponential function to each element of the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::exp to the corresponding
+ * element is the result of applying PythonMath::exp to the corresponding
  * element in the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -88,7 +88,7 @@ template <typename T> inline std::vector<T> exp(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::exp(element));
+    result.push_back(PythonMath::exp(element));
   }
   return result;
 }
@@ -97,7 +97,7 @@ template <typename T> inline std::vector<T> exp(const std::vector<T> &vector) {
  * @brief Applies the exponential function to each element of the input array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * array where each element is the result of applying Base::Math::exp to the
+ * array where each element is the result of applying PythonMath::exp to the
  * corresponding element of the input array.
  *
  * @tparam T The type of the elements in the array.
@@ -110,7 +110,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> exp(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::exp(array[i]);
+    result[i] = PythonMath::exp(array[i]);
   }
   return result;
 }
@@ -134,7 +134,7 @@ template <typename T> inline T exp2(const T &x) { return Base::Math::exp2(x); }
  * vector.
  *
  * This function computes 2 raised to the power of each element in the input
- * vector using Base::Math::exp2, and returns a new vector containing the
+ * vector using PythonMath::exp2, and returns a new vector containing the
  * results.
  *
  * @tparam T The type of the elements in the input vector.
@@ -146,7 +146,7 @@ template <typename T> inline std::vector<T> exp2(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::exp2(element));
+    result.push_back(PythonMath::exp2(element));
   }
   return result;
 }
@@ -168,7 +168,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> exp2(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::exp2(array[i]);
+    result[i] = PythonMath::exp2(array[i]);
   }
   return result;
 }
@@ -193,7 +193,7 @@ template <typename T> inline T log(const T &x) { return Base::Math::log(x); }
  * vector.
  *
  * This function takes a vector of elements of type T and returns a new vector
- * where each element is the result of applying Base::Math::log to the
+ * where each element is the result of applying PythonMath::log to the
  * corresponding element in the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -205,7 +205,7 @@ template <typename T> inline std::vector<T> log(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::log(element));
+    result.push_back(PythonMath::log(element));
   }
   return result;
 }
@@ -214,7 +214,7 @@ template <typename T> inline std::vector<T> log(const std::vector<T> &vector) {
  * @brief Applies the natural logarithm element-wise to a std::array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * std::array where each element is the result of applying Base::Math::log to
+ * std::array where each element is the result of applying PythonMath::log to
  * the corresponding element of the input array.
  *
  * @tparam T The type of the elements in the array.
@@ -227,7 +227,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> log(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::log(array[i]);
+    result[i] = PythonMath::log(array[i]);
   }
   return result;
 }
@@ -252,7 +252,7 @@ template <typename T> inline T log2(const T &x) { return Base::Math::log2(x); }
  * This function takes a vector of type T and returns a new vector where each
  * element is the result of applying the base-2 logarithm (log2) to the
  * corresponding element in the input vector. The log2 operation is performed
- * using Base::Math::log2.
+ * using PythonMath::log2.
  *
  * @tparam T The type of the elements in the input vector.
  * @param vector The input vector containing elements to compute the log2 for.
@@ -263,7 +263,7 @@ template <typename T> inline std::vector<T> log2(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::log2(element));
+    result.push_back(PythonMath::log2(element));
   }
   return result;
 }
@@ -272,7 +272,7 @@ template <typename T> inline std::vector<T> log2(const std::vector<T> &vector) {
  * @brief Computes the base-2 logarithm of each element in the input array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * array where each element is the result of applying Base::Math::log2 to the
+ * array where each element is the result of applying PythonMath::log2 to the
  * corresponding element in the input array.
  *
  * @tparam T The type of the elements in the array.
@@ -285,7 +285,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> log2(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::log2(array[i]);
+    result[i] = PythonMath::log2(array[i]);
   }
   return result;
 }
@@ -310,7 +310,7 @@ template <typename T> inline T log10(const T &x) {
  * @brief Computes the base-10 logarithm of each element in the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::log10 to the corresponding
+ * element is the result of applying PythonMath::log10 to the corresponding
  * element of the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -323,7 +323,7 @@ inline std::vector<T> log10(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::log10(element));
+    result.push_back(PythonMath::log10(element));
   }
   return result;
 }
@@ -332,7 +332,7 @@ inline std::vector<T> log10(const std::vector<T> &vector) {
  * @brief Computes the base-10 logarithm of each element in the input array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * array where each element is the result of applying Base::Math::log10 to the
+ * array where each element is the result of applying PythonMath::log10 to the
  * corresponding element of the input array.
  *
  * @tparam T The type of the elements in the array.
@@ -345,7 +345,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> log10(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::log10(array[i]);
+    result[i] = PythonMath::log10(array[i]);
   }
   return result;
 }
@@ -374,7 +374,7 @@ template <typename T> inline T pow(const T &x, const T &y) {
  * This function takes a vector of elements and a scalar exponent, and returns a
  * new vector where each element is the result of raising the corresponding
  * input element to the power of y. The exponentiation is performed using
- * Base::Math::pow.
+ * PythonMath::pow.
  *
  * @tparam T The type of the elements in the vector.
  * @param vector_x The input vector whose elements will be exponentiated.
@@ -386,7 +386,7 @@ inline std::vector<T> pow(const std::vector<T> &vector_x, const T &y) {
   std::vector<T> result;
   result.reserve(vector_x.size());
   for (const auto &element : vector_x) {
-    result.push_back(Base::Math::pow(element, y));
+    result.push_back(PythonMath::pow(element, y));
   }
   return result;
 }
@@ -396,7 +396,7 @@ inline std::vector<T> pow(const std::vector<T> &vector_x, const T &y) {
  *
  * This function computes the result of raising the scalar value `x` to the
  * power of each element in the input vector `vector_y`. The results are stored
- * in a new vector, where each element is calculated as `Base::Math::pow(x,
+ * in a new vector, where each element is calculated as `PythonMath::pow(x,
  * y_i)` for each `y_i` in `vector_y`.
  *
  * @tparam T The numeric type of the scalar and vector elements.
@@ -410,7 +410,7 @@ inline std::vector<T> pow(const T &x, const std::vector<T> &vector_y) {
   std::vector<T> result;
   result.reserve(vector_y.size());
   for (const auto &element : vector_y) {
-    result.push_back(Base::Math::pow(x, element));
+    result.push_back(PythonMath::pow(x, element));
   }
   return result;
 }
@@ -421,7 +421,7 @@ inline std::vector<T> pow(const T &x, const std::vector<T> &vector_y) {
  * This function takes two vectors of the same size, `vector_x` and `vector_y`,
  * and returns a new vector where each element is the result of raising the
  * corresponding element in `vector_x` to the power of the corresponding element
- * in `vector_y`, using `Base::Math::pow`.
+ * in `vector_y`, using `PythonMath::pow`.
  *
  * @tparam T The type of the elements in the input vectors.
  * @param vector_x The base values as a vector.
@@ -437,7 +437,7 @@ inline std::vector<T> pow(const std::vector<T> &vector_x,
   std::vector<T> result;
   result.reserve(vector_x.size());
   for (std::size_t i = 0; i < vector_x.size(); ++i) {
-    result.push_back(Base::Math::pow(vector_x[i], vector_y[i]));
+    result.push_back(PythonMath::pow(vector_x[i], vector_y[i]));
   }
   return result;
 }
@@ -446,7 +446,7 @@ inline std::vector<T> pow(const std::vector<T> &vector_x,
  * @brief Raises each element of the input array to the given power.
  *
  * This function takes an input array of type T and size N, and returns a new
- * array where each element is raised to the power of y using Base::Math::pow.
+ * array where each element is raised to the power of y using PythonMath::pow.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
@@ -459,7 +459,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> pow(const std::array<T, N> &array_x, const T &y) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::pow(array_x[i], y);
+    result[i] = PythonMath::pow(array_x[i], y);
   }
   return result;
 }
@@ -482,7 +482,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> pow(const T &x, const std::array<T, N> &array_y) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::pow(x, array_y[i]);
+    result[i] = PythonMath::pow(x, array_y[i]);
   }
   return result;
 }
@@ -492,7 +492,7 @@ inline std::array<T, N> pow(const T &x, const std::array<T, N> &array_y) {
  *
  * This function takes two arrays of the same size and computes the power of
  * each corresponding element, i.e., result[i] = pow(array_x[i], array_y[i]),
- * using Base::Math::pow.
+ * using PythonMath::pow.
  *
  * @tparam T The type of the elements in the arrays.
  * @tparam N The size of the arrays.
@@ -506,7 +506,7 @@ inline std::array<T, N> pow(const std::array<T, N> &array_x,
                             const std::array<T, N> &array_y) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::pow(array_x[i], array_y[i]);
+    result[i] = PythonMath::pow(array_x[i], array_y[i]);
   }
   return result;
 }

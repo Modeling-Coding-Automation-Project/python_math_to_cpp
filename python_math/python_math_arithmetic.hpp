@@ -42,7 +42,7 @@ template <typename T> inline T abs(const T &x) { return Base::Math::abs(x); }
  *
  * This function takes a constant reference to a std::vector of type T and
  * returns a new std::vector containing the absolute values of each element. The
- * function assumes that Base::Math::abs is defined for type T.
+ * function assumes that PythonMath::abs is defined for type T.
  *
  * @tparam T The type of the elements in the input vector.
  * @param vector The input vector whose elements' absolute values are to be
@@ -54,7 +54,7 @@ template <typename T> inline std::vector<T> abs(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::abs(element));
+    result.push_back(PythonMath::abs(element));
   }
   return result;
 }
@@ -65,7 +65,7 @@ template <typename T> inline std::vector<T> abs(const std::vector<T> &vector) {
  * This function takes a constant reference to a std::array of type T and size
  * N, and returns a new std::array where each element is the absolute value of
  * the corresponding element in the input array. The absolute value is computed
- * using Base::Math::abs.
+ * using PythonMath::abs.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
@@ -78,7 +78,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> abs(const std::array<T, N> &array) {
   std::array<T, N> result;
   for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::abs(array[i]);
+    result[i] = PythonMath::abs(array[i]);
   }
   return result;
 }
