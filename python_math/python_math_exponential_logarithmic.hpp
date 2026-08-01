@@ -14,6 +14,18 @@ namespace PythonMath {
 template <typename T, std::size_t N>
 inline std::array<T, N> sqrt(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> sqrt(const std::vector<T> &vector);
+
+/**
+ * @brief Computes the square root of the given value.
+ *
+ * This function is a wrapper around Base::Math::sqrt, providing a generic
+ * interface for calculating the square root of a value of type T.
+ *
+ * @tparam T The numeric type of the input value.
+ * @param x The value for which to compute the square root.
+ * @return The square root of the input value.
+ */
 template <typename T> inline T sqrt(const T &x) { return Base::Math::sqrt(x); }
 
 /**
@@ -113,6 +125,8 @@ inline std::array<T, N> sqrt(const std::array<T, N> &array) {
 
 template <typename T, std::size_t N>
 inline std::array<T, N> exp(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> exp(const std::vector<T> &vector);
 
 /**
  * @brief Computes the exponential of the given value.
@@ -220,6 +234,8 @@ inline std::array<T, N> exp(const std::array<T, N> &array) {
 template <typename T, std::size_t N>
 inline std::array<T, N> exp2(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> exp2(const std::vector<T> &vector);
+
 /**
  * @brief Computes the base-2 exponential of the given value.
  *
@@ -326,7 +342,9 @@ inline std::array<T, N> exp2(const std::array<T, N> &array) {
 /* log */
 
 template <typename T, std::size_t N>
-inline void compute(std::array<T, N> &result, const std::array<T, N> &array);
+inline std::array<T, N> log(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> log(const std::vector<T> &vector);
 
 /**
  * @brief Computes the natural logarithm (base e) of the given value.
@@ -437,6 +455,8 @@ inline std::array<T, N> log(const std::array<T, N> &array) {
 template <typename T, std::size_t N>
 inline std::array<T, N> log2(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> log2(const std::vector<T> &vector);
+
 /**
  * @brief Computes the base-2 logarithm of the given value.
  *
@@ -544,6 +564,8 @@ inline std::array<T, N> log2(const std::array<T, N> &array) {
 
 template <typename T, std::size_t N>
 inline std::array<T, N> log10(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> log10(const std::vector<T> &vector);
 
 /**
  * @brief Computes the base-10 logarithm of the given value.
@@ -661,6 +683,16 @@ inline std::array<T, N> pow(const T &x, const std::array<T, N> &array_y);
 template <typename T, std::size_t N>
 inline std::array<T, N> pow(const std::array<T, N> &array_x,
                             const std::array<T, N> &array_y);
+
+template <typename T>
+inline std::vector<T> pow(const std::vector<T> &vector_x, const T &y);
+
+template <typename T>
+inline std::vector<T> pow(const T &x, const std::vector<T> &vector_y);
+
+template <typename T>
+inline std::vector<T> pow(const std::vector<T> &vector_x,
+                          const std::vector<T> &vector_y);
 
 /**
  * @brief Computes the value of x raised to the power of y.

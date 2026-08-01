@@ -40,6 +40,8 @@ namespace PythonMath {
 template <typename T, std::size_t N>
 inline std::array<T, N> sin(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> sin(const std::vector<T> &vector);
+
 /**
  * @brief Computes the sine of the given value.
  *
@@ -143,6 +145,8 @@ inline std::array<T, N> sin(const std::array<T, N> &array) {
 
 template <typename T, std::size_t N>
 inline std::array<T, N> cos(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> cos(const std::vector<T> &vector);
 
 /**
  * @brief Computes the cosine of the given value.
@@ -248,6 +252,8 @@ inline std::array<T, N> cos(const std::array<T, N> &array) {
 template <typename T, std::size_t N>
 inline std::array<T, N> tan(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> tan(const std::vector<T> &vector);
+
 /**
  * @brief Computes the tangent of the given value.
  *
@@ -351,6 +357,8 @@ inline std::array<T, N> tan(const std::array<T, N> &array) {
 
 template <typename T, std::size_t N>
 inline std::array<T, N> atan(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> atan(const std::vector<T> &vector);
 
 /**
  * @brief Computes the arc tangent (inverse tangent) of the given value.
@@ -463,6 +471,16 @@ inline std::array<T, N> atan2(const T &y, const std::array<T, N> &vector_x);
 template <typename T, std::size_t N>
 inline std::array<T, N> atan2(const std::array<T, N> &vector_y,
                               const std::array<T, N> &vector_x);
+
+template <typename T>
+inline std::vector<T> atan2(const std::vector<T> &vector_y, const T &x);
+
+template <typename T>
+inline std::vector<T> atan2(const T &y, const std::vector<T> &vector_x);
+
+template <typename T>
+inline std::vector<T> atan2(const std::vector<T> &vector_y,
+                            const std::vector<T> &vector_x);
 
 /**
  * @brief Computes the arc tangent of y/x using the signs of both arguments to
@@ -776,6 +794,8 @@ inline std::array<T, N> atan2(const std::array<T, N> &array_y,
 template <typename T, std::size_t N>
 inline std::array<T, N> asin(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> asin(const std::vector<T> &vector);
+
 /**
  * @brief Computes the arc sine (inverse sine) of the given value.
  *
@@ -886,6 +906,8 @@ inline std::array<T, N> asin(const std::array<T, N> &array) {
 template <typename T, std::size_t N>
 inline std::array<T, N> acos(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> acos(const std::vector<T> &vector);
+
 /**
  * @brief Computes the arc cosine (inverse cosine) of the given value.
  *
@@ -994,6 +1016,8 @@ inline std::array<T, N> acos(const std::array<T, N> &array) {
 template <typename T, std::size_t N>
 inline std::array<T, N> sinh(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> sinh(const std::vector<T> &vector);
+
 /**
  * @brief Computes the hyperbolic sine of the given value.
  *
@@ -1100,6 +1124,8 @@ inline std::array<T, N> sinh(const std::array<T, N> &array) {
 template <typename T, std::size_t N>
 inline std::array<T, N> cosh(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> cosh(const std::vector<T> &vector);
+
 /**
  * @brief Computes the hyperbolic cosine of the given value.
  *
@@ -1204,6 +1230,8 @@ inline std::array<T, N> cosh(const std::array<T, N> &array) {
 
 template <typename T, std::size_t N>
 inline std::array<T, N> tanh(const std::array<T, N> &array);
+
+template <typename T> inline std::vector<T> tanh(const std::vector<T> &vector);
 
 /**
  * @brief Computes the hyperbolic tangent of the given value.

@@ -27,6 +27,8 @@ namespace PythonMath {
 template <typename T, std::size_t N>
 inline std::array<T, N> abs(const std::array<T, N> &array);
 
+template <typename T> inline std::vector<T> abs(const std::vector<T> &vector);
+
 /**
  * @brief Returns the absolute value of the given input.
  *
@@ -197,6 +199,9 @@ inline void compute(std::array<T, N> &result, const std::array<T, N> &array,
 
 template <typename T, std::size_t N>
 inline std::array<T, N> fmod(const std::array<T, N> &array, const T &y);
+
+template <typename T>
+inline std::vector<T> fmod(const std::vector<T> &vector, const T &y);
 
 /**
  * @brief Computes the floating-point remainder of the division of two values.
