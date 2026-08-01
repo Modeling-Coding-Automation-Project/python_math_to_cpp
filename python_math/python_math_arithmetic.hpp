@@ -42,7 +42,7 @@ template <typename T> inline T abs(const T &x) { return Base::Math::abs(x); }
  *
  * This function takes a constant reference to a std::vector of type T and
  * returns a new std::vector containing the absolute values of each element. The
- * function assumes that Base::Math::abs is defined for type T.
+ * function assumes that PythonMath::abs is defined for type T.
  *
  * @tparam T The type of the elements in the input vector.
  * @param vector The input vector whose elements' absolute values are to be
@@ -54,10 +54,62 @@ template <typename T> inline std::vector<T> abs(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::abs(element));
+    result.push_back(PythonMath::abs(element));
   }
   return result;
 }
+
+namespace AbsAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct AbsCore {
+  /**
+   * @brief Recursively computes the element-wise absolute value of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' absolute values are to be
+   * computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::abs(array[Index]);
+    AbsCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct AbsCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of absolute values in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' absolute values are to be
+   * computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::abs(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise absolute value of a std::array.
+ *
+ * This function serves as an entry point for computing the absolute values of
+ * elements in a std::array. It initializes the recursive computation by calling
+ * AbsCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements' absolute values are to be
+ * computed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  AbsCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace AbsAction
 
 /**
  * @brief Computes the element-wise absolute value of a std::array.
@@ -65,7 +117,7 @@ template <typename T> inline std::vector<T> abs(const std::vector<T> &vector) {
  * This function takes a constant reference to a std::array of type T and size
  * N, and returns a new std::array where each element is the absolute value of
  * the corresponding element in the input array. The absolute value is computed
- * using Base::Math::abs.
+ * using PythonMath::abs.
  *
  * @tparam T The type of the elements in the array.
  * @tparam N The size of the array.
@@ -77,11 +129,66 @@ template <typename T> inline std::vector<T> abs(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> abs(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::abs(array[i]);
-  }
+
+  AbsAction::compute(result, array);
+
   return result;
 }
+
+namespace FmodAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct FmodCore {
+  /**
+   * @brief Recursively computes the element-wise floating-point modulus of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be processed.
+   * @param y The divisor to use for the modulus operation.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array,
+                      const T &y) {
+    result[Index] = Base::Math::mod(array[Index], y);
+    FmodCore<T, N, Index - 1>::compute(result, array, y);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct FmodCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of floating-point modulus
+   * in a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be processed.
+   * @param y The divisor to use for the modulus operation.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array,
+                      const T &y) {
+    result[0] = Base::Math::mod(array[0], y);
+  }
+};
+
+/**
+ * @brief Computes the element-wise floating-point modulus of a std::array.
+ *
+ * This function serves as an entry point for computing the floating-point
+ * modulus of elements in a std::array. It initializes the recursive computation
+ * by calling FmodCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be processed.
+ * @param y The divisor to use for the modulus operation.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array,
+                    const T &y) {
+  FmodCore<T, N, N - 1>::compute(result, array, y);
+}
+
+} // namespace FmodAction
 
 /* fmod */
 
@@ -141,9 +248,9 @@ inline std::vector<T> fmod(const std::vector<T> &vector, const T &y) {
 template <typename T, std::size_t N>
 inline std::array<T, N> fmod(const std::array<T, N> &array, const T &y) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::mod(array[i], y);
-  }
+
+  FmodAction::compute(result, array, y);
+
   return result;
 }
 

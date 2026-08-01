@@ -53,7 +53,7 @@ template <typename T> inline T sin(const T &x) { return Base::Math::sin(x); }
  * @brief Computes the sine of each element in the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::sin to the corresponding
+ * element is the result of applying PythonMath::sin to the corresponding
  * element of the input vector.
  *
  * @tparam T The numeric type of the vector elements.
@@ -64,17 +64,64 @@ template <typename T> inline std::vector<T> sin(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::sin(element));
+    result.push_back(PythonMath::sin(element));
   }
   return result;
 }
+
+namespace SinAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct SinCore {
+  /**
+   * @brief Recursively computes the element-wise sine of a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' sines are to be computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::sin(array[Index]);
+    SinCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct SinCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of sines in a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' sines are to be computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::sin(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise sine of a std::array.
+ *
+ * This function serves as an entry point for computing the sines of elements
+ * in a std::array. It initializes the recursive computation by calling SinCore
+ * with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements' sines are to be computed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  SinCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace SinAction
 
 /**
  * @brief Computes the element-wise sine of the input array.
  *
  * This function takes a std::array of type T and size N, and returns a new
  * array where each element is the sine of the corresponding element in the
- * input array. The sine computation is performed using Base::Math::sin for each
+ * input array. The sine computation is performed using PythonMath::sin for each
  * element.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
@@ -85,9 +132,7 @@ template <typename T> inline std::vector<T> sin(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> sin(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::sin(array[i]);
-  }
+  SinAction::compute(result, array);
   return result;
 }
 
@@ -109,7 +154,7 @@ template <typename T> inline T cos(const T &x) { return Base::Math::cos(x); }
  * @brief Computes the cosine of each element in the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying the cosine function (Base::Math::cos) to
+ * element is the result of applying the cosine function (PythonMath::cos) to
  * the corresponding element of the input vector.
  *
  * @tparam T The numeric type of the elements in the vector.
@@ -120,17 +165,64 @@ template <typename T> inline std::vector<T> cos(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::cos(element));
+    result.push_back(PythonMath::cos(element));
   }
   return result;
 }
+
+namespace CosAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct CosCore {
+  /**
+   * @brief Recursively computes the element-wise cosine of a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' cosines are to be computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::cos(array[Index]);
+    CosCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct CosCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of cosines in a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' cosines are to be computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::cos(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise cosine of a std::array.
+ *
+ * This function serves as an entry point for computing the cosines of elements
+ * in a std::array. It initializes the recursive computation by calling CosCore
+ * with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements' cosines are to be computed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  CosCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace CosAction
 
 /**
  * @brief Computes the cosine of each element in the input array.
  *
  * This function takes a std::array of type T and size N, and returns a new
  * array where each element is the cosine of the corresponding element in the
- * input array. The cosine computation is performed using Base::Math::cos.
+ * input array. The cosine computation is performed using PythonMath::cos.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
  * @tparam N The size of the array.
@@ -141,9 +233,7 @@ template <typename T> inline std::vector<T> cos(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> cos(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::cos(array[i]);
-  }
+  CosAction::compute(result, array);
   return result;
 }
 
@@ -165,7 +255,7 @@ template <typename T> inline T tan(const T &x) { return Base::Math::tan(x); }
  * @brief Applies the tangent function to each element of the input vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::tan to the corresponding
+ * element is the result of applying PythonMath::tan to the corresponding
  * element of the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -176,16 +266,63 @@ template <typename T> inline std::vector<T> tan(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::tan(element));
+    result.push_back(PythonMath::tan(element));
   }
   return result;
 }
+
+namespace TanAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct TanCore {
+  /**
+   * @brief Recursively computes the element-wise tangent of a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::tan(array[Index]);
+    TanCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct TanCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of tangents in a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::tan(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise tangent of a std::array.
+ *
+ * This function serves as an entry point for computing the tangents of elements
+ * in a std::array. It initializes the recursive computation by calling TanCore
+ * with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be transformed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  TanCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace TanAction
 
 /**
  * @brief Applies the tangent function element-wise to a std::array.
  *
  * This function takes a std::array of type T and size N, computes the tangent
- * of each element using Base::Math::tan, and returns a new std::array
+ * of each element using PythonMath::tan, and returns a new std::array
  * containing the results.
  *
  * @tparam T The type of the elements in the array.
@@ -197,9 +334,7 @@ template <typename T> inline std::vector<T> tan(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> tan(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::tan(array[i]);
-  }
+  TanAction::compute(result, array);
   return result;
 }
 
@@ -221,7 +356,7 @@ template <typename T> inline T atan(const T &x) { return Base::Math::atan(x); }
  * @brief Computes the element-wise arctangent (inverse tangent) of a vector.
  *
  * This function takes a vector of type T and returns a new vector where each
- * element is the result of applying Base::Math::atan to the corresponding
+ * element is the result of applying PythonMath::atan to the corresponding
  * element of the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -233,16 +368,64 @@ template <typename T> inline std::vector<T> atan(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::atan(element));
+    result.push_back(PythonMath::atan(element));
   }
   return result;
 }
+
+namespace AtanAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct AtanCore {
+  /**
+   * @brief Recursively computes the element-wise arctangent of a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::atan(array[Index]);
+    AtanCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct AtanCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of arctangents in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::atan(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise arctangent of a std::array.
+ *
+ * This function serves as an entry point for computing the arctangents of
+ * elements in a std::array. It initializes the recursive computation by calling
+ * AtanCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be transformed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  AtanCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace AtanAction
 
 /**
  * @brief Applies the arctangent (atan) function element-wise to a std::array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * array where each element is the result of applying Base::Math::atan to the
+ * array where each element is the result of applying PythonMath::atan to the
  * corresponding element in the input array.
  *
  * @tparam T The type of the elements in the array.
@@ -254,9 +437,7 @@ template <typename T> inline std::vector<T> atan(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> atan(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::atan(array[i]);
-  }
+  AtanAction::compute(result, array);
   return result;
 }
 
@@ -287,7 +468,7 @@ template <typename T> inline T atan2(const T &y, const T &x) {
  * This function applies the two-argument arctangent (atan2) operation to each
  * element of the input vector `vector_y` with respect to the scalar `x`,
  * returning a vector of results. The operation is equivalent to calling
- * `Base::Math::atan2(y_i, x)` for each element `y_i` in `vector_y`.
+ * `PythonMath::atan2(y_i, x)` for each element `y_i` in `vector_y`.
  *
  * @tparam T Numeric type of the vector elements and the scalar.
  * @param vector_y A vector of values representing the numerator in the atan2
@@ -301,7 +482,7 @@ inline std::vector<T> atan2(const std::vector<T> &vector_y, const T &x) {
   std::vector<T> result;
   result.reserve(vector_y.size());
   for (const auto &element : vector_y) {
-    result.push_back(Base::Math::atan2(element, x));
+    result.push_back(PythonMath::atan2(element, x));
   }
   return result;
 }
@@ -311,7 +492,7 @@ inline std::vector<T> atan2(const std::vector<T> &vector_y, const T &x) {
  * scalar y and a vector x.
  *
  * This function takes a scalar value `y` and a vector of values `vector_x`, and
- * computes the arc tangent of each pair (y, x_i) using `Base::Math::atan2`. The
+ * computes the arc tangent of each pair (y, x_i) using `PythonMath::atan2`. The
  * result is a vector containing the computed values.
  *
  * @tparam T The numeric type of the input and output values.
@@ -326,7 +507,7 @@ inline std::vector<T> atan2(const T &y, const std::vector<T> &vector_x) {
   std::vector<T> result;
   result.reserve(vector_x.size());
   for (const auto &element : vector_x) {
-    result.push_back(Base::Math::atan2(y, element));
+    result.push_back(PythonMath::atan2(y, element));
   }
   return result;
 }
@@ -336,7 +517,7 @@ inline std::vector<T> atan2(const T &y, const std::vector<T> &vector_x) {
  *
  * This function takes two vectors of the same size, `vector_y` and `vector_x`,
  * and computes the arc tangent of the quotient of their corresponding elements
- * using `Base::Math::atan2`. The result is a vector containing the computed
+ * using `PythonMath::atan2`. The result is a vector containing the computed
  * values for each pair of elements.
  *
  * @tparam T The numeric type of the input vectors (e.g., float, double).
@@ -352,10 +533,157 @@ inline std::vector<T> atan2(const std::vector<T> &vector_y,
   std::vector<T> result;
   result.reserve(vector_y.size());
   for (std::size_t i = 0; i < vector_y.size(); ++i) {
-    result.push_back(Base::Math::atan2(vector_y[i], vector_x[i]));
+    result.push_back(PythonMath::atan2(vector_y[i], vector_x[i]));
   }
   return result;
 }
+
+namespace Atan2Action1 {
+
+template <typename T, std::size_t N, std::size_t Index> struct Atan2Core1 {
+  /**
+   * @brief Recursively computes element-wise atan2(array_y, scalar x).
+   *
+   * @param result The array to store the results.
+   * @param array_y The y-coordinate array.
+   * @param x The scalar x-coordinate.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array_y,
+                      const T &x) {
+    result[Index] = PythonMath::atan2(array_y[Index], x);
+    Atan2Core1<T, N, Index - 1>::compute(result, array_y, x);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct Atan2Core1<T, N, 0> {
+  /**
+   * @brief Base case for atan2(array_y, scalar x).
+   *
+   * @param result The array to store the results.
+   * @param array_y The y-coordinate array.
+   * @param x The scalar x-coordinate.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array_y,
+                      const T &x) {
+    result[0] = PythonMath::atan2(array_y[0], x);
+  }
+};
+
+/**
+ * @brief Entry point for atan2(array_y, scalar x).
+ *
+ * @tparam T The type of the elements.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array_y The y-coordinate array.
+ * @param x The scalar x-coordinate.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array_y,
+                    const T &x) {
+  Atan2Core1<T, N, N - 1>::compute(result, array_y, x);
+}
+
+} // namespace Atan2Action1
+
+namespace Atan2Action2 {
+
+template <typename T, std::size_t N, std::size_t Index> struct Atan2Core2 {
+  /**
+   * @brief Recursively computes element-wise atan2(scalar y, array_x).
+   *
+   * @param result The array to store the results.
+   * @param y The scalar y-coordinate.
+   * @param array_x The x-coordinate array.
+   */
+  static void compute(std::array<T, N> &result, const T &y,
+                      const std::array<T, N> &array_x) {
+    result[Index] = PythonMath::atan2(y, array_x[Index]);
+    Atan2Core2<T, N, Index - 1>::compute(result, y, array_x);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct Atan2Core2<T, N, 0> {
+  /**
+   * @brief Base case for atan2(scalar y, array_x).
+   *
+   * @param result The array to store the results.
+   * @param y The scalar y-coordinate.
+   * @param array_x The x-coordinate array.
+   */
+  static void compute(std::array<T, N> &result, const T &y,
+                      const std::array<T, N> &array_x) {
+    result[0] = PythonMath::atan2(y, array_x[0]);
+  }
+};
+
+/**
+ * @brief Entry point for atan2(scalar y, array_x).
+ *
+ * @tparam T The type of the elements.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param y The scalar y-coordinate.
+ * @param array_x The x-coordinate array.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const T &y,
+                    const std::array<T, N> &array_x) {
+  Atan2Core2<T, N, N - 1>::compute(result, y, array_x);
+}
+
+} // namespace Atan2Action2
+
+namespace Atan2Action3 {
+
+template <typename T, std::size_t N, std::size_t Index> struct Atan2Core3 {
+  /**
+   * @brief Recursively computes element-wise atan2(array_y, array_x).
+   *
+   * @param result The array to store the results.
+   * @param array_y The y-coordinate array.
+   * @param array_x The x-coordinate array.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array_y,
+                      const std::array<T, N> &array_x) {
+    result[Index] = PythonMath::atan2(array_y[Index], array_x[Index]);
+    Atan2Core3<T, N, Index - 1>::compute(result, array_y, array_x);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct Atan2Core3<T, N, 0> {
+  /**
+   * @brief Base case for atan2(array_y, array_x).
+   *
+   * @param result The array to store the results.
+   * @param array_y The y-coordinate array.
+   * @param array_x The x-coordinate array.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array_y,
+                      const std::array<T, N> &array_x) {
+    result[0] = PythonMath::atan2(array_y[0], array_x[0]);
+  }
+};
+
+/**
+ * @brief Entry point for atan2(array_y, array_x).
+ *
+ * @tparam T The type of the elements.
+ * @tparam N The size of the arrays.
+ * @param result The array to store the results.
+ * @param array_y The y-coordinate array.
+ * @param array_x The x-coordinate array.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array_y,
+                    const std::array<T, N> &array_x) {
+  Atan2Core3<T, N, N - 1>::compute(result, array_y, array_x);
+}
+
+} // namespace Atan2Action3
 
 /**
  * @brief Computes the element-wise arc tangent of each element in the input
@@ -375,9 +703,7 @@ inline std::vector<T> atan2(const std::vector<T> &vector_y,
 template <typename T, std::size_t N>
 inline std::array<T, N> atan2(const std::array<T, N> &array_y, const T &x) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::atan2(array_y[i], x);
-  }
+  Atan2Action1::compute(result, array_y, x);
   return result;
 }
 
@@ -386,7 +712,7 @@ inline std::array<T, N> atan2(const std::array<T, N> &array_y, const T &x) {
  * input array x.
  *
  * This function takes a scalar value y and an array of values array_x, and
- * returns a new array where each element is the result of Base::Math::atan2(y,
+ * returns a new array where each element is the result of PythonMath::atan2(y,
  * array_x[i]). The atan2 function computes the angle (in radians) whose tangent
  * is the quotient of its arguments, handling the correct quadrant.
  *
@@ -401,9 +727,7 @@ inline std::array<T, N> atan2(const std::array<T, N> &array_y, const T &x) {
 template <typename T, std::size_t N>
 inline std::array<T, N> atan2(const T &y, const std::array<T, N> &array_x) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::atan2(y, array_x[i]);
-  }
+  Atan2Action2::compute(result, y, array_x);
   return result;
 }
 
@@ -413,7 +737,7 @@ inline std::array<T, N> atan2(const T &y, const std::array<T, N> &array_x) {
  * This function takes two input arrays, `array_y` and `array_x`, each of size
  * `N`, and computes the arc tangent of the quotient of their corresponding
  * elements, storing the result in a new array. The computation is performed
- * using `Base::Math::atan2` for each element.
+ * using `PythonMath::atan2` for each element.
  *
  * @tparam T The type of the elements in the arrays (e.g., float, double).
  * @tparam N The size of the input arrays.
@@ -425,9 +749,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> atan2(const std::array<T, N> &array_y,
                               const std::array<T, N> &array_x) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::atan2(array_y[i], array_x[i]);
-  }
+  Atan2Action3::compute(result, array_y, array_x);
   return result;
 }
 
@@ -453,7 +775,7 @@ template <typename T> inline T asin(const T &x) { return Base::Math::asin(x); }
  * vector.
  *
  * This function takes a vector of elements and returns a new vector where each
- * element is the result of applying Base::Math::asin to the corresponding
+ * element is the result of applying PythonMath::asin to the corresponding
  * element of the input vector.
  *
  * @tparam T The type of the elements in the input vector.
@@ -466,16 +788,63 @@ template <typename T> inline std::vector<T> asin(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::asin(element));
+    result.push_back(PythonMath::asin(element));
   }
   return result;
 }
+
+namespace AsinAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct AsinCore {
+  /**
+   * @brief Recursively computes the element-wise arcsine of a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be processed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::asin(array[Index]);
+    AsinCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct AsinCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of arcsines in a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be processed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::asin(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise arcsine of a std::array.
+ *
+ * This function serves as an entry point for computing the arcsines of elements
+ * in a std::array. It initializes the recursive computation by calling AsinCore
+ * with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be processed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  AsinCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace AsinAction
 
 /**
  * @brief Computes the element-wise arcsine (inverse sine) of the input array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * array where each element is the result of applying Base::Math::asin to the
+ * array where each element is the result of applying PythonMath::asin to the
  * corresponding element of the input array.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
@@ -487,9 +856,7 @@ template <typename T> inline std::vector<T> asin(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> asin(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::asin(array[i]);
-  }
+  AsinAction::compute(result, array);
   return result;
 }
 
@@ -513,7 +880,7 @@ template <typename T> inline T acos(const T &x) { return Base::Math::acos(x); }
  * vector.
  *
  * This function takes a vector of elements and applies the arc cosine function
- * (acos) to each element using Base::Math::acos, returning a new vector with
+ * (acos) to each element using PythonMath::acos, returning a new vector with
  * the results.
  *
  * @tparam T The type of the elements in the input vector.
@@ -526,16 +893,64 @@ template <typename T> inline std::vector<T> acos(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::acos(element));
+    result.push_back(PythonMath::acos(element));
   }
   return result;
 }
+
+namespace AcosAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct AcosCore {
+  /**
+   * @brief Recursively computes the element-wise arccosine of a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be processed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::acos(array[Index]);
+    AcosCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct AcosCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of arccosines in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be processed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::acos(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise arccosine of a std::array.
+ *
+ * This function serves as an entry point for computing the arccosines of
+ * elements in a std::array. It initializes the recursive computation by calling
+ * AcosCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be processed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  AcosCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace AcosAction
 
 /**
  * @brief Computes the arc cosine (inverse cosine) of each element in the input
  * array.
  *
- * This function applies the Base::Math::acos function to each element of the
+ * This function applies the PythonMath::acos function to each element of the
  * input std::array and returns a new std::array containing the results.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
@@ -547,9 +962,7 @@ template <typename T> inline std::vector<T> acos(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> acos(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::acos(array[i]);
-  }
+  AcosAction::compute(result, array);
   return result;
 }
 
@@ -571,7 +984,7 @@ template <typename T> inline T sinh(const T &x) { return Base::Math::sinh(x); }
  * @brief Computes the hyperbolic sine (sinh) of each element in the input
  * vector.
  *
- * This function applies the Base::Math::sinh operation to every element of the
+ * This function applies the PythonMath::sinh operation to every element of the
  * input vector and returns a new vector containing the results.
  *
  * @tparam T The type of the elements in the input vector.
@@ -583,16 +996,65 @@ template <typename T> inline std::vector<T> sinh(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::sinh(element));
+    result.push_back(PythonMath::sinh(element));
   }
   return result;
 }
+
+namespace SinhAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct SinhCore {
+  /**
+   * @brief Recursively computes the element-wise hyperbolic sine of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::sinh(array[Index]);
+    SinhCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct SinhCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of hyperbolic sines in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::sinh(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise hyperbolic sine of a std::array.
+ *
+ * This function serves as an entry point for computing the hyperbolic sines of
+ * elements in a std::array. It initializes the recursive computation by calling
+ * SinhCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be transformed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  SinhCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace SinhAction
 
 /**
  * @brief Computes the hyperbolic sine (sinh) of each element in the input
  * array.
  *
- * This function applies the Base::Math::sinh operation to each element of the
+ * This function applies the PythonMath::sinh operation to each element of the
  * input std::array and returns a new array containing the results.
  *
  * @tparam T The type of the elements in the array.
@@ -604,9 +1066,7 @@ template <typename T> inline std::vector<T> sinh(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> sinh(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::sinh(array[i]);
-  }
+  SinhAction::compute(result, array);
   return result;
 }
 
@@ -627,7 +1087,7 @@ template <typename T> inline T cosh(const T &x) { return Base::Math::cosh(x); }
  * @brief Computes the hyperbolic cosine (cosh) of each element in the input
  * vector.
  *
- * This function applies the Base::Math::cosh function to each element of the
+ * This function applies the PythonMath::cosh function to each element of the
  * input std::vector<T> and returns a new vector containing the results.
  *
  * @tparam T The type of the elements in the input vector.
@@ -639,16 +1099,65 @@ template <typename T> inline std::vector<T> cosh(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::cosh(element));
+    result.push_back(PythonMath::cosh(element));
   }
   return result;
 }
+
+namespace CoshAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct CoshCore {
+  /**
+   * @brief Recursively computes the element-wise hyperbolic cosine of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::cosh(array[Index]);
+    CoshCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct CoshCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of hyperbolic cosines in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::cosh(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise hyperbolic cosine of a std::array.
+ *
+ * This function serves as an entry point for computing the hyperbolic cosines
+ * of elements in a std::array. It initializes the recursive computation by
+ * calling CoshCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be transformed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  CoshCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace CoshAction
 
 /**
  * @brief Computes the hyperbolic cosine (cosh) of each element in the input
  * array.
  *
- * This function applies the Base::Math::cosh function to each element of the
+ * This function applies the PythonMath::cosh function to each element of the
  * input std::array, returning a new std::array containing the results.
  *
  * @tparam T The type of the elements in the array (e.g., float, double).
@@ -660,9 +1169,7 @@ template <typename T> inline std::vector<T> cosh(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> cosh(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::cosh(array[i]);
-  }
+  CoshAction::compute(result, array);
   return result;
 }
 
@@ -695,16 +1202,65 @@ template <typename T> inline std::vector<T> tanh(const std::vector<T> &vector) {
   std::vector<T> result;
   result.reserve(vector.size());
   for (const auto &element : vector) {
-    result.push_back(Base::Math::tanh(element));
+    result.push_back(PythonMath::tanh(element));
   }
   return result;
 }
+
+namespace TanhAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct TanhCore {
+  /**
+   * @brief Recursively computes the element-wise hyperbolic tangent of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::tanh(array[Index]);
+    TanhCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct TanhCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of hyperbolic tangents in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::tanh(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise hyperbolic tangent of a std::array.
+ *
+ * This function serves as an entry point for computing the hyperbolic tangents
+ * of elements in a std::array. It initializes the recursive computation by
+ * calling TanhCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be transformed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  TanhCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace TanhAction
 
 /**
  * @brief Applies the hyperbolic tangent function element-wise to a std::array.
  *
  * This function takes a std::array of type T and size N, and returns a new
- * std::array where each element is the result of applying Base::Math::tanh to
+ * std::array where each element is the result of applying PythonMath::tanh to
  * the corresponding element in the input array.
  *
  * @tparam T The type of the elements in the array.
@@ -716,9 +1272,7 @@ template <typename T> inline std::vector<T> tanh(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> tanh(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = Base::Math::tanh(array[i]);
-  }
+  TanhAction::compute(result, array);
   return result;
 }
 
