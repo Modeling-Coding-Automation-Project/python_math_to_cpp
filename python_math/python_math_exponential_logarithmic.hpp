@@ -11,6 +11,9 @@ namespace PythonMath {
 
 /* sqrt */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> sqrt(const std::array<T, N> &array);
+
 template <typename T> inline T sqrt(const T &x) { return Base::Math::sqrt(x); }
 
 /**
@@ -107,6 +110,9 @@ inline std::array<T, N> sqrt(const std::array<T, N> &array) {
 }
 
 /* exp */
+
+template <typename T, std::size_t N>
+inline std::array<T, N> exp(const std::array<T, N> &array);
 
 /**
  * @brief Computes the exponential of the given value.
@@ -210,6 +216,9 @@ inline std::array<T, N> exp(const std::array<T, N> &array) {
 }
 
 /* exp2 */
+
+template <typename T, std::size_t N>
+inline std::array<T, N> exp2(const std::array<T, N> &array);
 
 /**
  * @brief Computes the base-2 exponential of the given value.
@@ -315,6 +324,9 @@ inline std::array<T, N> exp2(const std::array<T, N> &array) {
 }
 
 /* log */
+
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array);
 
 /**
  * @brief Computes the natural logarithm (base e) of the given value.
@@ -422,6 +434,9 @@ inline std::array<T, N> log(const std::array<T, N> &array) {
 
 /* log2 */
 
+template <typename T, std::size_t N>
+inline std::array<T, N> log2(const std::array<T, N> &array);
+
 /**
  * @brief Computes the base-2 logarithm of the given value.
  *
@@ -526,6 +541,9 @@ inline std::array<T, N> log2(const std::array<T, N> &array) {
 }
 
 /* log10 */
+
+template <typename T, std::size_t N>
+inline std::array<T, N> log10(const std::array<T, N> &array);
 
 /**
  * @brief Computes the base-10 logarithm of the given value.
@@ -633,6 +651,16 @@ inline std::array<T, N> log10(const std::array<T, N> &array) {
 }
 
 /* pow */
+
+template <typename T, std::size_t N>
+inline std::array<T, N> pow(const std::array<T, N> &array_x, const T &y);
+
+template <typename T, std::size_t N>
+inline std::array<T, N> pow(const T &x, const std::array<T, N> &array_y);
+
+template <typename T, std::size_t N>
+inline std::array<T, N> pow(const std::array<T, N> &array_x,
+                            const std::array<T, N> &array_y);
 
 /**
  * @brief Computes the value of x raised to the power of y.
