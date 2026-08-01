@@ -59,6 +59,58 @@ template <typename T> inline std::vector<T> abs(const std::vector<T> &vector) {
   return result;
 }
 
+namespace AbsAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct AbsCore {
+  /**
+   * @brief Recursively computes the element-wise absolute value of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' absolute values are to be
+   * computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::abs(array[Index]);
+    AbsCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct AbsCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of absolute values in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' absolute values are to be
+   * computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::abs(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise absolute value of a std::array.
+ *
+ * This function serves as an entry point for computing the absolute values of
+ * elements in a std::array. It initializes the recursive computation by calling
+ * AbsCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements' absolute values are to be
+ * computed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  AbsCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace AbsAction
+
 /**
  * @brief Computes the element-wise absolute value of a std::array.
  *
@@ -77,9 +129,9 @@ template <typename T> inline std::vector<T> abs(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> abs(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::abs(array[i]);
-  }
+
+  AbsAction::compute(result, array);
+
   return result;
 }
 
