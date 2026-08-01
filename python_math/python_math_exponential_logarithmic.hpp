@@ -35,6 +35,56 @@ template <typename T> inline std::vector<T> sqrt(const std::vector<T> &vector) {
   return result;
 }
 
+namespace SqrtAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct SqrtCore {
+  /**
+   * @brief Recursively computes the element-wise square root of a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' square roots are to be
+   * computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::sqrt(array[Index]);
+    SqrtCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct SqrtCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of square roots in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements' square roots are to be
+   * computed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::sqrt(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise square root of a std::array.
+ *
+ * This function serves as an entry point for computing the square roots of
+ * elements in a std::array. It initializes the recursive computation by calling
+ * SqrtCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements' square roots are to be computed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  SqrtCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace SqrtAction
+
 /**
  * @brief Computes the square root of each element in the input array.
  *
@@ -52,9 +102,7 @@ template <typename T> inline std::vector<T> sqrt(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> sqrt(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::sqrt(array[i]);
-  }
+  SqrtAction::compute(result, array);
   return result;
 }
 
@@ -93,6 +141,54 @@ template <typename T> inline std::vector<T> exp(const std::vector<T> &vector) {
   return result;
 }
 
+namespace ExpAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct ExpCore {
+  /**
+   * @brief Recursively computes the element-wise exponential of a std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be exponentiated.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::exp(array[Index]);
+    ExpCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct ExpCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of exponentials in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be exponentiated.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::exp(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise exponential of a std::array.
+ *
+ * This function serves as an entry point for computing the exponentials of
+ * elements in a std::array. It initializes the recursive computation by calling
+ * ExpCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be exponentiated.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  ExpCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace ExpAction
+
 /**
  * @brief Applies the exponential function to each element of the input array.
  *
@@ -109,9 +205,7 @@ template <typename T> inline std::vector<T> exp(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> exp(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::exp(array[i]);
-  }
+  ExpAction::compute(result, array);
   return result;
 }
 
@@ -151,6 +245,55 @@ template <typename T> inline std::vector<T> exp2(const std::vector<T> &vector) {
   return result;
 }
 
+namespace Exp2Action {
+
+template <typename T, std::size_t N, std::size_t Index> struct Exp2Core {
+  /**
+   * @brief Recursively computes the element-wise base-2 exponential of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be exponentiated.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::exp2(array[Index]);
+    Exp2Core<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct Exp2Core<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of base-2 exponentials in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be exponentiated.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::exp2(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise base-2 exponential of a std::array.
+ *
+ * This function serves as an entry point for computing the base-2 exponentials
+ * of elements in a std::array. It initializes the recursive computation by
+ * calling Exp2Core with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be exponentiated.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  Exp2Core<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace Exp2Action
+
 /**
  * @brief Applies the base-2 exponential function to each element of the input
  * array.
@@ -167,9 +310,7 @@ template <typename T> inline std::vector<T> exp2(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> exp2(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::exp2(array[i]);
-  }
+  Exp2Action::compute(result, array);
   return result;
 }
 
@@ -210,6 +351,55 @@ template <typename T> inline std::vector<T> log(const std::vector<T> &vector) {
   return result;
 }
 
+namespace LogAction {
+
+template <typename T, std::size_t N, std::size_t Index> struct LogCore {
+  /**
+   * @brief Recursively computes the element-wise natural logarithm of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::log(array[Index]);
+    LogCore<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct LogCore<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of natural logarithms in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::log(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise natural logarithm of a std::array.
+ *
+ * This function serves as an entry point for computing the natural logarithms
+ * of elements in a std::array. It initializes the recursive computation by
+ * calling LogCore with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be transformed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  LogCore<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace LogAction
+
 /**
  * @brief Applies the natural logarithm element-wise to a std::array.
  *
@@ -226,9 +416,7 @@ template <typename T> inline std::vector<T> log(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> log(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::log(array[i]);
-  }
+  LogAction::compute(result, array);
   return result;
 }
 
@@ -268,6 +456,55 @@ template <typename T> inline std::vector<T> log2(const std::vector<T> &vector) {
   return result;
 }
 
+namespace Log2Action {
+
+template <typename T, std::size_t N, std::size_t Index> struct Log2Core {
+  /**
+   * @brief Recursively computes the element-wise base-2 logarithm of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::log2(array[Index]);
+    Log2Core<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct Log2Core<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of base-2 logarithms in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::log2(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise base-2 logarithm of a std::array.
+ *
+ * This function serves as an entry point for computing the base-2 logarithms
+ * of elements in a std::array. It initializes the recursive computation by
+ * calling Log2Core with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be transformed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  Log2Core<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace Log2Action
+
 /**
  * @brief Computes the base-2 logarithm of each element in the input array.
  *
@@ -284,9 +521,7 @@ template <typename T> inline std::vector<T> log2(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> log2(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::log2(array[i]);
-  }
+  Log2Action::compute(result, array);
   return result;
 }
 
@@ -328,6 +563,55 @@ inline std::vector<T> log10(const std::vector<T> &vector) {
   return result;
 }
 
+namespace Log10Action {
+
+template <typename T, std::size_t N, std::size_t Index> struct Log10Core {
+  /**
+   * @brief Recursively computes the element-wise base-10 logarithm of a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[Index] = PythonMath::log10(array[Index]);
+    Log10Core<T, N, Index - 1>::compute(result, array);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct Log10Core<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of base-10 logarithms in a
+   * std::array.
+   *
+   * @param result The array to store the results.
+   * @param array The input array whose elements will be transformed.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+    result[0] = PythonMath::log10(array[0]);
+  }
+};
+
+/**
+ * @brief Computes the element-wise base-10 logarithm of a std::array.
+ *
+ * This function serves as an entry point for computing the base-10 logarithms
+ * of elements in a std::array. It initializes the recursive computation by
+ * calling Log10Core with the appropriate parameters.
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array The input array whose elements will be transformed.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array) {
+  Log10Core<T, N, N - 1>::compute(result, array);
+}
+
+} // namespace Log10Action
+
 /**
  * @brief Computes the base-10 logarithm of each element in the input array.
  *
@@ -344,9 +628,7 @@ inline std::vector<T> log10(const std::vector<T> &vector) {
 template <typename T, std::size_t N>
 inline std::array<T, N> log10(const std::array<T, N> &array) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::log10(array[i]);
-  }
+  Log10Action::compute(result, array);
   return result;
 }
 
@@ -442,6 +724,162 @@ inline std::vector<T> pow(const std::vector<T> &vector_x,
   return result;
 }
 
+namespace PowAction1 {
+
+template <typename T, std::size_t N, std::size_t Index> struct PowCore1 {
+  /**
+   * @brief Recursively computes the element-wise power (array base, scalar
+   * exponent).
+   *
+   * @param result The array to store the results.
+   * @param array_x The base values as an array.
+   * @param y The scalar exponent.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array_x,
+                      const T &y) {
+    result[Index] = PythonMath::pow(array_x[Index], y);
+    PowCore1<T, N, Index - 1>::compute(result, array_x, y);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct PowCore1<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of power (array base, scalar
+   * exponent).
+   *
+   * @param result The array to store the results.
+   * @param array_x The base values as an array.
+   * @param y The scalar exponent.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array_x,
+                      const T &y) {
+    result[0] = PythonMath::pow(array_x[0], y);
+  }
+};
+
+/**
+ * @brief Entry point for computing element-wise power (array base, scalar
+ * exponent).
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param array_x The base values as an array.
+ * @param y The scalar exponent.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array_x,
+                    const T &y) {
+  PowCore1<T, N, N - 1>::compute(result, array_x, y);
+}
+
+} // namespace PowAction1
+
+namespace PowAction2 {
+
+template <typename T, std::size_t N, std::size_t Index> struct PowCore2 {
+  /**
+   * @brief Recursively computes the element-wise power (scalar base, array
+   * exponent).
+   *
+   * @param result The array to store the results.
+   * @param x The scalar base.
+   * @param array_y The exponent values as an array.
+   */
+  static void compute(std::array<T, N> &result, const T &x,
+                      const std::array<T, N> &array_y) {
+    result[Index] = PythonMath::pow(x, array_y[Index]);
+    PowCore2<T, N, Index - 1>::compute(result, x, array_y);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct PowCore2<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of power (scalar base, array
+   * exponent).
+   *
+   * @param result The array to store the results.
+   * @param x The scalar base.
+   * @param array_y The exponent values as an array.
+   */
+  static void compute(std::array<T, N> &result, const T &x,
+                      const std::array<T, N> &array_y) {
+    result[0] = PythonMath::pow(x, array_y[0]);
+  }
+};
+
+/**
+ * @brief Entry point for computing element-wise power (scalar base, array
+ * exponent).
+ *
+ * @tparam T The type of the elements in the array.
+ * @tparam N The size of the array.
+ * @param result The array to store the results.
+ * @param x The scalar base.
+ * @param array_y The exponent values as an array.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const T &x,
+                    const std::array<T, N> &array_y) {
+  PowCore2<T, N, N - 1>::compute(result, x, array_y);
+}
+
+} // namespace PowAction2
+
+namespace PowAction3 {
+
+template <typename T, std::size_t N, std::size_t Index> struct PowCore3 {
+  /**
+   * @brief Recursively computes the element-wise power (array base, array
+   * exponent).
+   *
+   * @param result The array to store the results.
+   * @param array_x The base values as an array.
+   * @param array_y The exponent values as an array.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array_x,
+                      const std::array<T, N> &array_y) {
+    result[Index] = PythonMath::pow(array_x[Index], array_y[Index]);
+    PowCore3<T, N, Index - 1>::compute(result, array_x, array_y);
+  }
+};
+
+// Specialization to end the recursion
+template <typename T, std::size_t N> struct PowCore3<T, N, 0> {
+  /**
+   * @brief Base case for the recursive computation of power (array base, array
+   * exponent).
+   *
+   * @param result The array to store the results.
+   * @param array_x The base values as an array.
+   * @param array_y The exponent values as an array.
+   */
+  static void compute(std::array<T, N> &result, const std::array<T, N> &array_x,
+                      const std::array<T, N> &array_y) {
+    result[0] = PythonMath::pow(array_x[0], array_y[0]);
+  }
+};
+
+/**
+ * @brief Entry point for computing element-wise power (array base, array
+ * exponent).
+ *
+ * @tparam T The type of the elements in the arrays.
+ * @tparam N The size of the arrays.
+ * @param result The array to store the results.
+ * @param array_x The base values as an array.
+ * @param array_y The exponent values as an array.
+ */
+template <typename T, std::size_t N>
+inline void compute(std::array<T, N> &result, const std::array<T, N> &array_x,
+                    const std::array<T, N> &array_y) {
+  PowCore3<T, N, N - 1>::compute(result, array_x, array_y);
+}
+
+} // namespace PowAction3
+
 /**
  * @brief Raises each element of the input array to the given power.
  *
@@ -458,9 +896,7 @@ inline std::vector<T> pow(const std::vector<T> &vector_x,
 template <typename T, std::size_t N>
 inline std::array<T, N> pow(const std::array<T, N> &array_x, const T &y) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::pow(array_x[i], y);
-  }
+  PowAction1::compute(result, array_x, y);
   return result;
 }
 
@@ -481,9 +917,7 @@ inline std::array<T, N> pow(const std::array<T, N> &array_x, const T &y) {
 template <typename T, std::size_t N>
 inline std::array<T, N> pow(const T &x, const std::array<T, N> &array_y) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::pow(x, array_y[i]);
-  }
+  PowAction2::compute(result, x, array_y);
   return result;
 }
 
@@ -505,9 +939,7 @@ template <typename T, std::size_t N>
 inline std::array<T, N> pow(const std::array<T, N> &array_x,
                             const std::array<T, N> &array_y) {
   std::array<T, N> result;
-  for (std::size_t i = 0; i < N; ++i) {
-    result[i] = PythonMath::pow(array_x[i], array_y[i]);
-  }
+  PowAction3::compute(result, array_x, array_y);
   return result;
 }
 
