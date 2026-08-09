@@ -30,8 +30,9 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y g++
     - name: Build and Run C++ application
-      run: 'g++ -std=c++11 -Wall -Wextra -Werror ${{ matrix.define }} -I ./base_math -I ./python_math
-        -I ./external_libraries/base_utility_cpp/base_utility -I ./test_vs/MCAP_tester/include
-        -o ./test_vs/app ./test_vs/test_vs_main.cpp && ./test_vs/app
+      run: 'g++ -std=c++11 -Wall -Wextra -Werror ${{ matrix.define }} -I ./base_math
+        -I ./python_math -I ./external_libraries/base_utility_cpp/base_utility -I
+        ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp
+        && ./test_vs/app
 
         '
