@@ -27,10 +27,6 @@ C++11
 
 - [ドキュメント一覧](./document/README.md)
 
-参考記事（背景解説）:
-
-https://note.com/claude_a/n/n175c03804515
-
 ## サポート
 
 新規にissueを作成して、詳細をお知らせください。
