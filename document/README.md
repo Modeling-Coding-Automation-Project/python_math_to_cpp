@@ -10,7 +10,6 @@
 3. [内部アルゴリズム: 算術・安全化基盤](./03_algorithm_arithmetic_and_safety.md)
 4. [内部アルゴリズム: 指数・対数・平方根](./04_algorithm_exponential_logarithmic.md)
 5. [内部アルゴリズム: 三角・逆三角・双曲線関数](./05_algorithm_trigonometric.md)
-6. [参考にした記事（添付PDF由来）](./06_reference_articles.md)
 
 ## 読み進め方（おすすめ）
 
